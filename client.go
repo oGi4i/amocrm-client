@@ -45,6 +45,14 @@ type (
 			Error string `json:"error"`
 		} `json:"response"`
 	}
+	//RequestParams параметры GET запроса
+	RequestParams struct {
+		ID                int
+		LimitRows         int
+		LimitOffset       int
+		ResponsibleUserID int
+		Query             string
+	}
 )
 
 //New Открытия соединения и авторизация
