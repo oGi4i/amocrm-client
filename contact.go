@@ -2,7 +2,6 @@ package amocrm
 
 import (
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -20,7 +19,6 @@ func (c *clientInfo) AddContact(contact Contact) (int, error) {
 }
 
 func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, error) {
-	fmt.Println("TEst1")
 	addValues := map[string]string{}
 	addValues["type"] = "json"
 	contacts := ContactGetResponse{}

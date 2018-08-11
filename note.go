@@ -6,7 +6,6 @@ import (
 )
 
 func (c *clientInfo) AddNote(note Note) (int, error) {
-	fmt.Println("TEst")
 	if note.Text == "" {
 		return 0, errors.New("Text is empty")
 	}
