@@ -2,12 +2,12 @@ package amocrm
 
 type (
 	Parameters struct {
-		UNIQ       string `json:"uniq"`
-		LINK       string `json:"link"`
-		PHONE      string `json:"phone"`
-		DURATION   int    `json:"duation"`
-		SRC        string `json:"src"`
-		FROM       string `json:"from,omitempty"`
+		UNIQ       string `json:"UNIQ"`
+		LINK       string `json:"LINK"`
+		PHONE      string `json:"PHONE"`
+		DURATION   int    `json:"DURATION"`
+		SRC        string `json:"SRC"`
+		FROM       string `json:"FROM,omitempty"`
 		CallStatus int    `json:"call_status"`
 		CallResult string `json:"call_result,omitempty"`
 		Text       string `json:"text,omitempty"`

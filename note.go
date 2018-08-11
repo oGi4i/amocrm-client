@@ -6,9 +6,6 @@ import (
 )
 
 func (c *clientInfo) AddNote(note Note) (int, error) {
-	if note.Text == "" {
-		return 0, errors.New("Text is empty")
-	}
 	if note.ElementID == 0 {
 		return 0, errors.New("ElementID is empty")
 	}
