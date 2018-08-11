@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -139,6 +140,7 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	buf := bytes.NewBuffer([]byte{})
 	enc := json.NewEncoder(buf)
 	err := enc.Encode(data)
+	fmt.Println(buf)
 	if err != nil {
 		return nil, err
 	}
@@ -149,6 +151,7 @@ func (c *clientInfo) GetResponseID(resp *http.Response) (int, error) {
 	result := respID{}
 	dec := json.NewDecoder(resp.Body)
 	err := dec.Decode(&result)
+	fmt.Println(result)
 	if err != nil {
 		return 0, err
 	}

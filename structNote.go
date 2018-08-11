@@ -7,7 +7,7 @@ type (
 		PHONE      string `json:"phone"`
 		DURATION   int    `json:"duation"`
 		SRC        string `json:"src"`
-		FROM       string `json:"from"`
+		FROM       string `json:"from,omitempty"`
 		CallStatus int    `json:"call_status"`
 		CallResult string `json:"call_result,omitempty"`
 		Text       string `json:"text,omitempty"`
@@ -15,7 +15,7 @@ type (
 	Note struct {
 		ElementID         int        `json:"element_id"`
 		ElementType       int        `json:"element_type"`
-		Text              string     `json:"text"`
+		Text              string     `json:"text,omitempty"`
 		NoteType          int        `json:"note_type"`
 		CreatedAt         string     `json:"created_at,omitempty"`
 		UpdatedAt         int        `json:"updated_at,omitempty"`
