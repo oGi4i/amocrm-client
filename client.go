@@ -129,8 +129,6 @@ func (c *clientInfo) DoGet(url string, data map[string]string) (io.Reader, error
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(ioutil.ReadAll(resp.Body))
-	fmt.Println(resp.Body)
 	defer resp.Body.Close()
 	return resp.Body, nil
 }
