@@ -112,6 +112,7 @@ func New(accountURL string, login string, hash string, timeout time.Duration) (*
 
 // Установка URL и параметров по умолчанию
 func (c *clientInfo) SetURL(path string, addValues map[string]string) string {
+	fmt.Println("seturl")
 	requestURL := *c.accountWebAddress
 	requestURL.Path = apiUrls[path]
 	values := requestURL.Query()
@@ -137,6 +138,7 @@ func (c *clientInfo) DoGet(url string, result interface{}) error {
 }
 
 func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error) {
+	fmt.Println("dopost")
 	jsonStr, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
