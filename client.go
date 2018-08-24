@@ -129,7 +129,10 @@ func (c *clientInfo) SetURL(path string, addValues map[string]string) string {
 }
 
 func (c *clientInfo) DoGet(url string, result interface{}) error {
+	fmt.Println("doget")
+	fmt.Println(url)
 	resp, err := http.Get(url)
+	fmt.Println(resp)
 	if err != nil {
 		return err
 	}
