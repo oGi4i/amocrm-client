@@ -96,7 +96,6 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println("New3")
 		if len(authResponse.Response.Accounts) > 0 {
 			c.Timezone = authResponse.Response.Accounts[0].Timezone
 		}
@@ -112,7 +111,6 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 
 func (c *clientInfo) DoGet(url string, data map[string]string) (io.Reader, error) {
 	fmt.Println("doget")
-	fmt.Println(url)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		panic(err.Error())
@@ -125,7 +123,7 @@ func (c *clientInfo) DoGet(url string, data map[string]string) (io.Reader, error
 		q.Add(key, value)
 	}
 	req.URL.RawQuery = q.Encode()
-
+	fmt.Println(req)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
