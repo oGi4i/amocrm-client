@@ -5,20 +5,21 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"time"
+	"strings"
 )
 
 type (
 	// Информация о подключении к аккаунту
 	clientInfo struct {
-		userLogin         string
-		apiHash           string
-		Timezone          string
-		accountWebAddress *url.URL
-		Timeout           time.Duration
+		userLogin string
+		apiHash   string
+		Timezone  string
+		Url       string
+		Cookie    []*http.Cookie
 	}
 	//AuthResponse Структура ответа при авторизации
 	AuthResponse struct {
@@ -57,7 +58,7 @@ type (
 )
 
 //New Открытия соединения и авторизация
-func New(accountURL string, login string, hash string, timeout time.Duration) (*clientInfo, error) {
+func New(accountURL string, login string, hash string) (*clientInfo, error) {
 	var err error
 
 	if login == "" {
@@ -69,75 +70,67 @@ func New(accountURL string, login string, hash string, timeout time.Duration) (*
 	c := &clientInfo{
 		userLogin: login,
 		apiHash:   hash,
-		Timeout:   timeout,
 	}
-	c.accountWebAddress, err = url.Parse(accountURL)
+	_, err = url.Parse(accountURL)
 	if err != nil {
 		return nil, err
 	}
-	requestURL := c.accountWebAddress
-	requestURL.Path = apiUrls["auth"]
-	params := requestURL.Query()
-	params.Set("type", "json")
-	requestURL.RawQuery = params.Encode()
-	client := &http.Client{
-		Timeout: c.Timeout,
-	}
-
-	resp, err := client.PostForm(
-		requestURL.String(),
-		url.Values{"USER_LOGIN": {c.userLogin}, "USER_HASH": {c.apiHash}},
-	)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	var authResponse AuthResponse
-	err = json.Unmarshal(body, &authResponse)
-	if err != nil {
-		return nil, err
-	}
-	if len(authResponse.Response.Accounts) > 0 {
-		c.Timezone = authResponse.Response.Accounts[0].Timezone
-	}
-	if !authResponse.Response.Auth {
-		return nil, errors.New(authResponse.Response.Error)
-	}
-	return c, nil
-}
-
-// Установка URL и параметров по умолчанию
-func (c *clientInfo) SetURL(path string, addValues map[string]string) string {
-	fmt.Println("seturl")
-	requestURL := *c.accountWebAddress
-	requestURL.Path = apiUrls[path]
-	values := requestURL.Query()
+	c.Url = accountURL
+	values := url.Values{}
 	values.Set("USER_LOGIN", c.userLogin)
 	values.Set("USER_HASH", c.apiHash)
+	reqbody := strings.NewReader(values.Encode())
+	urlString := c.Url + apiUrls["auth"]
+	resp, err := http.Post(urlString, "application/x-www-form-urlencoded", reqbody)
 
-	if addValues != nil {
-		for key, value := range addValues {
-			values.Set(key, value)
+	defer resp.Body.Close()
+	if resp.StatusCode == 200 {
+		c.Cookie = resp.Cookies()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
 		}
+		var authResponse AuthResponse
+		err = json.Unmarshal(body, &authResponse)
+		if err != nil {
+			return nil, err
+		}
+		if len(authResponse.Response.Accounts) > 0 {
+			c.Timezone = authResponse.Response.Accounts[0].Timezone
+		}
+		if !authResponse.Response.Auth {
+			return nil, errors.New(authResponse.Response.Error)
+		}
+		return c, nil
+	} else {
+		err = errors.New("Wrong http status: " + string(resp.StatusCode))
+		return nil, err
 	}
-	requestURL.RawQuery = values.Encode()
-	return requestURL.String()
 }
 
-func (c *clientInfo) DoGet(url string, result interface{}) error {
+func (c *clientInfo) DoGet(url string, data map[string]string) (io.Reader, error) {
 	fmt.Println("doget")
 	fmt.Println(url)
-	resp, err := http.Get(url)
-	fmt.Println(resp)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		return err
+		panic(err.Error())
 	}
-	dec := json.NewDecoder(resp.Body)
-	return dec.Decode(&result)
+	for _, cookie := range c.Cookie {
+		req.AddCookie(cookie)
+	}
+	q := req.URL.Query()
+	for key, value := range data {
+		q.Add(key, value)
+	}
+	req.URL.RawQuery = q.Encode()
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		panic(err)
+	}
+	defer resp.Body.Close()
+	return resp.Body, nil
 }
 
 func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error) {
@@ -153,6 +146,9 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	}
 	fmt.Println(url)
 	req.Header.Set("Content-Type", "application/json")
+	for _, cookie := range c.Cookie {
+		req.AddCookie(cookie)
+	}
 	fmt.Println(req)
 	client := &http.Client{}
 	return client.Do(req)

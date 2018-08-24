@@ -14,7 +14,7 @@ func (c *clientInfo) AddNote(note Note) (int, error) {
 	if note.NoteType == 0 {
 		return 0, errors.New("NoteType is empty")
 	}
-	url := c.SetURL("note", nil)
+	url := c.Url + apiUrls["note"]
 	resp, err := c.DoPost(url, NoteSetRequest{Add: []Note{note}})
 	if err != nil {
 		return 0, err
