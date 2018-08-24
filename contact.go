@@ -48,6 +48,6 @@ func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, err
 		return nil, err
 	}
 	dec := json.NewDecoder(body)
-	dec.Decode(contacts)
+	dec.Decode(&contacts)
 	return contacts.Embedded.Items, err
 }
