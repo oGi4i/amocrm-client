@@ -2,7 +2,6 @@ package amocrm
 
 import (
 	"errors"
-	"fmt"
 )
 
 func (c *clientInfo) AddNote(note Note) (int, error) {
@@ -17,7 +16,6 @@ func (c *clientInfo) AddNote(note Note) (int, error) {
 	}
 	url := c.SetURL("note", nil)
 	resp, err := c.DoPost(url, NoteSetRequest{Add: []Note{note}})
-	fmt.Println(resp)
 	if err != nil {
 		return 0, err
 	}

@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -137,21 +136,23 @@ func (c *clientInfo) DoGet(url string, result interface{}) error {
 }
 
 func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error) {
-	buf := bytes.NewBuffer([]byte{})
-	enc := json.NewEncoder(buf)
-	err := enc.Encode(data)
-	fmt.Println(buf)
+	jsonStr, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
-	return http.Post(url, "application/json", buf)
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		panic(err.Error())
+	}
+	req.Header.Set("Content-Type", "application/json")
+	client := &http.Client{}
+	return client.Do(req)
 }
 
 func (c *clientInfo) GetResponseID(resp *http.Response) (int, error) {
 	result := respID{}
 	dec := json.NewDecoder(resp.Body)
 	err := dec.Decode(&result)
-	fmt.Println(result)
 	if err != nil {
 		return 0, err
 	}
