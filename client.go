@@ -72,7 +72,6 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 		apiHash:   hash,
 	}
 	_, err = url.Parse(accountURL)
-	fmt.Println("New1")
 	if err != nil {
 		return nil, err
 	}
@@ -88,16 +87,16 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 	if resp.StatusCode == 200 {
 		c.Cookie = resp.Cookies()
 		body, err := ioutil.ReadAll(resp.Body)
-		fmt.Println("New2")
 		if err != nil {
 			return nil, err
 		}
 		var authResponse AuthResponse
 		err = json.Unmarshal(body, &authResponse)
-		fmt.Println("New3")
+
 		if err != nil {
 			return nil, err
 		}
+		fmt.Println("New3")
 		if len(authResponse.Response.Accounts) > 0 {
 			c.Timezone = authResponse.Response.Accounts[0].Timezone
 		}
