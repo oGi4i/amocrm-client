@@ -2,6 +2,7 @@ package amocrm
 
 import (
 	"errors"
+	"fmt"
 )
 
 func (c *clientInfo) AddNote(note Note) (int, error) {
@@ -15,6 +16,7 @@ func (c *clientInfo) AddNote(note Note) (int, error) {
 		return 0, errors.New("NoteType is empty")
 	}
 	url := c.Url + apiUrls["notes"]
+	fmt.Println(note)
 	resp, err := c.DoPost(url, NoteSetRequest{Add: []Note{note}})
 	if err != nil {
 		return 0, err
