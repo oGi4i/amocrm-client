@@ -141,7 +141,6 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(jsonStr)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
 		panic(err.Error())
