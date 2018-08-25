@@ -127,13 +127,11 @@ func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 	if err != nil {
 		panic(err)
 	}
+	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err.Error())
 	}
-	contacts := ContactGetResponse{}
-	err = json.NewDecoder(resp.Body).Decode(&contacts)
-	fmt.Println(contacts)
 	return body, nil
 }
 

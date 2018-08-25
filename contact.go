@@ -45,17 +45,13 @@ func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, err
 
 	url := c.Url + apiUrls["contacts"]
 	body, err := c.DoGet(url, addValues)
-	fmt.Println(body)
 	if err != nil {
 		return nil, err
 	}
 	err = json.Unmarshal(body, &contacts)
-	/*
-		err = json.NewDecoder(body).Decode(&contacts)
-	*/
 	if err != nil {
 		panic(err.Error())
 	}
 	fmt.Println(contacts)
-	return contacts._embedded.Items, err
+	return contacts.Embedded.Items, err
 }

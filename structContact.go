@@ -28,62 +28,64 @@ type (
 	}
 
 	ContactGetResponse struct {
-		_embedded struct {
+		Links struct {
+			Self struct {
+				Href   string `json:"href"`
+				Method string `json:"method"`
+			} `json:"self"`
+		} `json:"_links"`
+		Embedded struct {
 			Items []ContactResponse `json:"items"`
 		} `json:"_embedded"`
-		_links struct {
-			Self struct {
-				Href   string `json:"href"`
-				Method string `json:"method"`
-			} `json:"self"`
-		} `json:"_links"`
 	}
 	ContactResponse struct {
-		_links struct {
+		ID                int    `json:"id"`
+		Name              string `json:"name"`
+		ResponsibleUserID int    `json:"responsible_user_id"`
+		CreatedBy         int    `json:"created_by"`
+		CreatedAt         int    `json:"created_at"`
+		UpdatedAt         int    `json:"updated_at"`
+		AccountID         int    `json:"account_id"`
+		UpdatedBy         int    `json:"updated_by"`
+		GroupID           int    `json:"group_id"`
+		Company           struct {
+			ID    int    `json:"id"`
+			Name  string `json:"name"`
+			Links struct {
+				Self struct {
+					Href   string `json:"href"`
+					Method string `json:"method"`
+				} `json:"self"`
+			} `json:"_links"`
+		} `json:"company"`
+		Leads struct {
+			ID    []int `json:"id"`
+			Links struct {
+				Self struct {
+					Href   string `json:"href"`
+					Method string `json:"method"`
+				} `json:"self"`
+			} `json:"_links"`
+		} `json:"leads"`
+		ClosestTaskAt int `json:"closest_task_at"`
+		Tags          struct {
+		} `json:"tags"`
+		CustomFields []struct {
+			ID     int    `json:"id"`
+			Name   string `json:"name"`
+			Values []struct {
+				Value string `json:"value"`
+				Enum  string `json:"enum"`
+			} `json:"values"`
+			IsSystem bool `json:"is_system"`
+		} `json:"custom_fields"`
+		Customers struct {
+		} `json:"customers"`
+		Links struct {
 			Self struct {
 				Href   string `json:"href"`
 				Method string `json:"method"`
 			} `json:"self"`
 		} `json:"_links"`
-		AccountID     int `json:"account_id"`
-		ClosestTaskAt int `json:"closest_task_at"`
-		Company       struct {
-			_links struct {
-				Self struct {
-					Href   string `json:"href"`
-					Method string `json:"method"`
-				} `json:"self"`
-			} `json:"_links"`
-			ID   int    `json:"id"`
-			Name string `json:"name"`
-		} `json:"company"`
-		CreatedAt    int `json:"created_at"`
-		CreatedBy    int `json:"created_by"`
-		CustomFields []struct {
-			ID       int    `json:"id"`
-			IsSystem bool   `json:"is_system"`
-			Name     string `json:"name"`
-			Values   []struct {
-				Enum  string `json:"enum"`
-				Value string `json:"value"`
-			} `json:"values"`
-		} `json:"custom_fields"`
-		Customers struct{} `json:"customers"`
-		GroupID   int      `json:"group_id"`
-		ID        int      `json:"id"`
-		Leads     struct {
-			_links struct {
-				Self struct {
-					Href   string `json:"href"`
-					Method string `json:"method"`
-				} `json:"self"`
-			} `json:"_links"`
-			ID []int `json:"id"`
-		} `json:"leads"`
-		Name              string   `json:"name"`
-		ResponsibleUserID int      `json:"responsible_user_id"`
-		Tags              struct{} `json:"tags"`
-		UpdatedAt         int      `json:"updated_at"`
-		UpdatedBy         int      `json:"updated_by"`
 	}
 )
