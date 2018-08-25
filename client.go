@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -109,7 +108,7 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 	}
 }
 
-func (c *clientInfo) DoGet(url string, data map[string]string) (io.Reader, error) {
+func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 	fmt.Println("doget")
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -129,8 +128,12 @@ func (c *clientInfo) DoGet(url string, data map[string]string) (io.Reader, error
 	if err != nil {
 		panic(err)
 	}
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		panic(err.Error())
+	}
 	defer resp.Body.Close()
-	return resp.Body, nil
+	return body, nil
 }
 
 func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error) {

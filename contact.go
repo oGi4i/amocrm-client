@@ -48,11 +48,10 @@ func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, err
 	if err != nil {
 		return nil, err
 	}
+	err = json.Unmarshal(body, &contacts)
 	/*
-		rbody, _ := ioutil.ReadAll(body)
-		err = json.Unmarshal(rbody, &contacts)
+		err = json.NewDecoder(body).Decode(&contacts)
 	*/
-	err = json.NewDecoder(body).Decode(&contacts)
 	if err != nil {
 		panic(err.Error())
 	}
