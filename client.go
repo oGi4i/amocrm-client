@@ -122,7 +122,6 @@ func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 		q.Add(key, value)
 	}
 	req.URL.RawQuery = q.Encode()
-	fmt.Println(req)
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -132,7 +131,9 @@ func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 	if err != nil {
 		panic(err.Error())
 	}
-	defer resp.Body.Close()
+	contacts := ContactGetResponse{}
+	err = json.NewDecoder(resp.Body).Decode(&contacts)
+	fmt.Println(contacts)
 	return body, nil
 }
 

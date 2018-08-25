@@ -45,6 +45,7 @@ func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, err
 
 	url := c.Url + apiUrls["contacts"]
 	body, err := c.DoGet(url, addValues)
+	fmt.Println(body)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +56,6 @@ func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, err
 	if err != nil {
 		panic(err.Error())
 	}
-
 	fmt.Println(contacts)
 	return contacts._embedded.Items, err
 }
