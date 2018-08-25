@@ -55,5 +55,5 @@ func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, err
 		panic(err.Error())
 	}
 	fmt.Println(contacts)
-	return contacts.Embedded.Items, err
+	return contacts._embedded.Items, err
 }
