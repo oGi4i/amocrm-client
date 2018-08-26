@@ -3,7 +3,6 @@ package amocrm
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"strconv"
 )
 
@@ -50,8 +49,7 @@ func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, err
 	}
 	err = json.Unmarshal(body, &contacts)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
-	fmt.Println(contacts)
 	return contacts.Embedded.Items, err
 }

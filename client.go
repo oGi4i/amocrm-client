@@ -112,7 +112,7 @@ func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 	fmt.Println("doget")
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 	for _, cookie := range c.Cookie {
 		req.AddCookie(cookie)
@@ -125,12 +125,12 @@ func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 	return body, nil
 }
@@ -143,7 +143,7 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	}
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
 	if err != nil {
-		panic(err.Error())
+		return nil, err
 	}
 	fmt.Println(url)
 	req.Header.Set("Content-Type", "application/json")
