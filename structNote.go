@@ -13,14 +13,14 @@ type (
 		Text       string `json:"text,omitempty"`
 	}
 	Note struct {
-		ElementID         int          `json:"element_id"`
-		ElementType       int          `json:"element_type"`
-		Text              string       `json:"text,omitempty"`
-		NoteType          int          `json:"note_type"`
-		CreatedAt         string       `json:"created_at,omitempty"`
-		UpdatedAt         int          `json:"updated_at,omitempty"`
-		ResponsibleUserID int          `json:"responsible_user_id,omitempty"`
-		Params            []Parameters `json:"params,omitempty"`
+		ElementID         int        `json:"element_id"`
+		ElementType       int        `json:"element_type"`
+		Text              string     `json:"text,omitempty"`
+		NoteType          int        `json:"note_type"`
+		CreatedAt         string     `json:"created_at,omitempty"`
+		UpdatedAt         int        `json:"updated_at,omitempty"`
+		ResponsibleUserID int        `json:"responsible_user_id,omitempty"`
+		Params            Parameters `json:"params,omitempty"`
 	}
 	NoteSetRequest struct {
 		Add []Note `json:"add"`
