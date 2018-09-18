@@ -24,7 +24,7 @@ type (
 	CustomValue struct {
 		Value   string `json:"value"`
 		Enum    string `json:"enum"`
-		Subtype string `json:"subtype"`
+		Subtype string `json:"subtype,omitempty"`
 	}
 
 	ContactGetResponse struct {
