@@ -1,6 +1,15 @@
 package amocrm
 
 type (
+	//RequestParams параметры GET запроса
+	ContactRequestParams struct {
+		ID                int
+		LimitRows         int
+		LimitOffset       int
+		ResponsibleUserID int
+		Query             string
+	}
+
 	Contact struct {
 		Name              string        `json:"name"`
 		CreatedAt         int           `json:"created_at,omitempty"`

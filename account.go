@@ -1,0 +1,22 @@
+package amocrm
+
+import "encoding/json"
+
+func (c *clientInfo) GetAccount(reqParams AccountRequestParams) (AccountResponse, error) {
+	addValues := map[string]string{}
+	account := AccountResponse{}
+	var err error
+	if reqParams.With != "" {
+		addValues["with"] = reqParams.With
+	}
+	url := c.Url + apiUrls["account"]
+	body, err := c.DoGet(url, addValues)
+	if err != nil {
+		return account, err
+	}
+	err = json.Unmarshal(body, &account)
+	if err != nil {
+		return account, err
+	}
+	return account, nil
+}

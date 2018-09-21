@@ -19,7 +19,7 @@ func (c *clientInfo) AddContact(contact Contact) (int, error) {
 	return c.GetResponseID(resp)
 }
 
-func (c *clientInfo) GetContact(reqParams RequestParams) ([]ContactResponse, error) {
+func (c *clientInfo) GetContact(reqParams ContactRequestParams) ([]ContactResponse, error) {
 	addValues := map[string]string{}
 	contacts := ContactGetResponse{}
 	var err error
