@@ -1,6 +1,10 @@
 package amocrm
 
 type (
+	IncomingLeadRequestParams struct {
+		SourceName string
+		SourceUID  string
+	}
 	IncomingLead struct {
 		SourceName       string `json:"source_name"`
 		SourceUID        string `json:"source_uid"`

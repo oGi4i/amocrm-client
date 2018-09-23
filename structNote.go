@@ -25,4 +25,20 @@ type (
 	NoteSetRequest struct {
 		Add []Note `json:"add"`
 	}
+	NoteGetResponse struct {
+		Links struct {
+			Self struct {
+				Href   string `json:"href"`
+				Method string `json:"method"`
+			} `json:"self"`
+		} `json:"_links"`
+		Embedded struct {
+			Items []NoteResponse `json:"items"`
+		} `json:"_embedded"`
+	}
+
+	NoteResponse struct {
+		ID                int `json:"id"`
+		ResponsibleUserID int `json:"id"`
+	}
 )
