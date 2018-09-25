@@ -6,6 +6,12 @@ import (
 )
 
 func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (int, error) {
+	if incominglead.SourceName == "" {
+		return 0, errors.New("SourceName is empty")
+	}
+	if incominglead.SourceUID == "" {
+		return 0, errors.New("SourceUID is empty")
+	}
 	if incominglead.IncomingLeadInfo.To == "" {
 		return 0, errors.New("IncomingLeadInfo.To is empty")
 	}
@@ -29,9 +35,6 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (int, error)
 	}
 	if incominglead.IncomingLeadInfo.Uniq == "" {
 		return 0, errors.New("IncomingLeadInfo.Uniq is empty")
-	}
-	if incominglead.IncomingLeadInfo.AddNote == "" {
-		return 0, errors.New("IncomingLeadInfo.AddNote is empty")
 	}
 	url := c.Url + apiUrls["incomingleadsip"]
 	fmt.Println(incominglead)
