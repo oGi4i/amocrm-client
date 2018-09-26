@@ -36,7 +36,7 @@ type (
 		CustomFields []struct {
 			ID     string   `json:"id,omitempty"`
 			Values []string `json:"values,omitempty"`
-		} `json:"custom_fields"`
+		} `json:"custom_fields,omitempty"`
 	}
 
 	IncomingLeadContact struct {
