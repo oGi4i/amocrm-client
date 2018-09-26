@@ -147,6 +147,23 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	return client.Do(req)
 }
 
+func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
+	fmt.Println("dopost")
+	jsonStr, err := json.Marshal(data)
+	if err != nil {
+		return nil, err
+	}
+	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(url)
+	req.Header.Set("Content-Type", "application/json")
+	fmt.Println(req)
+	client := &http.Client{}
+	return client.Do(req)
+}
+
 func (c *clientInfo) GetResponseID(resp *http.Response) (int, error) {
 	result := respID{}
 	dec := json.NewDecoder(resp.Body)
