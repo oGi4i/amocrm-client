@@ -18,24 +18,24 @@ type (
 	}
 	IncomingEntities struct {
 		Leads     []IncomingLeadParams  `json:"leads"`
-		Contacts  []IncomingLeadContact `json:"contacts"`
-		Companies []IncomingLeadCompany `json:"companies"`
+		Contacts  []IncomingLeadContact `json:"contacts,omitempty"`
+		Companies []IncomingLeadCompany `json:"companies,omitempty"`
 	}
 	IncomingLeadParams struct {
 		Name              string `json:"name"`
-		CreatedAt         string `json:"created_at"`
-		StatusID          string `json:"status_id"`
-		ResponsibleUserID string `json:"responsible_user_id"`
-		Price             string `json:"price"`
-		Tags              string `json:"tags"`
+		CreatedAt         string `json:"created_at,omitempty"`
+		StatusID          string `json:"status_id,omitempty"`
+		ResponsibleUserID string `json:"responsible_user_id,omitempty"`
+		Price             string `json:"price,omitempty"`
+		Tags              string `json:"tags,omitempty"`
 		Notes             []struct {
-			NoteType    string `json:"note_type"`
-			ElementType string `json:"element_type"`
-			Text        string `json:"text"`
-		} `json:"notes"`
+			NoteType    string `json:"note_type,omitempty"`
+			ElementType string `json:"element_type,omitempty"`
+			Text        string `json:"text,omitempty"`
+		} `json:"notes,omitempty"`
 		CustomFields []struct {
-			ID     string   `json:"id"`
-			Values []string `json:"values"`
+			ID     string   `json:"id,omitempty"`
+			Values []string `json:"values,omitempty"`
 		} `json:"custom_fields"`
 	}
 
