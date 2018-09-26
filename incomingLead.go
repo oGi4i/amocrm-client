@@ -46,6 +46,7 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (int, error)
 	)
 	fmt.Println(incominglead)
 	resp, err := c.DoPost(url, IncomingLeadRequest{Add: []IncomingLead{incominglead}})
+	fmt.Println(resp)
 	if err != nil {
 		return 0, err
 	}
