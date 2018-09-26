@@ -36,12 +36,18 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (int, error)
 	if incominglead.IncomingLeadInfo.Uniq == "" {
 		return 0, errors.New("IncomingLeadInfo.Uniq is empty")
 	}
-	url := c.Url + apiUrls["incomingleadsip"]
+	url := fmt.Sprint(
+		c.Url,
+		apiUrls["incomingleadsip"],
+		"?login=",
+		c.userLogin,
+		"&api_key=",
+		c.apiHash,
+	)
 	fmt.Println(incominglead)
 	resp, err := c.DoPost(url, IncomingLeadRequest{Add: []IncomingLead{incominglead}})
 	if err != nil {
 		return 0, err
 	}
-	fmt.Println(resp)
 	return c.GetResponseID(resp)
 }
