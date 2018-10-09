@@ -20,6 +20,7 @@ type (
 		CreatedAt         string     `json:"created_at,omitempty"`
 		UpdatedAt         int        `json:"updated_at,omitempty"`
 		ResponsibleUserID int        `json:"responsible_user_id,omitempty"`
+		CreatedBy         int        `json:"created_by,omitempty"`
 		Params            Parameters `json:"params,omitempty"`
 	}
 	NoteSetRequest struct {
