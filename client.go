@@ -101,7 +101,6 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 }
 
 func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
-	fmt.Println("doget")
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -128,7 +127,6 @@ func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 }
 
 func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error) {
-	fmt.Println("dopost")
 	jsonStr, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
@@ -148,7 +146,6 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 }
 
 func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
-	fmt.Println("dopost")
 	jsonStr, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
