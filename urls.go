@@ -8,5 +8,6 @@ var (
 		"incomingleadsip": "/api/v2/incoming_leads/sip",
 		"account":         "/api/v2/account",
 		"events":          "/api/v2/events",
+		"leads":           "/api/v2/leads",
 	}
 )

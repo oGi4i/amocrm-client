@@ -4,7 +4,7 @@ type (
 	Event struct {
 		PhoneNumber string   `json:"phone_number"`
 		Type        string   `json:"type"`
-		Users       []string `json:"users"`
+		Users       []string `json:"users,omitempty"`
 	}
 
 	EventSetRequest struct {
