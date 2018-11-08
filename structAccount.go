@@ -74,6 +74,7 @@ type (
 		Name        string `json:"name"`
 		FieldType   int    `json:"field_type"`
 		Sort        int    `json:"sort"`
+		Code        int    `json:"code"`
 		IsMultiple  bool   `json:"is_multiple"`
 		IsSystem    bool   `json:"is_system"`
 		IsEditable  bool   `json:"is_editable"`
