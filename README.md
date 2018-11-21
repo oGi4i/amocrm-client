@@ -22,4 +22,7 @@ account, err := amo.GetAccount(amocrm.AccountRequestParams{With: "users"})
 
 //Add call notify
 resp, err := amo.AddEvent(amocrm.Event{PhoneNumber: "79999999999", Type: "phone_call", Users: []string{"user_id"}})
+
+//Add lead
+resp, err := amo.AddLead(amocrm.Lead{Name: "Call to XXXXX", StatusID: "12345687", ResponsibleUserID: "123456", ContactsID: []string{"24248411"}})
 ```
