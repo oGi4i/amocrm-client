@@ -75,6 +75,6 @@ type (
 			} `json:"self"`
 		} `json:"_links"`
 		Error     string `json:"error"`
-		ErrorCode string `json:"error_code"`
+		ErrorCode int    `json:"error_code"`
 	}
 )
