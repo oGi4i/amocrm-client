@@ -25,9 +25,6 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 	if incominglead.IncomingLeadInfo.Duration == "" {
 		return "0", errors.New("IncomingLeadInfo.Duration is empty")
 	}
-	if incominglead.IncomingLeadInfo.Duration == "" {
-		return "0", errors.New("IncomingLeadInfo.Duration is empty")
-	}
 	if incominglead.IncomingLeadInfo.Link == "" {
 		return "0", errors.New("IncomingLeadInfo.Link is empty")
 	}
@@ -58,7 +55,7 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 	}
 	fmt.Println(response)
 	if len(response.Data) == 0 {
-		return "0", errors.New("No Items")
+		return response.Error, errors.New("No Items")
 	}
 	return response.Data, nil
 }
