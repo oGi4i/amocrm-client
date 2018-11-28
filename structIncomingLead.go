@@ -74,5 +74,7 @@ type (
 				Method string `json:"method"`
 			} `json:"self"`
 		} `json:"_links"`
+		Error     string `json:"error"`
+		ErrorCode string `json:"error_code"`
 	}
 )
