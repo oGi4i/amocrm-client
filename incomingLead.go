@@ -19,7 +19,7 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 	if incominglead.IncomingLeadInfo.From == "" {
 		return "0", errors.New("IncomingLeadInfo.From is empty")
 	}
-	if incominglead.IncomingLeadInfo.DateCall == "" {
+	if incominglead.IncomingLeadInfo.DateCall == 0 {
 		return "0", errors.New("IncomingLeadInfo.DateCall is empty")
 	}
 	if incominglead.IncomingLeadInfo.Duration == "" {
