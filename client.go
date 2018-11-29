@@ -9,8 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/google/go-querystring/query"
 )
 
 type (
@@ -147,10 +145,8 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	return client.Do(req)
 }
 
-func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
-	enStr, _ := query.Values(data)
-	fmt.Println(enStr.Encode())
-	req, err := http.NewRequest("POST", url, strings.NewReader(enStr.Encode()))
+func (c *clientInfo) DoPostWithoutCookie(url string, data string) (*http.Response, error) {
+	req, err := http.NewRequest("POST", url, strings.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
