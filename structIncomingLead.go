@@ -8,7 +8,7 @@ type (
 	IncomingLead struct {
 		SourceName       string           `json:"source_name"`
 		SourceUID        string           `json:"source_uid"`
-		CreatedAt        string           `json:"created_at,omitempty"`
+		CreatedAt        int64            `json:"created_at,omitempty"`
 		PipelineID       string           `json:"pipeline_id,omitempty"`
 		IncomingEntities IncomingEntities `json:"incoming_entities"`
 		IncomingLeadInfo IncomingLeadInfo `json:"incoming_lead_info,omitempty"`
