@@ -149,6 +149,7 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 
 func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
 	enStr, _ := query.Values(data)
+	fmt.Println(enStr.Encode())
 	req, err := http.NewRequest("POST", url, strings.NewReader(enStr.Encode()))
 	if err != nil {
 		return nil, err
