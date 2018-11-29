@@ -9,6 +9,8 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+
+	"github.com/google/go-querystring/query"
 )
 
 type (
@@ -146,15 +148,13 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 }
 
 func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
-	jsonStr, err := json.Marshal(data)
-	if err != nil {
-		return nil, err
-	}
-	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
+	enStr, _ := query.Values(data)
+	req, err := http.NewRequest("POST", url, nil)
 	if err != nil {
 		return nil, err
 	}
 	fmt.Println(url)
+	req.URL.RawQuery = enStr.Encode()
 	req.Header.Set("Accept", "application/json")
 	fmt.Println(req)
 	client := &http.Client{}
