@@ -149,12 +149,11 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 
 func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
 	enStr, _ := query.Values(data)
-	req, err := http.NewRequest("POST", url, nil)
+	req, err := http.NewRequest("POST", url, strings.NewReader(enStr.Encode()))
 	if err != nil {
 		return nil, err
 	}
 	fmt.Println(url)
-	req.URL.RawQuery = enStr.Encode()
 	req.Header.Set("Accept", "application/json")
 	fmt.Println(req)
 	client := &http.Client{}
