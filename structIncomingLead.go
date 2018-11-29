@@ -57,7 +57,7 @@ type (
 	IncomingLeadInfo struct {
 		To          string `json:"to"`
 		From        string `json:"from"`
-		DateCall    string `json:"date_call"`
+		DateCall    int64  `json:"date_call"`
 		Duration    string `json:"duration"`
 		Link        string `json:"link"`
 		ServiceCode string `json:"service_code"`
