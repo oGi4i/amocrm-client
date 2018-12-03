@@ -146,12 +146,13 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 }
 
 func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
-	_, err := json.Marshal(data)
+	var buf bytes.Buffer
+	err := json.NewEncoder(&buf).Encode(data)
 	if err != nil {
 		return nil, err
 	}
-	jsonStr := "add%5B0%5D%5Bsource_name%5D=686&add%5B0%5D%5Bsource_uid%5D=1543476014.430401&add%5B0%5D%5Bcreated_at%5D=1543860981&add%5B0%5D%5Bincoming_lead_info%5D%5Bdate_call%5D=1543860981&add%5B0%5D%5Bincoming_lead_info%5D%5Blink%5D=https%3A%2F%2Fsip.ritual.ru%2Fmonitor%2F&add%5B0%5D%5Bincoming_lead_info%5D%5Bservice_code%5D=amo_asterisk&add%5B0%5D%5Bincoming_lead_info%5D%5Buniq%5D=1543476014.430401"
-	req, err := http.NewRequest("POST", url, strings.NewReader(jsonStr))
+	// jsonStr := "add%5B0%5D%5Bsource_name%5D=686&add%5B0%5D%5Bsource_uid%5D=1543476014.430401&add%5B0%5D%5Bcreated_at%5D=1543860981&add%5B0%5D%5Bincoming_lead_info%5D%5Bdate_call%5D=1543860981&add%5B0%5D%5Bincoming_lead_info%5D%5Blink%5D=https%3A%2F%2Fsip.ritual.ru%2Fmonitor%2F&add%5B0%5D%5Bincoming_lead_info%5D%5Bservice_code%5D=amo_asterisk&add%5B0%5D%5Bincoming_lead_info%5D%5Buniq%5D=1543476014.430401"
+	req, err := http.NewRequest("POST", url, &buf)
 	if err != nil {
 		return nil, err
 	}
