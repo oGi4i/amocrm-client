@@ -150,7 +150,7 @@ func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Re
 	if err != nil {
 		return nil, err
 	}
-	jsonStr := "add[0][source_name]=686&add[0][source_uid]=1543476014.430401&add[0][created_at]=1543860981&add[0][incoming_lead_info][date_call]=1543860981&add[0][incoming_lead_info][link]=https://sip.ritual.ru/monitor/&add[0][incoming_lead_info][service_code]=amo_asterisk&add[0][incoming_lead_info][uniq]=1543476014.430401"
+	jsonStr := "add%5B0%5D%5Bsource_name%5D=686&add%5B0%5D%5Bsource_uid%5D=1543476014.430401&add%5B0%5D%5Bcreated_at%5D=1543860981&add%5B0%5D%5Bincoming_lead_info%5D%5Bdate_call%5D=1543860981&add%5B0%5D%5Bincoming_lead_info%5D%5Blink%5D=https%3A%2F%2Fsip.ritual.ru%2Fmonitor%2F&add%5B0%5D%5Bincoming_lead_info%5D%5Bservice_code%5D=amo_asterisk&add%5B0%5D%5Bincoming_lead_info%5D%5Buniq%5D=1543476014.430401"
 	req, err := http.NewRequest("POST", url, strings.NewReader(jsonStr))
 	if err != nil {
 		return nil, err
