@@ -6,63 +6,63 @@ type (
 		SourceUID  string
 	}
 	IncomingLead struct {
-		SourceName       string           `url:"source_name"`
-		SourceUID        string           `url:"source_uid"`
-		CreatedAt        int64            `url:"created_at,omitempty"`
-		PipelineID       string           `url:"pipeline_id,omitempty"`
-		IncomingEntities IncomingEntities `url:"incoming_entities"`
-		IncomingLeadInfo IncomingLeadInfo `url:"incoming_lead_info,omitempty"`
+		SourceName       string           `json:"source_name"`
+		SourceUID        string           `json:"source_uid"`
+		CreatedAt        int64            `json:"created_at,omitempty"`
+		PipelineID       string           `json:"pipeline_id,omitempty"`
+		IncomingEntities IncomingEntities `json:"incoming_entities"`
+		IncomingLeadInfo IncomingLeadInfo `json:"incoming_lead_info,omitempty"`
 	}
 	IncomingLeadRequest struct {
-		Add []IncomingLead `url:"add"`
+		Add []IncomingLead `json:"add"`
 	}
 	IncomingEntities struct {
-		Leads     []IncomingLeadParams  `url:"leads"`
-		Contacts  []IncomingLeadContact `url:"contacts,omitempty"`
-		Companies []IncomingLeadCompany `url:"companies,omitempty"`
+		Leads     []IncomingLeadParams  `json:"leads"`
+		Contacts  []IncomingLeadContact `json:"contacts,omitempty"`
+		Companies []IncomingLeadCompany `json:"companies,omitempty"`
 	}
 	IncomingLeadParams struct {
-		Name              string `url:"name"`
-		CreatedAt         string `url:"created_at,omitempty"`
-		StatusID          string `url:"status_id,omitempty"`
-		ResponsibleUserID string `url:"responsible_user_id,omitempty"`
-		Price             string `url:"price,omitempty"`
-		Tags              string `url:"tags,omitempty"`
+		Name              string `json:"name"`
+		CreatedAt         string `json:"created_at,omitempty"`
+		StatusID          string `json:"status_id,omitempty"`
+		ResponsibleUserID string `json:"responsible_user_id,omitempty"`
+		Price             string `json:"price,omitempty"`
+		Tags              string `json:"tags,omitempty"`
 		Notes             []struct {
-			NoteType    string `url:"note_type,omitempty"`
-			ElementType string `url:"element_type,omitempty"`
-			Text        string `url:"text,omitempty"`
-		} `url:"notes,omitempty"`
+			NoteType    string `json:"note_type,omitempty"`
+			ElementType string `json:"element_type,omitempty"`
+			Text        string `json:"text,omitempty"`
+		} `json:"notes,omitempty"`
 		CustomFields []struct {
-			ID     string   `url:"id,omitempty"`
-			Values []string `url:"values,omitempty"`
-		} `url:"custom_fields,omitempty"`
+			ID     string   `json:"id,omitempty"`
+			Values []string `json:"values,omitempty"`
+		} `json:"custom_fields,omitempty"`
 	}
 
 	IncomingLeadContact struct {
-		Name         string `url:"name"`
+		Name         string `json:"name"`
 		CustomFields []struct {
-			ID     string `url:"id"`
+			ID     string `json:"id"`
 			Values []struct {
-				Value string `url:"value"`
-				Enum  string `url:"enum"`
-			} `url:"values"`
-		} `url:"custom_fields"`
-		ResponsibleUserID string `url:"responsible_user_id"`
-		DateCreate        string `url:"date_create"`
+				Value string `json:"value"`
+				Enum  string `json:"enum"`
+			} `json:"values"`
+		} `json:"custom_fields"`
+		ResponsibleUserID string `json:"responsible_user_id"`
+		DateCreate        string `json:"date_create"`
 	}
 	IncomingLeadCompany struct {
-		Name string `url:"name"`
+		Name string `json:"name"`
 	}
 	IncomingLeadInfo struct {
-		To          string `url:"to"`
-		From        string `url:"from"`
-		DateCall    int64  `url:"date_call"`
-		Duration    string `url:"duration"`
-		Link        string `url:"link"`
-		ServiceCode string `url:"service_code"`
-		Uniq        string `url:"uniq"`
-		AddNote     string `url:"add_note,omitempty"`
+		To          string `json:"to"`
+		From        string `json:"from"`
+		DateCall    int64  `json:"date_call"`
+		Duration    string `json:"duration"`
+		Link        string `json:"link"`
+		ServiceCode string `json:"service_code"`
+		Uniq        string `json:"uniq"`
+		AddNote     string `json:"add_note,omitempty"`
 	}
 
 	IncomingLeadResponse struct {

@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
-	"github.com/google/go-querystring/query"
 )
 
 func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, error) {
@@ -45,10 +43,8 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 		c.apiHash,
 	)
 	fmt.Println(incominglead)
-	vData := IncomingLeadRequest{Add: []IncomingLead{incominglead}}
-	data, _ := query.Values(vData)
-	fmt.Println(data.Encode())
-	resp, err := c.DoPostWithoutCookie(url, data.Encode())
+
+	resp, err := c.DoPostWithoutCookie(url, IncomingLeadRequest{Add: []IncomingLead{incominglead}})
 	if err != nil {
 		return "0", err
 	}

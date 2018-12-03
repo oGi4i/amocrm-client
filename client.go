@@ -145,12 +145,16 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	return client.Do(req)
 }
 
-func (c *clientInfo) DoPostWithoutCookie(url string, data string) (*http.Response, error) {
-	req, err := http.NewRequest("POST", url, strings.NewReader(data))
+func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
+	jsonStr, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(url)
+
+	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonStr)))
+	if err != nil {
+		return nil, err
+	}
 	req.Header.Set("Accept", "application/json")
 	fmt.Println(req)
 	client := &http.Client{}
