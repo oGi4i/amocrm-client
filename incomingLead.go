@@ -43,7 +43,6 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 		c.apiHash,
 	)
 	fmt.Println(incominglead)
-
 	resp, err := c.DoPostWithoutCookie(url, IncomingLeadRequest{Add: []IncomingLead{incominglead}})
 	if err != nil {
 		return "0", err

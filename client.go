@@ -146,12 +146,12 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 }
 
 func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
-	jsonStr, err := json.Marshal(data)
+	_, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
-
-	req, err := http.NewRequest("POST", url, strings.NewReader(string(jsonStr)))
+	jsonStr := "add[0][source_name]=686&add[0][source_uid]=1543476014.430401&add[0][created_at]=1543860981&add[0][incoming_lead_info][date_call]=1543860981&add[0][incoming_lead_info][link]=https://sip.ritual.ru/monitor/&add[0][incoming_lead_info][service_code]=amo_asterisk&add[0][incoming_lead_info][uniq]=1543476014.430401"
+	req, err := http.NewRequest("POST", url, strings.NewReader(jsonStr))
 	if err != nil {
 		return nil, err
 	}
