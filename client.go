@@ -158,6 +158,7 @@ func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Re
 		return nil, err
 	}
 	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	fmt.Println(req)
 	client := &http.Client{}
 	return client.Do(req)
