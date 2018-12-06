@@ -66,8 +66,8 @@ type (
 	}
 
 	IncomingLeadResponse struct {
-		Status string `json:"status"`
-		Data   string `json:"data"`
+		Status string   `json:"status"`
+		Data   []string `json:"data"`
 		Links  struct {
 			Self struct {
 				Href   string `json:"href"`

@@ -170,5 +170,5 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 	if len(response.Data) == 0 {
 		return response.Error, errors.New("No Items")
 	}
-	return response.Data, nil
+	return response.Status, nil
 }
