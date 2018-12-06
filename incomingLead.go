@@ -38,7 +38,7 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 		return "0", errors.New("IncomingEntities.Leads[0].Name is empty")
 	}
 	url := fmt.Sprint(
-		"c.Url",
+		c.Url,
 		apiUrls["incomingleadsip"],
 		"?login=",
 		c.userLogin,
