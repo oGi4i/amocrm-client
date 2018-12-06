@@ -9,8 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-
-	"github.com/google/go-querystring/query"
 )
 
 type (
@@ -147,19 +145,14 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	return client.Do(req)
 }
 
-func (c *clientInfo) DoPostWithoutCookie(url string, data interface{}) (*http.Response, error) {
-	enStr, _ := query.Values(data)
-	req, err := http.NewRequest("POST", url, nil)
+func (c *clientInfo) DoPostWithoutCookie(url string, data string) (*http.Response, error) {
+	fmt.Println(data)
+	req, err := http.NewRequest("POST", url, strings.NewReader(data))
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(url)
-	req.URL.RawQuery = enStr.Encode()
-	// jsonStr := "add%5B0%5D%5Bsource_name%5D=686&add%5B0%5D%5Bsource_uid%5D=1544023966.361&add%5B0%5D%5Bcreated_at%5D=1544040279&add%5B0%5D%5Bincoming_entities%5D%5Bleads%5D%5B0%5D%5Bname%5D=89626849787&add%5B0%5D%5Bincoming_lead_info%5D%5Bto%5D=78123375496&add%5B0%5D%5Bincoming_lead_info%5D%5Bfrom%5D=89626849787&add%5B0%5D%5Bincoming_lead_info%5D%5Bdate_call%5D=1544040279&add%5B0%5D%5Bincoming_lead_info%5D%5Bduration%5D=14&add%5B0%5D%5Bincoming_lead_info%5D%5Blink%5D=https%3A%2F%2Fnewcity.dela.bz%3A8085%2Fgetrecord%3Fpath%3D2018-12-05%2F18-32-54-78123375496-89626849788.mp3&add%5B0%5D%5Bincoming_lead_info%5D%5Bservice_code%5D=amo_asterisk&add%5B0%5D%5Bincoming_lead_info%5D%5Buniq%5D=1544023966.361&add%5B0%5D%5Bincoming_lead_info%5D%5Badd_note%5D=1"
-
 	req.Header.Set("Accept", "application/json")
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	fmt.Println(req)
 	client := &http.Client{}
 	return client.Do(req)
 }

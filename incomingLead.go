@@ -34,8 +34,11 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 	if incominglead.IncomingLeadInfo.Uniq == "" {
 		return "0", errors.New("IncomingLeadInfo.Uniq is empty")
 	}
+	if incominglead.IncomingEntities.Leads[0].Name == "" {
+		return "0", errors.New("IncomingEntities.Leads[0].Name is empty")
+	}
 	url := fmt.Sprint(
-		"http://callcenter.dela.bz",
+		"c.Url",
 		apiUrls["incomingleadsip"],
 		"?login=",
 		c.userLogin,
@@ -43,7 +46,117 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 		c.apiHash,
 	)
 	fmt.Println(incominglead)
-	resp, err := c.DoPostWithoutCookie(url, IncomingLeadRequest{Add: []IncomingLead{incominglead}})
+	payload := fmt.Sprint("add", "%5B0%5D%5B", "source_name", "%5D=", incominglead.SourceName)
+	payload = fmt.Sprint(payload, "&add", "%5B0%5D%5B", "source_uid", "%5D=", incominglead.SourceUID)
+	if incominglead.CreatedAt != 0 {
+		payload = fmt.Sprint(payload, "&add", "%5B0%5D%5B", "created_at", "%5D=", incominglead.CreatedAt)
+	}
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_entities",
+		"%5D%5B",
+		"leads",
+		"%5D%5B0%5D%5B",
+		"name",
+		"%5D=",
+		incominglead.IncomingEntities.Leads[0].Name,
+	)
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_lead_info",
+		"%5D%5B",
+		"to",
+		"%5D=",
+		incominglead.IncomingLeadInfo.To,
+	)
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_lead_info",
+		"%5D%5B",
+		"from",
+		"%5D=",
+		incominglead.IncomingLeadInfo.From,
+	)
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_lead_info",
+		"%5D%5B",
+		"date_call",
+		"%5D=",
+		incominglead.IncomingLeadInfo.DateCall,
+	)
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_lead_info",
+		"%5D%5B",
+		"duration",
+		"%5D=",
+		incominglead.IncomingLeadInfo.Duration,
+	)
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_lead_info",
+		"%5D%5B",
+		"duration",
+		"%5D=",
+		incominglead.IncomingLeadInfo.Duration,
+	)
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_lead_info",
+		"%5D%5B",
+		"link",
+		"%5D=",
+		incominglead.IncomingLeadInfo.Link,
+	)
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_lead_info",
+		"%5D%5B",
+		"service_code",
+		"%5D=",
+		incominglead.IncomingLeadInfo.ServiceCode,
+	)
+	payload = fmt.Sprint(
+		payload,
+		"&add",
+		"%5B0%5D%5B",
+		"incoming_lead_info",
+		"%5D%5B",
+		"uid",
+		"%5D=",
+		incominglead.IncomingLeadInfo.Uniq,
+	)
+	if incominglead.IncomingLeadInfo.AddNote == true {
+		payload = fmt.Sprint(
+			payload,
+			"&add",
+			"%5B0%5D%5B",
+			"incoming_lead_info",
+			"%5D%5B",
+			"add_note",
+			"%5D=",
+			incominglead.IncomingLeadInfo.AddNote,
+		)
+	}
+
+	resp, err := c.DoPostWithoutCookie(url, payload)
 	if err != nil {
 		return "0", err
 	}
