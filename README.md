@@ -25,4 +25,30 @@ resp, err := amo.AddEvent(amocrm.Event{PhoneNumber: "79999999999", Type: "phone_
 
 //Add lead
 resp, err := amo.AddLead(amocrm.Lead{Name: "Call to XXXXX", StatusID: "12345687", ResponsibleUserID: "123456", ContactsID: []string{"24248411"}})
+
+//Add Incoming lead
+resp, err := amo.AddIncomingLeadCall(
+    amocrm.IncomingLead {
+        SourceName: "call from 98234377", 
+        SourceUID: "8e64ba2e8822ba378", 
+        IncomingEntities: amocrm.IncomingEntities {
+            Leads: []amocrm.IncomingLeadParams{
+                amocrm.IncomingLeadParams{
+                    Name: "call from 98234377",
+                },
+            },
+        }, 
+        IncomingLeadInfo: amocrm.IncomingLeadInfo{
+            To: "102", 
+            From: "73433859994", 
+            DateCall: time.Now().Unix(), 
+            Duration: "60", 
+            Link: "https://callcenter.dela.bz/test1.mp3", 
+            ServiceCode: "delabz_widget", 
+            Uniq: "8e64ba2e883389",
+            AddNote: true,
+        },
+    },
+)
 ```
+
