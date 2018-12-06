@@ -35,7 +35,7 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 		return "0", errors.New("IncomingLeadInfo.Uniq is empty")
 	}
 	url := fmt.Sprint(
-		"http://callcenter.dela.bz",
+		c.Url,
 		apiUrls["incomingleadsip"],
 		"?login=",
 		c.userLogin,
