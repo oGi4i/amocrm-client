@@ -45,7 +45,6 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 		"&api_key=",
 		c.apiHash,
 	)
-	fmt.Println(incominglead)
 	payload := fmt.Sprint("add", "%5B0%5D%5B", "source_name", "%5D=", incominglead.SourceName)
 	payload = fmt.Sprint(payload, "&add", "%5B0%5D%5B", "source_uid", "%5D=", incominglead.SourceUID)
 	if incominglead.CreatedAt != 0 {
@@ -166,7 +165,6 @@ func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 	if err != nil {
 		return "0", err
 	}
-	fmt.Println(response)
 	if len(response.Data) == 0 {
 		return response.Error, errors.New("No Items")
 	}

@@ -146,7 +146,6 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 }
 
 func (c *clientInfo) DoPostWithoutCookie(url string, data string) (*http.Response, error) {
-	fmt.Println(data)
 	req, err := http.NewRequest("POST", url, strings.NewReader(data))
 	if err != nil {
 		return nil, err
