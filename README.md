@@ -50,5 +50,7 @@ resp, err := amo.AddIncomingLeadCall(
         },
     },
 )
-```
 
+//Get Pipelines
+pipelines, err := amo.GetPipelines(amocrm.PipelineRequestParams{Id: ""})
+```
