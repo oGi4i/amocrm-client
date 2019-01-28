@@ -73,6 +73,9 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 	reqbody := strings.NewReader(values.Encode())
 	urlString := c.Url + apiUrls["auth"]
 	resp, err := http.Post(urlString, "application/x-www-form-urlencoded", reqbody)
+	if err != nil {
+		return nil, err
+	}
 
 	defer resp.Body.Close()
 	if resp.StatusCode == 200 {
