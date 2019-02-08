@@ -97,4 +97,55 @@ type (
 			} `json:"self"`
 		} `json:"_links"`
 	}
+
+	ContactResponseByTags struct {
+		ID                int    `json:"id"`
+		Name              string `json:"name"`
+		ResponsibleUserID int    `json:"responsible_user_id"`
+		CreatedBy         int    `json:"created_by"`
+		CreatedAt         int    `json:"created_at"`
+		UpdatedAt         int    `json:"updated_at"`
+		AccountID         int    `json:"account_id"`
+		UpdatedBy         int    `json:"updated_by"`
+		GroupID           int    `json:"group_id"`
+		Company           struct {
+			ID    int    `json:"id"`
+			Name  string `json:"name"`
+			Links struct {
+				Self struct {
+					Href   string `json:"href"`
+					Method string `json:"method"`
+				} `json:"self"`
+			} `json:"_links"`
+		} `json:"company"`
+		Leads struct {
+			ID    []int `json:"id"`
+			Links struct {
+				Self struct {
+					Href   string `json:"href"`
+					Method string `json:"method"`
+				} `json:"self"`
+			} `json:"_links"`
+		} `json:"leads"`
+		ClosestTaskAt int `json:"closest_task_at"`
+		Tags          []struct {
+		} `json:"tags"`
+		CustomFields []struct {
+			ID     int    `json:"id"`
+			Name   string `json:"name"`
+			Values []struct {
+				Value string `json:"value"`
+				Enum  string `json:"enum"`
+			} `json:"values"`
+			IsSystem bool `json:"is_system"`
+		} `json:"custom_fields"`
+		Customers struct {
+		} `json:"customers"`
+		Links struct {
+			Self struct {
+				Href   string `json:"href"`
+				Method string `json:"method"`
+			} `json:"self"`
+		} `json:"_links"`
+	}
 )

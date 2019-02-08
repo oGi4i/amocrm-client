@@ -49,7 +49,11 @@ func (c *clientInfo) GetContact(reqParams ContactRequestParams) ([]ContactRespon
 	}
 	err = json.Unmarshal(body, &contacts)
 	if err != nil {
-		return nil, err
+		contacts := ContactResponseByTags{}
+		err = json.Unmarshal(body, &contacts)
+		if err != nil {
+			return nil, err
+		}
 	}
 	return contacts.Embedded.Items, err
 }
