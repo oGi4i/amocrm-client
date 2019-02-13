@@ -132,14 +132,7 @@ type (
 		IsVisible   bool   `json:"is_visible"`
 		Params      struct {
 		} `json:"params"`
-		Enums struct {
-			Num361629 string `json:"361629"`
-			Num361631 string `json:"361631"`
-			Num361633 string `json:"361633"`
-			Num361635 string `json:"361635"`
-			Num361637 string `json:"361637"`
-			Num361639 string `json:"361639"`
-		} `json:"enums"`
+		Enums map[string]string `json:"enums"`
 	}
 	AccountNoteType struct {
 		ID         int    `json:"id"`
@@ -154,56 +147,20 @@ type (
 		ID   int    `json:"id"`
 		Name string `json:"name"`
 	}
+	AccountStatus struct {
+		ID         int    `json:"id"`
+		Name       string `json:"name"`
+		Color      string `json:"color"`
+		Sort       int    `json:"sort"`
+		IsEditable bool   `json:"is_editable"`
+	}
 	AccountPipeline struct {
-		ID       int    `json:"id"`
-		Name     string `json:"name"`
-		Sort     int    `json:"sort"`
-		IsMain   bool   `json:"is_main"`
-		Statuses struct {
-			Num142 struct {
-				ID         int    `json:"id"`
-				Name       string `json:"name"`
-				Color      string `json:"color"`
-				Sort       int    `json:"sort"`
-				IsEditable bool   `json:"is_editable"`
-			} `json:"142"`
-			Num143 struct {
-				ID         int    `json:"id"`
-				Name       string `json:"name"`
-				Color      string `json:"color"`
-				Sort       int    `json:"sort"`
-				IsEditable bool   `json:"is_editable"`
-			} `json:"143"`
-			Num19743178 struct {
-				ID         int    `json:"id"`
-				Name       string `json:"name"`
-				Color      string `json:"color"`
-				Sort       int    `json:"sort"`
-				IsEditable bool   `json:"is_editable"`
-			} `json:"19743178"`
-			Num19743181 struct {
-				ID         int    `json:"id"`
-				Name       string `json:"name"`
-				Color      string `json:"color"`
-				Sort       int    `json:"sort"`
-				IsEditable bool   `json:"is_editable"`
-			} `json:"19743181"`
-			Num19743184 struct {
-				ID         int    `json:"id"`
-				Name       string `json:"name"`
-				Color      string `json:"color"`
-				Sort       int    `json:"sort"`
-				IsEditable bool   `json:"is_editable"`
-			} `json:"19743184"`
-			Num19743187 struct {
-				ID         int    `json:"id"`
-				Name       string `json:"name"`
-				Color      string `json:"color"`
-				Sort       int    `json:"sort"`
-				IsEditable bool   `json:"is_editable"`
-			} `json:"19743187"`
-		} `json:"statuses"`
-		Links struct {
+		ID       int                      `json:"id"`
+		Name     string                   `json:"name"`
+		Sort     int                      `json:"sort"`
+		IsMain   bool                     `json:"is_main"`
+		Statuses map[string]AccountStatus `json:"statuses"`
+		Links    struct {
 			Self struct {
 				Href   string `json:"href"`
 				Method string `json:"method"`
