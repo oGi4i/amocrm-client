@@ -24,9 +24,9 @@ type (
 			Users        map[string]AccountUser `json:"users"`
 			CustomFields struct {
 				Contacts  map[string]AccountContact   `json:"contacts"`
-				Leads     map[string]AccountLead      `json:"leads"`
-				Companies map[string]AccountCompanies `json:"companies"`
-				Customers []interface{}               `json:"customers"`
+				Leads     map[string]AccountLead      `json:"leads,omitempty"`
+				Companies map[string]AccountCompanies `json:"companies,omitempty"`
+				Customers []interface{}               `json:"customers,omitempty"`
 			} `json:"custom_fields"`
 			NoteTypes map[string]AccountNoteType `json:"note_types"`
 			Groups    map[string]AccountGroup    `json:"groups"`
@@ -82,15 +82,8 @@ type (
 		IsDeletable bool   `json:"is_deletable"`
 		IsVisible   bool   `json:"is_visible"`
 		Params      struct {
-		}
-		Enums struct {
-			Num361629 string `json:"361629"`
-			Num361631 string `json:"361631"`
-			Num361633 string `json:"361633"`
-			Num361635 string `json:"361635"`
-			Num361637 string `json:"361637"`
-			Num361639 string `json:"361639"`
-		} `json:"enums"`
+		} `json:"params"`
+		Enums map[string]string `json:"enums"`
 	}
 
 	AccountLead struct {
@@ -106,17 +99,7 @@ type (
 		IsVisible   bool   `json:"is_visible"`
 		Params      struct {
 		} `json:"params"`
-		Enums struct {
-			Num1054811 string `json:"1054811"`
-			Num1054813 string `json:"1054813"`
-			Num1054815 string `json:"1054815"`
-			Num1054817 string `json:"1054817"`
-			Num1054819 string `json:"1054819"`
-			Num1054821 string `json:"1054821"`
-			Num1054969 string `json:"1054969"`
-			Num1054971 string `json:"1054971"`
-			Num1060097 string `json:"1060097"`
-		} `json:"enums"`
+		Enums map[string]string `json:"enums"`
 	}
 
 	AccountCompanies struct {
