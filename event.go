@@ -5,7 +5,7 @@ import (
 	"errors"
 )
 
-func (c *clientInfo) AddEvent(event Event) (EventResponse, error) {
+func (c *ClientInfo) AddEvent(event Event) (EventResponse, error) {
 	emptyResponse := EventResponse{}
 	if event.PhoneNumber == "" {
 		return emptyResponse, errors.New("PhoneNumber is empty")

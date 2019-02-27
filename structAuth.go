@@ -4,7 +4,7 @@ import "net/http"
 
 type (
 	// Информация о подключении к аккаунту
-	clientInfo struct {
+	ClientInfo struct {
 		userLogin string
 		apiHash   string
 		Timezone  string

@@ -2,7 +2,7 @@ package amocrm
 
 import "errors"
 
-func (c *clientInfo) AddLead(lead Lead) (int, error) {
+func (c *ClientInfo) AddLead(lead Lead) (int, error) {
 	if lead.Name == "" {
 		return 0, errors.New("Name is empty")
 	}

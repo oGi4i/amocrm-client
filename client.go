@@ -26,7 +26,7 @@ type (
 )
 
 //New Открытия соединения и авторизация
-func New(accountURL string, login string, hash string) (*clientInfo, error) {
+func New(accountURL string, login string, hash string) (*ClientInfo, error) {
 	var err error
 
 	if login == "" {
@@ -35,7 +35,7 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 	if hash == "" {
 		return nil, errors.New("hash is empty")
 	}
-	c := &clientInfo{
+	c := &ClientInfo{
 		userLogin: login,
 		apiHash:   hash,
 	}
@@ -80,7 +80,7 @@ func New(accountURL string, login string, hash string) (*clientInfo, error) {
 	}
 }
 
-func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
+func (c *ClientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -106,7 +106,7 @@ func (c *clientInfo) DoGet(url string, data map[string]string) ([]byte, error) {
 	return body, nil
 }
 
-func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error) {
+func (c *ClientInfo) DoPost(url string, data interface{}) (*http.Response, error) {
 	jsonStr, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
@@ -125,7 +125,7 @@ func (c *clientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	return client.Do(req)
 }
 
-func (c *clientInfo) DoPostWithoutCookie(url string, data string) (*http.Response, error) {
+func (c *ClientInfo) DoPostWithoutCookie(url string, data string) (*http.Response, error) {
 	req, err := http.NewRequest("POST", url, strings.NewReader(data))
 	if err != nil {
 		return nil, err
@@ -136,7 +136,7 @@ func (c *clientInfo) DoPostWithoutCookie(url string, data string) (*http.Respons
 	return client.Do(req)
 }
 
-func (c *clientInfo) GetResponseID(resp *http.Response) (int, error) {
+func (c *ClientInfo) GetResponseID(resp *http.Response) (int, error) {
 	result := respID{}
 	dec := json.NewDecoder(resp.Body)
 	err := dec.Decode(&result)

@@ -2,7 +2,7 @@ package amocrm
 
 import "encoding/json"
 
-func (c *clientInfo) GetPipelines(reqParams PipelineRequestParams) (PipelineResponse, error) {
+func (c *ClientInfo) GetPipelines(reqParams PipelineRequestParams) (PipelineResponse, error) {
 	addValues := map[string]string{}
 	pipeline := PipelineResponse{}
 	var err error

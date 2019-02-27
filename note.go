@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (c *clientInfo) AddNote(note Note) (int, error) {
+func (c *ClientInfo) AddNote(note Note) (int, error) {
 	if note.ElementID == 0 {
 		return 0, errors.New("ElementID is empty")
 	}

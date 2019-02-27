@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func (c *clientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, error) {
+func (c *ClientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, error) {
 	if incominglead.SourceName == "" {
 		return "0", errors.New("SourceName is empty")
 	}

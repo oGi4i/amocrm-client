@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-func (c *clientInfo) AddContact(contact Contact) (int, error) {
+func (c *ClientInfo) AddContact(contact Contact) (int, error) {
 	if contact.Name == "" {
 		return 0, errors.New("Name is empty")
 	}
@@ -19,7 +19,7 @@ func (c *clientInfo) AddContact(contact Contact) (int, error) {
 	return c.GetResponseID(resp)
 }
 
-func (c *clientInfo) GetContact(reqParams ContactRequestParams) ([]ContactResponse, error) {
+func (c *ClientInfo) GetContact(reqParams ContactRequestParams) ([]ContactResponse, error) {
 	addValues := map[string]string{}
 	contacts := ContactGetResponse{}
 	var err error
