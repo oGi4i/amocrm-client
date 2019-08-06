@@ -23,30 +23,18 @@ type (
 		CompanyID         string        `json:"company_id,omitempty"`
 		CustomFields      []CustomField `json:"custom_fields,omitempty"`
 	}
+
 	ContactSetRequest struct {
 		Add []Contact `json:"add"`
 	}
-	CustomField struct {
-		ID     int           `json:"id"`
-		Values []CustomValue `json:"values"`
-	}
-	CustomValue struct {
-		Value   string `json:"value"`
-		Enum    string `json:"enum"`
-		Subtype string `json:"subtype,omitempty"`
-	}
 
 	ContactGetResponse struct {
-		Links struct {
-			Self struct {
-				Href   string `json:"href"`
-				Method string `json:"method"`
-			} `json:"self"`
-		} `json:"_links"`
+		Links    *Links `json:"_links"`
 		Embedded struct {
-			Items []ContactResponse `json:"items"`
+			Items []*ContactResponse `json:"items"`
 		} `json:"_embedded"`
 	}
+
 	ContactResponse struct {
 		ID                int    `json:"id"`
 		Name              string `json:"name"`
@@ -60,42 +48,18 @@ type (
 		Company           struct {
 			ID    int    `json:"id"`
 			Name  string `json:"name"`
-			Links struct {
-				Self struct {
-					Href   string `json:"href"`
-					Method string `json:"method"`
-				} `json:"self"`
-			} `json:"_links"`
+			Links *Links `json:"_links"`
 		} `json:"company"`
 		Leads struct {
-			ID    []int `json:"id"`
-			Links struct {
-				Self struct {
-					Href   string `json:"href"`
-					Method string `json:"method"`
-				} `json:"self"`
-			} `json:"_links"`
+			ID    []int  `json:"id"`
+			Links *Links `json:"_links"`
 		} `json:"leads"`
-		ClosestTaskAt int `json:"closest_task_at"`
-		Tags          struct {
-		} `json:"tags"`
-		CustomFields []struct {
-			ID     int    `json:"id"`
-			Name   string `json:"name"`
-			Values []struct {
-				Value string `json:"value"`
-				Enum  string `json:"enum"`
-			} `json:"values"`
-			IsSystem bool `json:"is_system"`
-		} `json:"custom_fields"`
-		Customers struct {
+		ClosestTaskAt int            `json:"closest_task_at"`
+		Tags          *Tag           `json:"tags"`
+		CustomFields  []*CustomField `json:"custom_fields"`
+		Customers     struct {
 		} `json:"customers"`
-		Links struct {
-			Self struct {
-				Href   string `json:"href"`
-				Method string `json:"method"`
-			} `json:"self"`
-		} `json:"_links"`
+		Links *Links `json:"_links"`
 	}
 
 	ContactResponseByTags struct {
@@ -111,41 +75,17 @@ type (
 		Company           struct {
 			ID    int    `json:"id"`
 			Name  string `json:"name"`
-			Links struct {
-				Self struct {
-					Href   string `json:"href"`
-					Method string `json:"method"`
-				} `json:"self"`
-			} `json:"_links"`
+			Links *Links `json:"_links"`
 		} `json:"company"`
 		Leads struct {
-			ID    []int `json:"id"`
-			Links struct {
-				Self struct {
-					Href   string `json:"href"`
-					Method string `json:"method"`
-				} `json:"self"`
-			} `json:"_links"`
+			ID    []int  `json:"id"`
+			Links *Links `json:"_links"`
 		} `json:"leads"`
-		ClosestTaskAt int `json:"closest_task_at"`
-		Tags          []struct {
-		} `json:"tags"`
-		CustomFields []struct {
-			ID     int    `json:"id"`
-			Name   string `json:"name"`
-			Values []struct {
-				Value string `json:"value"`
-				Enum  string `json:"enum"`
-			} `json:"values"`
-			IsSystem bool `json:"is_system"`
-		} `json:"custom_fields"`
-		Customers struct {
+		ClosestTaskAt int            `json:"closest_task_at"`
+		Tags          *Tag           `json:"tags"`
+		CustomFields  []*CustomField `json:"custom_fields"`
+		Customers     struct {
 		} `json:"customers"`
-		Links struct {
-			Self struct {
-				Href   string `json:"href"`
-				Method string `json:"method"`
-			} `json:"self"`
-		} `json:"_links"`
+		Links *Links `json:"_links"`
 	}
 )

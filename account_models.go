@@ -5,6 +5,7 @@ type (
 	AccountRequestParams struct {
 		With string
 	}
+
 	AccountResponse struct {
 		ID             int    `json:"id"`
 		Name           string `json:"name"`
@@ -117,19 +118,23 @@ type (
 		} `json:"params"`
 		Enums map[string]string `json:"enums"`
 	}
+
 	AccountNoteType struct {
 		ID         int    `json:"id"`
 		Code       string `json:"code"`
 		IsEditable bool   `json:"is_editable"`
 	}
+
 	AccountGroup struct {
 		ID   int    `json:"id"`
 		Name string `json:"name"`
 	}
+
 	AccountTaskType struct {
 		ID   int    `json:"id"`
 		Name string `json:"name"`
 	}
+
 	AccountStatus struct {
 		ID         int    `json:"id"`
 		Name       string `json:"name"`
@@ -137,6 +142,7 @@ type (
 		Sort       int    `json:"sort"`
 		IsEditable bool   `json:"is_editable"`
 	}
+
 	AccountPipeline struct {
 		ID       int                      `json:"id"`
 		Name     string                   `json:"name"`

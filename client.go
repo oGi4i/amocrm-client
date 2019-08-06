@@ -147,7 +147,7 @@ func (c *ClientInfo) GetResponseID(resp *http.Response) (int, error) {
 		if result.Response.Error != "" {
 			return 0, errors.New(result.Response.Error)
 		}
-		return 0, errors.New("No Items")
+		return 0, errors.New("no Items")
 	}
 	return result.Embedded.Items[0].ID, nil
 }

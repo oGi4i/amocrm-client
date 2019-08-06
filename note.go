@@ -7,13 +7,13 @@ import (
 
 func (c *ClientInfo) AddNote(note Note) (int, error) {
 	if note.ElementID == 0 {
-		return 0, errors.New("ElementID is empty")
+		return 0, errors.New("elementID is empty")
 	}
 	if note.ElementType == 0 {
-		return 0, errors.New("ElementType is empty")
+		return 0, errors.New("elementType is empty")
 	}
 	if note.NoteType == 0 {
-		return 0, errors.New("NoteType is empty")
+		return 0, errors.New("noteType is empty")
 	}
 	url := c.Url + apiUrls["notes"]
 	fmt.Println(note)

@@ -12,11 +12,7 @@ type (
 	}
 
 	EventGetResponse struct {
-		Links struct {
-			Self struct {
-				Href string `json:"href"`
-			} `json:"self"`
-		} `json:"_links"`
+		Links    *Links `json:"_links"`
 		Embedded struct {
 			Items []EventResponse `json:"items"`
 		} `json:"_embedded"`

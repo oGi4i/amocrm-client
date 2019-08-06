@@ -8,7 +8,7 @@ import (
 
 func (c *ClientInfo) AddContact(contact Contact) (int, error) {
 	if contact.Name == "" {
-		return 0, errors.New("Name is empty")
+		return 0, errors.New("name is empty")
 	}
 
 	url := c.Url + apiUrls["contacts"]
@@ -19,7 +19,7 @@ func (c *ClientInfo) AddContact(contact Contact) (int, error) {
 	return c.GetResponseID(resp)
 }
 
-func (c *ClientInfo) GetContact(reqParams ContactRequestParams) ([]ContactResponse, error) {
+func (c *ClientInfo) GetContact(reqParams ContactRequestParams) ([]*ContactResponse, error) {
 	addValues := map[string]string{}
 	contacts := ContactGetResponse{}
 	var err error

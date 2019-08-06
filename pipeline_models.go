@@ -4,13 +4,9 @@ type (
 	PipelineRequestParams struct {
 		Id string
 	}
+
 	PipelineResponse struct {
-		Links struct {
-			Self struct {
-				Href   string `json:"href"`
-				Method string `json:"method"`
-			} `json:"self"`
-		} `json:"_links"`
+		Links    *Links `json:"_links"`
 		Embedded struct {
 			Items map[string]Pipeline `json:"items"`
 		} `json:"_embedded"`
@@ -22,12 +18,7 @@ type (
 		Sort     int                       `json:"sort"`
 		IsMain   bool                      `json:"is_main"`
 		Statuses map[string]PipelineStatus `json:"statuses"`
-		Links    struct {
-			Self struct {
-				Href   string `json:"href"`
-				Method string `json:"method"`
-			} `json:"self"`
-		} `json:"_links"`
+		Links    *Links                    `json:"_links"`
 	}
 
 	PipelineStatus struct {

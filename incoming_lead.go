@@ -8,34 +8,34 @@ import (
 
 func (c *ClientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, error) {
 	if incominglead.SourceName == "" {
-		return "0", errors.New("SourceName is empty")
+		return "0", errors.New("sourceName is empty")
 	}
 	if incominglead.SourceUID == "" {
-		return "0", errors.New("SourceUID is empty")
+		return "0", errors.New("sourceUID is empty")
 	}
 	if incominglead.IncomingLeadInfo.To == "" {
-		return "0", errors.New("IncomingLeadInfo.To is empty")
+		return "0", errors.New("incomingLeadInfo.To is empty")
 	}
 	if incominglead.IncomingLeadInfo.From == "" {
-		return "0", errors.New("IncomingLeadInfo.From is empty")
+		return "0", errors.New("incomingLeadInfo.From is empty")
 	}
 	if incominglead.IncomingLeadInfo.DateCall == 0 {
-		return "0", errors.New("IncomingLeadInfo.DateCall is empty")
+		return "0", errors.New("incomingLeadInfo.DateCall is empty")
 	}
 	if incominglead.IncomingLeadInfo.Duration == "" {
-		return "0", errors.New("IncomingLeadInfo.Duration is empty")
+		return "0", errors.New("incomingLeadInfo.Duration is empty")
 	}
 	if incominglead.IncomingLeadInfo.Link == "" {
-		return "0", errors.New("IncomingLeadInfo.Link is empty")
+		return "0", errors.New("incomingLeadInfo.Link is empty")
 	}
 	if incominglead.IncomingLeadInfo.ServiceCode == "" {
-		return "0", errors.New("IncomingLeadInfo.ServiceCode is empty")
+		return "0", errors.New("incomingLeadInfo.ServiceCode is empty")
 	}
 	if incominglead.IncomingLeadInfo.Uniq == "" {
-		return "0", errors.New("IncomingLeadInfo.Uniq is empty")
+		return "0", errors.New("incomingLeadInfo.Uniq is empty")
 	}
 	if incominglead.IncomingEntities.Leads[0].Name == "" {
-		return "0", errors.New("IncomingEntities.Leads[0].Name is empty")
+		return "0", errors.New("incomingEntities.Leads[0].Name is empty")
 	}
 	url := fmt.Sprint(
 		c.Url,
@@ -166,7 +166,7 @@ func (c *ClientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 		return "0", err
 	}
 	if len(response.Data) == 0 {
-		return response.Error, errors.New("No Items")
+		return response.Error, errors.New("no Items")
 	}
 	return response.Status, nil
 }

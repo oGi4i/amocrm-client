@@ -12,6 +12,7 @@ type (
 		CallResult string `json:"call_result,omitempty"`
 		Text       string `json:"text,omitempty"`
 	}
+
 	Note struct {
 		ElementID         int        `json:"element_id"`
 		ElementType       int        `json:"element_type"`
@@ -23,16 +24,13 @@ type (
 		CreatedBy         int        `json:"created_by,omitempty"`
 		Params            Parameters `json:"params,omitempty"`
 	}
+
 	NoteSetRequest struct {
 		Add []Note `json:"add"`
 	}
+
 	NoteGetResponse struct {
-		Links struct {
-			Self struct {
-				Href   string `json:"href"`
-				Method string `json:"method"`
-			} `json:"self"`
-		} `json:"_links"`
+		Links    *Links `json:"_links"`
 		Embedded struct {
 			Items []NoteResponse `json:"items"`
 		} `json:"_embedded"`
