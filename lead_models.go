@@ -5,7 +5,7 @@ import "time"
 type (
 	//RequestParams параметры GET запроса
 	LeadRequestParams struct {
-		ID                int
+		ID                []int
 		LimitRows         int
 		LimitOffset       int
 		ResponsibleUserID int

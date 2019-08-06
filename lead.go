@@ -30,8 +30,8 @@ func (c *ClientInfo) GetLead(reqParams LeadRequestParams) ([]*LeadResponse, erro
 	leads := new(LeadGetResponse)
 	var err error
 
-	if reqParams.ID != 0 {
-		addValues["id"] = strconv.Itoa(reqParams.ID)
+	if len(reqParams.ID) > 0 {
+		addValues["id"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.ID)), ","), "[]")
 	} else {
 		if reqParams.LimitRows != 0 {
 			addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
