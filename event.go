@@ -5,8 +5,8 @@ import (
 	"errors"
 )
 
-func (c *ClientInfo) AddEvent(event Event) (EventResponse, error) {
-	emptyResponse := EventResponse{}
+func (c *ClientInfo) AddEvent(event *Event) (*EventResponse, error) {
+	emptyResponse := new(EventResponse)
 	if event.PhoneNumber == "" {
 		return emptyResponse, errors.New("phoneNumber is empty")
 	}
@@ -16,11 +16,11 @@ func (c *ClientInfo) AddEvent(event Event) (EventResponse, error) {
 		}
 	}
 	url := c.Url + apiUrls["events"]
-	resp, err := c.DoPost(url, EventSetRequest{Add: []Event{event}})
+	resp, err := c.DoPost(url, &EventSetRequest{Add: []*Event{event}})
 	if err != nil {
 		return emptyResponse, err
 	}
-	response := EventGetResponse{}
+	response := new(EventGetResponse)
 	dec := json.NewDecoder(resp.Body)
 	err = dec.Decode(&response)
 	if err != nil {

@@ -8,13 +8,13 @@ type (
 	}
 
 	EventSetRequest struct {
-		Add []Event `json:"add"`
+		Add []*Event `json:"add"`
 	}
 
 	EventGetResponse struct {
 		Links    *Links `json:"_links"`
 		Embedded struct {
-			Items []EventResponse `json:"items"`
+			Items []*EventResponse `json:"items"`
 		} `json:"_embedded"`
 	}
 

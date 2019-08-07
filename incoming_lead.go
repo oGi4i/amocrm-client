@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-func (c *ClientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, error) {
+func (c *ClientInfo) AddIncomingLeadCall(incominglead *IncomingLead) (string, error) {
 	if incominglead.SourceName == "" {
 		return "0", errors.New("sourceName is empty")
 	}
@@ -159,7 +159,7 @@ func (c *ClientInfo) AddIncomingLeadCall(incominglead IncomingLead) (string, err
 	if err != nil {
 		return "0", err
 	}
-	response := IncomingLeadResponse{}
+	response := new(IncomingLeadResponse)
 	dec := json.NewDecoder(resp.Body)
 	err = dec.Decode(&response)
 	if err != nil {

@@ -66,8 +66,8 @@ type (
 		GroupId       int            `json:"group_id"`
 		ClosedAt      int            `json:"closed_at"`
 		ClosestTaskAt int            `json:"closest_task_at"`
-		Tags          *Tag           `json:"tags"`
-		CustomFields  []*CustomField `json:"custom_fields"`
+		Tags          []*Tag         `json:"tags"`
+		CustomFields  []*CustomField `json:"custom_fields,omitempty"`
 		Contact       struct {
 			ID    []int  `json:"id"`
 			Links *Links `json:"_links"`

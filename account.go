@@ -2,9 +2,9 @@ package amocrm
 
 import "encoding/json"
 
-func (c *ClientInfo) GetAccount(reqParams AccountRequestParams) (AccountResponse, error) {
+func (c *ClientInfo) GetAccount(reqParams *AccountRequestParams) (*AccountResponse, error) {
 	addValues := map[string]string{}
-	account := AccountResponse{}
+	account := new(AccountResponse)
 	var err error
 	if reqParams.With != "" {
 		addValues["with"] = reqParams.With

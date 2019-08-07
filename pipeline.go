@@ -2,9 +2,9 @@ package amocrm
 
 import "encoding/json"
 
-func (c *ClientInfo) GetPipelines(reqParams PipelineRequestParams) (PipelineResponse, error) {
+func (c *ClientInfo) GetPipelines(reqParams *PipelineRequestParams) (*PipelineResponse, error) {
 	addValues := map[string]string{}
-	pipeline := PipelineResponse{}
+	pipeline := new(PipelineResponse)
 	var err error
 	if reqParams.Id != "" {
 		addValues["id"] = reqParams.Id

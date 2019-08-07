@@ -7,22 +7,22 @@ type (
 	}
 
 	IncomingLead struct {
-		SourceName       string           `json:"source_name"`
-		SourceUID        string           `json:"source_uid"`
-		CreatedAt        int64            `json:"created_at,omitempty"`
-		PipelineID       string           `json:"pipeline_id,omitempty"`
-		IncomingEntities IncomingEntities `json:"incoming_entities"`
-		IncomingLeadInfo IncomingLeadInfo `json:"incoming_lead_info,omitempty"`
+		SourceName       string            `json:"source_name"`
+		SourceUID        string            `json:"source_uid"`
+		CreatedAt        int64             `json:"created_at,omitempty"`
+		PipelineID       string            `json:"pipeline_id,omitempty"`
+		IncomingEntities *IncomingEntities `json:"incoming_entities"`
+		IncomingLeadInfo *IncomingLeadInfo `json:"incoming_lead_info,omitempty"`
 	}
 
 	IncomingLeadRequest struct {
-		Add []IncomingLead `json:"add"`
+		Add []*IncomingLead `json:"add"`
 	}
 
 	IncomingEntities struct {
-		Leads     []IncomingLeadParams  `json:"leads"`
-		Contacts  []IncomingLeadContact `json:"contacts,omitempty"`
-		Companies []IncomingLeadCompany `json:"companies,omitempty"`
+		Leads     []*IncomingLeadParams  `json:"leads"`
+		Contacts  []*IncomingLeadContact `json:"contacts,omitempty"`
+		Companies []*IncomingLeadCompany `json:"companies,omitempty"`
 	}
 
 	IncomingLeadParams struct {

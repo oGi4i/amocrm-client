@@ -8,6 +8,10 @@ import (
 	"strings"
 )
 
+var (
+	leadArrayFields = []string{"tags", "custom_fields"}
+)
+
 func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
 	if lead.Name == "" {
 		return 0, errors.New("name is empty")
@@ -17,7 +21,7 @@ func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
 	}
 
 	url := c.Url + apiUrls["leads"]
-	resp, err := c.DoPost(url, LeadSetRequest{Add: []*LeadPost{lead}})
+	resp, err := c.DoPost(url, &LeadSetRequest{Add: []*LeadPost{lead}})
 	if err != nil {
 		return 0, err
 	}
@@ -25,7 +29,7 @@ func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
 	return c.GetResponseID(resp)
 }
 
-func (c *ClientInfo) GetLead(reqParams LeadRequestParams) ([]*LeadResponse, error) {
+func (c *ClientInfo) GetLead(reqParams *LeadRequestParams) ([]*LeadResponse, error) {
 	addValues := make(map[string]string)
 	leads := new(LeadGetResponse)
 	var err error
@@ -58,7 +62,15 @@ func (c *ClientInfo) GetLead(reqParams LeadRequestParams) ([]*LeadResponse, erro
 
 	err = json.Unmarshal(body, &leads)
 	if err != nil {
-		return nil, err
+		// fix bad json serialization, where nil array is serialized as nil object
+		stringBody := string(body)
+		for _, s := range leadArrayFields {
+			stringBody = strings.ReplaceAll(stringBody, "\""+s+"\":{}", "\""+s+"\":[]")
+		}
+		err = json.Unmarshal([]byte(stringBody), &leads)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return leads.Embedded.Items, err

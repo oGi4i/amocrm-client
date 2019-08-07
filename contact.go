@@ -4,24 +4,29 @@ import (
 	"encoding/json"
 	"errors"
 	"strconv"
+	"strings"
 )
 
-func (c *ClientInfo) AddContact(contact Contact) (int, error) {
+var (
+	contactArrayFields = []string{"tags", "custom_fields"}
+)
+
+func (c *ClientInfo) AddContact(contact *ContactPost) (int, error) {
 	if contact.Name == "" {
 		return 0, errors.New("name is empty")
 	}
 
 	url := c.Url + apiUrls["contacts"]
-	resp, err := c.DoPost(url, ContactSetRequest{Add: []Contact{contact}})
+	resp, err := c.DoPost(url, &ContactSetRequest{Add: []*ContactPost{contact}})
 	if err != nil {
 		return 0, err
 	}
 	return c.GetResponseID(resp)
 }
 
-func (c *ClientInfo) GetContact(reqParams ContactRequestParams) ([]*ContactResponse, error) {
+func (c *ClientInfo) GetContact(reqParams *ContactRequestParams) ([]*ContactResponse, error) {
 	addValues := map[string]string{}
-	contacts := ContactGetResponse{}
+	contacts := new(ContactGetResponse)
 	var err error
 
 	if reqParams.ID != 0 {
@@ -47,10 +52,14 @@ func (c *ClientInfo) GetContact(reqParams ContactRequestParams) ([]*ContactRespo
 	if err != nil {
 		return nil, err
 	}
-	err = json.Unmarshal(body, &contacts)
+	err = json.Unmarshal(body, contacts)
 	if err != nil {
-		contacts := ContactResponseByTags{}
-		err = json.Unmarshal(body, &contacts)
+		// fix bad json serialization, where nil array is serialized as nil object
+		stringBody := string(body)
+		for _, s := range contactArrayFields {
+			stringBody = strings.ReplaceAll(stringBody, "\""+s+"\":{}", "\""+s+"\":[]")
+		}
+		err = json.Unmarshal([]byte(stringBody), contacts)
 		if err != nil {
 			return nil, err
 		}
