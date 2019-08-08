@@ -1,6 +1,52 @@
 package amocrm
 
 const (
+	AccountNotFoundCode          = 101
+	BodyMustBeJSONCode           = 102
+	InvalidRequestParametersCode = 103
+	InvalidRequestMethodCode     = 104
+
+	InvalidCredentialsCode    = 110
+	CaptchaInputRequiredCode  = 111
+	DisabledAccountCode       = 112
+	UnauthorizedIpAddressCode = 113
+
+	ContactAddEmptyArrayCode                = 201
+	ContactAddInsufficientAccessRightsCode  = 202
+	ContactAddCustomFieldsInternalErrorCode = 203
+	ContactAddCustomFieldNotFoundCode       = 204
+	ContactAddNotProcessedCode              = 205
+
+	ContactsEmptyRequestCode         = 206
+	ContactsInvalidRequestMethodCode = 207
+
+	ContactUpdateEmptyArrayCode                 = 208
+	ContactUpdatedRequiredParametersMissingCode = 209
+	ContactUpdateCustomFieldsInternalErrorCode  = 210
+	ContactUpdateCustomFieldNotFoundCode        = 211
+	ContactUpdateNotProcessedCode               = 212
+
+	LeadAddEmptyArrayCode                   = 213
+	LeadEmptyRequestCode                    = 214
+	LeadInvalidRequestMethodCode            = 215
+	LeadUpdateEmptyArrayCode                = 216
+	LeadUpdateRequiredParametersMissingCode = 217
+
+	ContactGetSearchErrorCode = 219
+
+	LeadCustomFieldInvalidIdCode = 240
+
+	TooManyLinkedEntitiesCode = 330
+
+	InvalidRequestCode          = 400
+	AccountNotFoundOnServerCode = 401
+	SubscriptionExpireCode      = 402
+	AccountBlockedCode          = 403
+
+	RateLimitExceededCode = 429
+
+	NoContentCode = 2002
+
 	AccountNotFound          = "account_not_found"
 	BodyMustBeJSON           = "body_must_be_json"
 	InvalidRequestParameters = "invalid_request_params"
@@ -50,51 +96,51 @@ const (
 
 var (
 	AmoErrorTypeMap = map[int]string{
-		101: AccountNotFound,
-		102: BodyMustBeJSON,
-		103: InvalidRequestParameters,
-		104: InvalidRequestMethod,
+		AccountNotFoundCode:          AccountNotFound,
+		BodyMustBeJSONCode:           BodyMustBeJSON,
+		InvalidRequestParametersCode: InvalidRequestParameters,
+		InvalidRequestMethodCode:     InvalidRequestMethod,
 
-		110: InvalidCredentials,
-		111: CaptchaInputRequired,
-		112: DisabledAccount,
-		113: UnauthorizedIpAddress,
+		InvalidCredentialsCode:    InvalidCredentials,
+		CaptchaInputRequiredCode:  CaptchaInputRequired,
+		DisabledAccountCode:       DisabledAccount,
+		UnauthorizedIpAddressCode: UnauthorizedIpAddress,
 
-		201: ContactAddEmptyArray,
-		202: ContactAddInsufficientAccessRights,
-		203: ContactAddCustomFieldsInternalError,
-		204: ContactAddCustomFieldNotFound,
-		205: ContactAddNotProcessed,
+		ContactAddEmptyArrayCode:                ContactAddEmptyArray,
+		ContactAddInsufficientAccessRightsCode:  ContactAddInsufficientAccessRights,
+		ContactAddCustomFieldsInternalErrorCode: ContactAddCustomFieldsInternalError,
+		ContactAddCustomFieldNotFoundCode:       ContactAddCustomFieldNotFound,
+		ContactAddNotProcessedCode:              ContactAddNotProcessed,
 
-		206: ContactsEmptyRequest,
-		207: ContactsInvalidRequestMethod,
+		ContactsEmptyRequestCode:         ContactsEmptyRequest,
+		ContactsInvalidRequestMethodCode: ContactsInvalidRequestMethod,
 
-		208: ContactUpdateEmptyArray,
-		209: ContactUpdatedRequiredParametersMissing,
-		210: ContactUpdateCustomFieldsInternalError,
-		211: ContactUpdateCustomFieldNotFound,
-		212: ContactUpdateNotProcessed,
+		ContactUpdateEmptyArrayCode:                 ContactUpdateEmptyArray,
+		ContactUpdatedRequiredParametersMissingCode: ContactUpdatedRequiredParametersMissing,
+		ContactUpdateCustomFieldsInternalErrorCode:  ContactUpdateCustomFieldsInternalError,
+		ContactUpdateCustomFieldNotFoundCode:        ContactUpdateCustomFieldNotFound,
+		ContactUpdateNotProcessedCode:               ContactUpdateNotProcessed,
 
-		213: LeadAddEmptyArray,
-		214: LeadEmptyRequest,
-		215: LeadInvalidRequestMethod,
-		216: LeadUpdateEmptyArray,
-		217: LeadUpdateRequiredParametersMissing,
+		LeadAddEmptyArrayCode:                   LeadAddEmptyArray,
+		LeadEmptyRequestCode:                    LeadEmptyRequest,
+		LeadInvalidRequestMethodCode:            LeadInvalidRequestMethod,
+		LeadUpdateEmptyArrayCode:                LeadUpdateEmptyArray,
+		LeadUpdateRequiredParametersMissingCode: LeadUpdateRequiredParametersMissing,
 
-		219: ContactGetSearchError,
+		ContactGetSearchErrorCode: ContactGetSearchError,
 
-		240: LeadCustomFieldInvalidId,
+		LeadCustomFieldInvalidIdCode: LeadCustomFieldInvalidId,
 
-		330: TooManyLinkedEntities,
+		TooManyLinkedEntitiesCode: TooManyLinkedEntities,
 
-		400: InvalidRequest,
-		401: AccountNotFoundOnServer,
-		402: SubscriptionExpire,
-		403: AccountBlocked,
+		InvalidRequestCode:          InvalidRequest,
+		AccountNotFoundOnServerCode: AccountNotFoundOnServer,
+		SubscriptionExpireCode:      SubscriptionExpire,
+		AccountBlockedCode:          AccountBlocked,
 
-		429: RateLimitExceeded,
+		RateLimitExceededCode: RateLimitExceeded,
 
-		2002: NoContent,
+		NoContentCode: NoContent,
 	}
 )
 
