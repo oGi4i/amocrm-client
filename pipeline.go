@@ -14,9 +14,14 @@ func (c *ClientInfo) GetPipelines(reqParams *PipelineRequestParams) (*PipelineRe
 	if err != nil {
 		return pipeline, err
 	}
-	err = json.Unmarshal(body, &pipeline)
+	err = json.Unmarshal(body, pipeline)
 	if err != nil {
-		return pipeline, err
+		return nil, err
 	}
+
+	if pipeline.Response != nil {
+		return nil, pipeline.Response
+	}
+
 	return pipeline, nil
 }

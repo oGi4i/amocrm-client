@@ -60,17 +60,21 @@ func (c *ClientInfo) GetLead(reqParams *LeadRequestParams) ([]*LeadResponse, err
 		return nil, err
 	}
 
-	err = json.Unmarshal(body, &leads)
+	err = json.Unmarshal(body, leads)
 	if err != nil {
 		// fix bad json serialization, where nil array is serialized as nil object
 		stringBody := string(body)
 		for _, s := range leadArrayFields {
 			stringBody = strings.ReplaceAll(stringBody, "\""+s+"\":{}", "\""+s+"\":[]")
 		}
-		err = json.Unmarshal([]byte(stringBody), &leads)
+		err = json.Unmarshal([]byte(stringBody), leads)
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	if leads.Response != nil {
+		return nil, leads.Response
 	}
 
 	return leads.Embedded.Items, err

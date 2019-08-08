@@ -64,5 +64,10 @@ func (c *ClientInfo) GetContact(reqParams *ContactRequestParams) ([]*ContactResp
 			return nil, err
 		}
 	}
+
+	if contacts.Response != nil {
+		return nil, contacts.Response
+	}
+
 	return contacts.Embedded.Items, err
 }

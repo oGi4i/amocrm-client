@@ -34,6 +34,7 @@ type (
 		Embedded struct {
 			Items []*NoteResponse `json:"items"`
 		} `json:"_embedded"`
+		Response *AmoError `json:"response"`
 	}
 
 	NoteResponse struct {

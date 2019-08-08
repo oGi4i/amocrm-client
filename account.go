@@ -12,11 +12,17 @@ func (c *ClientInfo) GetAccount(reqParams *AccountRequestParams) (*AccountRespon
 	url := c.Url + apiUrls["account"]
 	body, err := c.DoGet(url, addValues)
 	if err != nil {
-		return account, err
+		return nil, err
 	}
-	err = json.Unmarshal(body, &account)
+	err = json.Unmarshal(body, account)
 	if err != nil {
-		return account, err
+		amoError := new(AmoError)
+		err = json.Unmarshal(body, amoError)
+		if err != nil {
+			return nil, err
+		}
+
+		return nil, amoError
 	}
 	return account, nil
 }

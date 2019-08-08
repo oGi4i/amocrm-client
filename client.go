@@ -19,9 +19,11 @@ type (
 				ID int `json:"id"`
 			} `json:"items"`
 		} `json:"_embedded"`
-		Response struct {
-			Error string `json:"error"`
-		} `json:"response"`
+		Response *AmoError `json:"response"`
+	}
+
+	errorResponse struct {
+		Response *AmoError `json:"response"`
 	}
 )
 
@@ -137,17 +139,23 @@ func (c *ClientInfo) DoPostWithoutCookie(url string, data string) (*http.Respons
 }
 
 func (c *ClientInfo) GetResponseID(resp *http.Response) (int, error) {
-	result := respID{}
+	result := new(respID)
 	dec := json.NewDecoder(resp.Body)
-	err := dec.Decode(&result)
+	err := dec.Decode(result)
 	if err != nil {
-		return 0, err
+		amoError := new(AmoError)
+		err = dec.Decode(amoError)
+		if err != nil {
+			return 0, err
+		}
+
+		return 0, amoError
 	}
 	if len(result.Embedded.Items) == 0 {
-		if result.Response.Error != "" {
-			return 0, errors.New(result.Response.Error)
+		if result.Response.ErrorCode != 0 {
+			return 0, errors.New(result.Response.Error())
 		}
-		return 0, errors.New("no Items")
+		return 0, errors.New("no items")
 	}
 	return result.Embedded.Items[0].ID, nil
 }

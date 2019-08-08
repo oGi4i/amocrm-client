@@ -33,6 +33,7 @@ type (
 		Embedded struct {
 			Items []*ContactResponse `json:"items"`
 		} `json:"_embedded"`
+		Response *AmoError `json:"response,omitempty"`
 	}
 
 	ContactResponse struct {

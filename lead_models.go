@@ -32,13 +32,6 @@ type (
 		RequestID         string   `json:"request_id,omitempty"`
 	}
 
-	LeadGetRequest struct {
-		Links    *Links `json:"_links"`
-		Embedded struct {
-			Items []*LeadResponse `json:"items"`
-		} `json:"_embedded"`
-	}
-
 	LeadSetRequest struct {
 		Add []*LeadPost `json:"add"`
 	}
@@ -48,6 +41,7 @@ type (
 		Embedded struct {
 			Items []*LeadResponse `json:"items"`
 		} `json:"_embedded"`
+		Response *AmoError `json:"response"`
 	}
 
 	LeadResponse struct {

@@ -10,6 +10,7 @@ type (
 		Embedded struct {
 			Items map[string]Pipeline `json:"items"`
 		} `json:"_embedded"`
+		Response *AmoError `json:"response"`
 	}
 
 	Pipeline struct {
