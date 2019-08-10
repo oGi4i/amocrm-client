@@ -3,7 +3,7 @@ package amocrm
 type (
 	//RequestParams параметры GET запроса
 	AccountRequestParams struct {
-		With string
+		With []string
 	}
 
 	AccountResponse struct {
@@ -22,17 +22,17 @@ type (
 		} `json:"date_pattern"`
 		CurrentUser int `json:"current_user"`
 		Embedded    struct {
-			Users        map[string]AccountUser `json:"users"`
+			Users        map[string]*AccountUser `json:"users"`
 			CustomFields struct {
-				Contacts  map[string]AccountContact   `json:"contacts"`
-				Leads     map[string]AccountLead      `json:"leads,omitempty"`
-				Companies map[string]AccountCompanies `json:"companies,omitempty"`
-				Customers []interface{}               `json:"customers,omitempty"`
+				Contacts  map[string]*AccountContact   `json:"contacts"`
+				Leads     map[string]*AccountLead      `json:"leads,omitempty"`
+				Companies map[string]*AccountCompanies `json:"companies,omitempty"`
+				Customers []interface{}                `json:"customers,omitempty"`
 			} `json:"custom_fields"`
-			NoteTypes map[string]AccountNoteType `json:"note_types"`
-			Groups    map[string]AccountGroup    `json:"groups"`
-			TaskTypes map[string]AccountTaskType `json:"task_types"`
-			Pipelines map[string]AccountPipeline `json:"pipelines"`
+			NoteTypes map[string]*AccountNoteType `json:"note_types"`
+			Groups    map[string]*AccountGroup    `json:"groups"`
+			TaskTypes map[string]*AccountTaskType `json:"task_types"`
+			Pipelines map[string]*AccountPipeline `json:"pipelines"`
 		} `json:"_embedded"`
 	}
 
@@ -144,11 +144,11 @@ type (
 	}
 
 	AccountPipeline struct {
-		ID       int                      `json:"id"`
-		Name     string                   `json:"name"`
-		Sort     int                      `json:"sort"`
-		IsMain   bool                     `json:"is_main"`
-		Statuses map[string]AccountStatus `json:"statuses"`
+		ID       int                       `json:"id"`
+		Name     string                    `json:"name"`
+		Sort     int                       `json:"sort"`
+		IsMain   bool                      `json:"is_main"`
+		Statuses map[string]*AccountStatus `json:"statuses"`
 		Links    struct {
 			Self struct {
 				Href   string `json:"href"`
