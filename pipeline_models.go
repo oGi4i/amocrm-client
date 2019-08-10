@@ -8,18 +8,18 @@ type (
 	PipelineResponse struct {
 		Links    *Links `json:"_links"`
 		Embedded struct {
-			Items map[string]Pipeline `json:"items"`
+			Items map[string]*Pipeline `json:"items"`
 		} `json:"_embedded"`
 		Response *AmoError `json:"response"`
 	}
 
 	Pipeline struct {
-		ID       int                       `json:"id"`
-		Name     string                    `json:"name"`
-		Sort     int                       `json:"sort"`
-		IsMain   bool                      `json:"is_main"`
-		Statuses map[string]PipelineStatus `json:"statuses"`
-		Links    *Links                    `json:"_links"`
+		ID       int                        `json:"id"`
+		Name     string                     `json:"name"`
+		Sort     int                        `json:"sort"`
+		IsMain   bool                       `json:"is_main"`
+		Statuses map[string]*PipelineStatus `json:"statuses"`
+		Links    *Links                     `json:"_links"`
 	}
 
 	PipelineStatus struct {
