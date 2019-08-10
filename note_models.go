@@ -41,4 +41,10 @@ type (
 		ID                int `json:"id"`
 		ResponsibleUserID int `json:"id"`
 	}
+
+	NoteType struct {
+		ID         int    `json:"id"`
+		Code       string `json:"code"`
+		IsEditable bool   `json:"is_editable"`
+	}
 )
