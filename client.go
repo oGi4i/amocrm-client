@@ -4,15 +4,16 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 type (
-	//respID стандартный ответ
+	// standart response to POST
 	respID struct {
 		Embedded struct {
 			Items []struct {
@@ -21,13 +22,8 @@ type (
 		} `json:"_embedded"`
 		Response *AmoError `json:"response"`
 	}
-
-	errorResponse struct {
-		Response *AmoError `json:"response"`
-	}
 )
 
-//New Открытия соединения и авторизация
 func New(accountURL string, login string, hash string) (*ClientInfo, error) {
 	var err error
 
@@ -117,12 +113,13 @@ func (c *ClientInfo) DoPost(url string, data interface{}) (*http.Response, error
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println(url)
+
 	req.Header.Set("Content-Type", "application/json")
 	for _, cookie := range c.Cookie {
 		req.AddCookie(cookie)
 	}
-	fmt.Println(req)
+
+	log.Printf("Request: Created: %s; URL: %s; Headers: %s; Body: %s", time.Now().Format(time.RFC3339), req.URL, req.Header, req.Body)
 	client := &http.Client{}
 	return client.Do(req)
 }
