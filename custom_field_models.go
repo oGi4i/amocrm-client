@@ -15,8 +15,8 @@ type (
 	}
 
 	CustomFieldPost struct {
-		ID     int                `json:"id"`
-		Values []*CustomValuePost `json:"values"`
+		ID     int           `json:"id"`
+		Values []interface{} `json:"values"`
 	}
 
 	CustomValuePost struct {
