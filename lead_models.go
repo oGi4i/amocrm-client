@@ -18,18 +18,18 @@ type (
 	}
 
 	LeadPost struct {
-		Name              string         `json:"name"`
-		CreatedAt         string         `json:"created_at,omitempty"`
-		UpdatedAt         string         `json:"updated_at,omitempty"`
-		StatusID          string         `json:"status_id"`
-		PipelineID        string         `json:"pipeline_id,omitempty"`
-		ResponsibleUserID string         `json:"responsible_user_id,omitempty"`
-		Sale              string         `json:"sale,omitempty"`
-		Tags              string         `json:"tags,omitempty"`
-		CustomFields      []*CustomField `json:"custom_fields,omitempty"`
-		ContactsID        []string       `json:"contacts_id,omitempty"`
-		CompanyID         string         `json:"company_id,omitempty"`
-		RequestID         string         `json:"request_id,omitempty"`
+		Name              string             `json:"name"`
+		CreatedAt         string             `json:"created_at,omitempty"`
+		UpdatedAt         string             `json:"updated_at,omitempty"`
+		StatusID          string             `json:"status_id"`
+		PipelineID        string             `json:"pipeline_id,omitempty"`
+		ResponsibleUserID string             `json:"responsible_user_id,omitempty"`
+		Sale              string             `json:"sale,omitempty"`
+		Tags              string             `json:"tags,omitempty"`
+		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
+		ContactsID        []string           `json:"contacts_id,omitempty"`
+		CompanyID         string             `json:"company_id,omitempty"`
+		RequestID         string             `json:"request_id,omitempty"`
 	}
 
 	AddLeadRequest struct {

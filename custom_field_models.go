@@ -13,4 +13,14 @@ type (
 		Enum    int    `json:"enum,omitempty"`
 		Subtype string `json:"subtype,omitempty"`
 	}
+
+	CustomFieldPost struct {
+		ID     int                `json:"id"`
+		Values []*CustomValuePost `json:"values"`
+	}
+
+	CustomValuePost struct {
+		Value   string `json:"value"`
+		Subtype string `json:"subtype,omitempty"`
+	}
 )
