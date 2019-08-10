@@ -1,24 +1,24 @@
 package amocrm
 
 type (
-	Event struct {
+	EventPost struct {
 		PhoneNumber string   `json:"phone_number"`
 		Type        string   `json:"type"`
 		Users       []string `json:"users,omitempty"`
 	}
 
-	EventSetRequest struct {
-		Add []*Event `json:"add"`
+	AddEventRequest struct {
+		Add []*EventPost `json:"add"`
 	}
 
-	EventGetResponse struct {
+	AddEventResponse struct {
 		Links    *Links `json:"_links"`
 		Embedded struct {
-			Items []*EventResponse `json:"items"`
+			Items []*Event `json:"items"`
 		} `json:"_embedded"`
 	}
 
-	EventResponse struct {
+	Event struct {
 		ElementType int    `json:"element_type"`
 		ElementID   int    `json:"element_id"`
 		UID         string `json:"uid"`

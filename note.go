@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func (c *ClientInfo) AddNote(note *Note) (int, error) {
+func (c *ClientInfo) AddNote(note *NotePost) (int, error) {
 	if note.ElementID == 0 {
 		return 0, errors.New("elementID is empty")
 	}
@@ -17,7 +17,7 @@ func (c *ClientInfo) AddNote(note *Note) (int, error) {
 	}
 	url := c.Url + apiUrls["notes"]
 	fmt.Println(note)
-	resp, err := c.DoPost(url, &NoteSetRequest{Add: []*Note{note}})
+	resp, err := c.DoPost(url, &AddNoteRequest{Add: []*NotePost{note}})
 	if err != nil {
 		return 0, err
 	}

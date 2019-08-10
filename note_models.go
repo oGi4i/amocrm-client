@@ -13,7 +13,7 @@ type (
 		Text       string `json:"text,omitempty"`
 	}
 
-	Note struct {
+	NotePost struct {
 		ElementID         int         `json:"element_id"`
 		ElementType       int         `json:"element_type"`
 		Text              string      `json:"text,omitempty"`
@@ -25,19 +25,19 @@ type (
 		Params            *Parameters `json:"params,omitempty"`
 	}
 
-	NoteSetRequest struct {
-		Add []*Note `json:"add"`
+	AddNoteRequest struct {
+		Add []*NotePost `json:"add"`
 	}
 
-	NoteGetResponse struct {
+	GetNoteResponse struct {
 		Links    *Links `json:"_links"`
 		Embedded struct {
-			Items []*NoteResponse `json:"items"`
+			Items []*Note `json:"items"`
 		} `json:"_embedded"`
 		Response *AmoError `json:"response"`
 	}
 
-	NoteResponse struct {
+	Note struct {
 		ID                int `json:"id"`
 		ResponsibleUserID int `json:"id"`
 	}

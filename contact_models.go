@@ -24,19 +24,19 @@ type (
 		CustomFields      []*CustomField `json:"custom_fields,omitempty"`
 	}
 
-	ContactSetRequest struct {
+	AddContactRequest struct {
 		Add []*ContactPost `json:"add"`
 	}
 
-	ContactGetResponse struct {
+	GetContactResponse struct {
 		Links    *Links `json:"_links"`
 		Embedded struct {
-			Items []*ContactResponse `json:"items"`
+			Items []*Contact `json:"items"`
 		} `json:"_embedded"`
 		Response *AmoError `json:"response,omitempty"`
 	}
 
-	ContactResponse struct {
+	Contact struct {
 		ID                int    `json:"id"`
 		Name              string `json:"name"`
 		ResponsibleUserID int    `json:"responsible_user_id"`

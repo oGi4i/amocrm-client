@@ -21,7 +21,7 @@ func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
 	}
 
 	url := c.Url + apiUrls["leads"]
-	resp, err := c.DoPost(url, &LeadSetRequest{Add: []*LeadPost{lead}})
+	resp, err := c.DoPost(url, &AddLeadRequest{Add: []*LeadPost{lead}})
 	if err != nil {
 		return 0, err
 	}
@@ -29,9 +29,9 @@ func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
 	return c.GetResponseID(resp)
 }
 
-func (c *ClientInfo) GetLead(reqParams *LeadRequestParams) ([]*LeadResponse, error) {
+func (c *ClientInfo) GetLead(reqParams *LeadRequestParams) ([]*Lead, error) {
 	addValues := make(map[string]string)
-	leads := new(LeadGetResponse)
+	leads := new(GetLeadResponse)
 	var err error
 
 	if len(reqParams.ID) > 0 {

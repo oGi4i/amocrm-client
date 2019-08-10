@@ -3,7 +3,7 @@ package amocrm
 import "net/http"
 
 type (
-	// Информация о подключении к аккаунту
+	// user account information
 	ClientInfo struct {
 		userLogin string
 		apiHash   string
@@ -12,7 +12,6 @@ type (
 		Cookie    []*http.Cookie
 	}
 
-	//AuthResponse Структура ответа при авторизации
 	AuthResponse struct {
 		Response struct {
 			Auth       bool       `json:"auth"`

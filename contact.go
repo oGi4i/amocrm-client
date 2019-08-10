@@ -17,16 +17,16 @@ func (c *ClientInfo) AddContact(contact *ContactPost) (int, error) {
 	}
 
 	url := c.Url + apiUrls["contacts"]
-	resp, err := c.DoPost(url, &ContactSetRequest{Add: []*ContactPost{contact}})
+	resp, err := c.DoPost(url, &AddContactRequest{Add: []*ContactPost{contact}})
 	if err != nil {
 		return 0, err
 	}
 	return c.GetResponseID(resp)
 }
 
-func (c *ClientInfo) GetContact(reqParams *ContactRequestParams) ([]*ContactResponse, error) {
+func (c *ClientInfo) GetContact(reqParams *ContactRequestParams) ([]*Contact, error) {
 	addValues := map[string]string{}
-	contacts := new(ContactGetResponse)
+	contacts := new(GetContactResponse)
 	var err error
 
 	if reqParams.ID != 0 {
