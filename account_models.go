@@ -43,12 +43,4 @@ type (
 		Language  string `json:"language"`
 		Timezone  string `json:"timezone"`
 	}
-
-	AccountStatus struct {
-		ID         int    `json:"id"`
-		Name       string `json:"name"`
-		Color      string `json:"color"`
-		Sort       int    `json:"sort"`
-		IsEditable bool   `json:"is_editable"`
-	}
 )
