@@ -19,7 +19,7 @@ var (
 	leadArrayFields = []string{"tags", "custom_fields"}
 )
 
-func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
+func (c *ClientInfo) AddLead(lead *LeadAdd) (int, error) {
 	if lead.Name == "" {
 		return 0, errors.New("name is empty")
 	}
@@ -28,7 +28,7 @@ func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
 	}
 
 	url := c.Url + apiUrls["leads"]
-	resp, err := c.DoPost(url, &AddLeadRequest{Add: []*LeadPost{lead}})
+	resp, err := c.DoPost(url, &AddLeadRequest{Add: []*LeadAdd{lead}})
 	if err != nil {
 		return 0, err
 	}
@@ -36,7 +36,7 @@ func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
 	return c.GetResponseID(resp)
 }
 
-func (c *ClientInfo) UpdateLead(lead *LeadPost) (int, error) {
+func (c *ClientInfo) UpdateLead(lead *LeadUpdate) (int, error) {
 	if lead.ID == "" {
 		return 0, errors.New("ID is empty")
 	}
@@ -45,7 +45,7 @@ func (c *ClientInfo) UpdateLead(lead *LeadPost) (int, error) {
 	}
 
 	url := c.Url + apiUrls["leads"]
-	resp, err := c.DoPost(url, &UpdateLeadRequest{Update: []*LeadPost{lead}})
+	resp, err := c.DoPost(url, &UpdateLeadRequest{Update: []*LeadUpdate{lead}})
 	if err != nil {
 		return 0, err
 	}

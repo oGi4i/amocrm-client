@@ -17,7 +17,7 @@ type (
 		Active int
 	}
 
-	LeadPost struct {
+	LeadAdd struct {
 		ID                string             `json:"id,omitempty"`
 		Name              string             `json:"name"`
 		CreatedAt         string             `json:"created_at,omitempty"`
@@ -31,15 +31,31 @@ type (
 		ContactsID        []string           `json:"contacts_id,omitempty"`
 		CompanyID         string             `json:"company_id,omitempty"`
 		RequestID         string             `json:"request_id,omitempty"`
+	}
+
+	LeadUpdate struct {
+		ID                string             `json:"id"`
+		Name              string             `json:"name,omitempty"`
+		CreatedAt         string             `json:"created_at,omitempty"`
+		UpdatedAt         string             `json:"updated_at"`
+		StatusID          string             `json:"status_id,omitempty"`
+		PipelineID        string             `json:"pipeline_id,omitempty"`
+		ResponsibleUserID string             `json:"responsible_user_id,omitempty"`
+		Sale              string             `json:"sale,omitempty"`
+		Tags              string             `json:"tags,omitempty"`
+		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
+		ContactsID        []string           `json:"contacts_id,omitempty"`
+		CompanyID         string             `json:"company_id,omitempty"`
+		RequestID         string             `json:"request_id,omitempty"`
 		Unlink            *Unlink            `json:"unlink,omitempty"`
 	}
 
 	AddLeadRequest struct {
-		Add []*LeadPost `json:"add"`
+		Add []*LeadAdd `json:"add"`
 	}
 
 	UpdateLeadRequest struct {
-		Update []*LeadPost `json:"update"`
+		Update []*LeadUpdate `json:"update"`
 	}
 
 	GetLeadResponse struct {
