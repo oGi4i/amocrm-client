@@ -18,6 +18,7 @@ type (
 	}
 
 	LeadPost struct {
+		ID                string             `json:"id,omitempty"`
 		Name              string             `json:"name"`
 		CreatedAt         string             `json:"created_at,omitempty"`
 		UpdatedAt         string             `json:"updated_at,omitempty"`
@@ -30,10 +31,15 @@ type (
 		ContactsID        []string           `json:"contacts_id,omitempty"`
 		CompanyID         string             `json:"company_id,omitempty"`
 		RequestID         string             `json:"request_id,omitempty"`
+		Unlink            *Unlink            `json:"unlink,omitempty"`
 	}
 
 	AddLeadRequest struct {
 		Add []*LeadPost `json:"add"`
+	}
+
+	UpdateLeadRequest struct {
+		Update []*LeadPost `json:"update"`
 	}
 
 	GetLeadResponse struct {
@@ -89,5 +95,10 @@ type (
 		Params      struct {
 		} `json:"params"`
 		Enums map[string]string `json:"enums"`
+	}
+
+	Unlink struct {
+		ContactsID []int `json:"contacts_id"`
+		CompanyID  int   `json:"company_id"`
 	}
 )

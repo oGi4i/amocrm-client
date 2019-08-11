@@ -36,6 +36,23 @@ func (c *ClientInfo) AddLead(lead *LeadPost) (int, error) {
 	return c.GetResponseID(resp)
 }
 
+func (c *ClientInfo) UpdateLead(lead *LeadPost) (int, error) {
+	if lead.ID == "" {
+		return 0, errors.New("ID is empty")
+	}
+	if lead.UpdatedAt == "" {
+		return 0, errors.New("updatedAt is empty")
+	}
+
+	url := c.Url + apiUrls["leads"]
+	resp, err := c.DoPost(url, &UpdateLeadRequest{Update: []*LeadPost{lead}})
+	if err != nil {
+		return 0, err
+	}
+
+	return c.GetResponseID(resp)
+}
+
 func (c *ClientInfo) GetLead(reqParams *LeadRequestParams) ([]*Lead, error) {
 	addValues := make(map[string]string)
 	leads := new(GetLeadResponse)
