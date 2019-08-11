@@ -43,21 +43,21 @@ type (
 	}
 
 	Task struct {
-		ID                int           `json:"id"`
-		ElementID         int           `json:"element_id"`
-		ElementType       int           `json:"element_type"`
-		CompleteTillAt    int           `json:"complete_till_at"`
-		TaskType          int           `json:"task_type"`
-		Text              string        `json:"text"`
-		CreatedAt         int           `json:"created_at"`
-		UpdatedAt         int           `json:"updated_at"`
-		ResponsibleUserID int           `json:"responsible_user_id"`
-		IsCompleted       bool          `json:"is_completed"`
-		CreatedBy         int           `json:"created_by"`
-		AccountID         int           `json:"account_id"`
-		GroupID           int           `json:"group_id"`
-		Result            []interface{} `json:"result"`
-		Links             *Links        `json:"_links"`
+		ID                int       `json:"id"`
+		ElementID         int       `json:"element_id"`
+		ElementType       int       `json:"element_type"`
+		CompleteTillAt    int       `json:"complete_till_at"`
+		TaskType          int       `json:"task_type"`
+		Text              string    `json:"text"`
+		CreatedAt         int       `json:"created_at"`
+		UpdatedAt         int       `json:"updated_at"`
+		ResponsibleUserID int       `json:"responsible_user_id"`
+		IsCompleted       bool      `json:"is_completed"`
+		CreatedBy         int       `json:"created_by"`
+		AccountID         int       `json:"account_id"`
+		GroupID           int       `json:"group_id"`
+		Result            *NoteTask `json:"result"`
+		Links             *Links    `json:"_links"`
 	}
 
 	TaskType struct {
