@@ -8,6 +8,16 @@ import (
 	"strings"
 )
 
+const (
+	ContactTaskElementType  = 1
+	LeadTaskElementType     = 2
+	CompanyTaskElementType  = 3
+	CustomerTaskElementType = 12
+
+	CompletedTasksTaskFilterStatus  = 1
+	InProgressTasksTaskFilterStatus = 0
+)
+
 func (c *ClientInfo) AddTask(task *TaskPost) (int, error) {
 	if task.ElementID == "" {
 		return 0, errors.New("elementID is empty")

@@ -8,6 +8,13 @@ import (
 	"strings"
 )
 
+const (
+	NoTasksLeadFilter         = 1
+	InProgressTasksLeadFilter = 2
+
+	ActiveLeadsLeadFilter = 1
+)
+
 var (
 	leadArrayFields = []string{"tags", "custom_fields"}
 )
