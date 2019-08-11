@@ -13,9 +13,10 @@ import (
 )
 
 type (
-	// standart response to POST
-	respID struct {
-		Embedded struct {
+	PostResponse struct {
+		ID        int `json:"id"`
+		RequestID int `json:"request_id"`
+		Embedded  struct {
 			Items []struct {
 				ID int `json:"id"`
 			} `json:"items"`
@@ -136,7 +137,7 @@ func (c *ClientInfo) DoPostWithoutCookie(url string, data string) (*http.Respons
 }
 
 func (c *ClientInfo) GetResponseID(resp *http.Response) (int, error) {
-	result := new(respID)
+	result := new(PostResponse)
 	dec := json.NewDecoder(resp.Body)
 	err := dec.Decode(result)
 	if err != nil {

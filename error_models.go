@@ -34,7 +34,7 @@ const (
 
 	ContactGetSearchErrorCode = 219
 
-	LeadCustomFieldInvalidIdCode = 240
+	LeadCustomFieldInvalidIDCode = 240
 
 	TooManyLinkedEntitiesCode = 330
 
@@ -80,7 +80,7 @@ const (
 
 	ContactGetSearchError = "contact_get_search_error"
 
-	LeadCustomFieldInvalidId = "leads_custom_field_invalid_id"
+	LeadCustomFieldInvalidID = "leads_custom_field_invalid_id"
 
 	TooManyLinkedEntities = "too_many_linked_entities"
 
@@ -129,7 +129,7 @@ var (
 
 		ContactGetSearchErrorCode: ContactGetSearchError,
 
-		LeadCustomFieldInvalidIdCode: LeadCustomFieldInvalidId,
+		LeadCustomFieldInvalidIDCode: LeadCustomFieldInvalidID,
 
 		TooManyLinkedEntitiesCode: TooManyLinkedEntities,
 

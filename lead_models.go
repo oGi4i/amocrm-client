@@ -47,17 +47,17 @@ type (
 	Lead struct {
 		ID                int    `json:"id"`
 		Name              string `json:"name"`
-		ResponsibleUserId int    `json:"responsible_user_id"`
+		ResponsibleUserID int    `json:"responsible_user_id"`
 		CreatedBy         int    `json:"created_by"`
 		CreatedAt         int    `json:"created_at"`
 		UpdatedAt         int    `json:"updated_at"`
-		AccountId         int    `json:"account_id"`
+		AccountID         int    `json:"account_id"`
 		IsDeleted         bool   `json:"is_deleted"`
 		MainContact       struct {
 			ID    int    `json:"id"`
 			Links *Links `json:"_links"`
 		} `json:"main_contact"`
-		GroupId       int            `json:"group_id"`
+		GroupID       int            `json:"group_id"`
 		ClosedAt      int            `json:"closed_at"`
 		ClosestTaskAt int            `json:"closest_task_at"`
 		Tags          []*Tag         `json:"tags"`
@@ -66,7 +66,7 @@ type (
 			ID    []int  `json:"id"`
 			Links *Links `json:"_links"`
 		} `json:"contacts"`
-		StatusId int `json:"status_id"`
+		StatusID int `json:"status_id"`
 		Sale     int `json:"sale"`
 		Pipeline struct {
 			ID    int    `json:"id"`

@@ -9,6 +9,7 @@ var (
 		"account":         "/api/v2/account",
 		"events":          "/api/v2/events",
 		"leads":           "/api/v2/leads",
+		"tasks":           "/api/v2/tasks",
 		"pipelines":       "/api/v2/pipelines",
 	}
 )

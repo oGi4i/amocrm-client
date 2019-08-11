@@ -2,7 +2,7 @@ package amocrm
 
 type (
 	PipelineRequestParams struct {
-		Id string
+		ID string
 	}
 
 	PipelineResponse struct {

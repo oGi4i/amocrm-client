@@ -6,8 +6,8 @@ func (c *ClientInfo) GetPipelines(reqParams *PipelineRequestParams) (*PipelineRe
 	addValues := map[string]string{}
 	pipeline := new(PipelineResponse)
 	var err error
-	if reqParams.Id != "" {
-		addValues["id"] = reqParams.Id
+	if reqParams.ID != "" {
+		addValues["id"] = reqParams.ID
 	}
 	url := c.Url + apiUrls["pipelines"]
 	body, err := c.DoGet(url, addValues)
