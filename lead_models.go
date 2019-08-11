@@ -18,7 +18,6 @@ type (
 	}
 
 	LeadAdd struct {
-		ID                string             `json:"id,omitempty"`
 		Name              string             `json:"name"`
 		CreatedAt         string             `json:"created_at,omitempty"`
 		UpdatedAt         string             `json:"updated_at,omitempty"`
@@ -111,10 +110,5 @@ type (
 		Params      struct {
 		} `json:"params"`
 		Enums map[string]string `json:"enums"`
-	}
-
-	Unlink struct {
-		ContactsID []int `json:"contacts_id"`
-		CompanyID  int   `json:"company_id"`
 	}
 )

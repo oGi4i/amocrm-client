@@ -11,13 +11,29 @@ var (
 	contactArrayFields = []string{"tags", "custom_fields"}
 )
 
-func (c *ClientInfo) AddContact(contact *ContactPost) (int, error) {
+func (c *ClientInfo) AddContact(contact *ContactAdd) (int, error) {
 	if contact.Name == "" {
 		return 0, errors.New("name is empty")
 	}
 
 	url := c.Url + apiUrls["contacts"]
-	resp, err := c.DoPost(url, &AddContactRequest{Add: []*ContactPost{contact}})
+	resp, err := c.DoPost(url, &AddContactRequest{Add: []*ContactAdd{contact}})
+	if err != nil {
+		return 0, err
+	}
+	return c.GetResponseID(resp)
+}
+
+func (c *ClientInfo) UpdateContact(contact *ContactUpdate) (int, error) {
+	if contact.ID == "" {
+		return 0, errors.New("ID is empty")
+	}
+	if contact.UpdatedAt == "" {
+		return 0, errors.New("updatedAt is empty")
+	}
+
+	url := c.Url + apiUrls["contacts"]
+	resp, err := c.DoPost(url, &UpdateContactRequest{Update: []*ContactUpdate{contact}})
 	if err != nil {
 		return 0, err
 	}

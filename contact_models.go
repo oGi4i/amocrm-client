@@ -10,22 +10,42 @@ type (
 		Query             string
 	}
 
-	ContactPost struct {
-		Name              string         `json:"name"`
-		CreatedAt         int            `json:"created_at,omitempty"`
-		UpdatedAt         int            `json:"updated_at,omitempty"`
-		ResponsibleUserID int            `json:"responsible_user_id,omitempty"`
-		CreatedBy         int            `json:"created_by,omitempty"`
-		CompanyName       string         `json:"company_name,omitempty"`
-		Tags              string         `json:"tags,omitempty"`
-		LeadsID           string         `json:"leads_id,omitempty"`
-		CustomersID       string         `json:"customers_id,omitempty"`
-		CompanyID         string         `json:"company_id,omitempty"`
-		CustomFields      []*CustomField `json:"custom_fields,omitempty"`
+	ContactAdd struct {
+		Name              string             `json:"name"`
+		CreatedAt         string             `json:"created_at,omitempty"`
+		UpdatedAt         string             `json:"updated_at,omitempty"`
+		ResponsibleUserID string             `json:"responsible_user_id,omitempty"`
+		CreatedBy         string             `json:"created_by,omitempty"`
+		CompanyName       string             `json:"company_name,omitempty"`
+		Tags              string             `json:"tags,omitempty"`
+		LeadsID           []string           `json:"leads_id,omitempty"`
+		CustomersID       string             `json:"customers_id,omitempty"`
+		CompanyID         string             `json:"company_id,omitempty"`
+		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
+	}
+
+	ContactUpdate struct {
+		ID                string             `json:"id"`
+		Name              string             `json:"name,omitempty"`
+		CreatedAt         string             `json:"created_at,omitempty"`
+		UpdatedAt         string             `json:"updated_at"`
+		ResponsibleUserID string             `json:"responsible_user_id,omitempty"`
+		CreatedBy         string             `json:"created_by,omitempty"`
+		CompanyName       string             `json:"company_name,omitempty"`
+		Tags              string             `json:"tags,omitempty"`
+		LeadsID           string             `json:"leads_id,omitempty"`
+		CustomersID       string             `json:"customers_id,omitempty"`
+		CompanyID         string             `json:"company_id,omitempty"`
+		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
+		Unlink            *Unlink            `json:"unlink,omitempty"`
 	}
 
 	AddContactRequest struct {
-		Add []*ContactPost `json:"add"`
+		Add []*ContactAdd `json:"add"`
+	}
+
+	UpdateContactRequest struct {
+		Update []*ContactUpdate `json:"update"`
 	}
 
 	GetContactResponse struct {
