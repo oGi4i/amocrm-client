@@ -1,4 +1,4 @@
-module amocrm
+module amocrm-client
 
 go 1.12
 
