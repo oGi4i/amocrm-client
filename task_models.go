@@ -16,22 +16,22 @@ type (
 		TaskType []int
 	}
 
-	TaskPost struct {
-		ElementID         string `json:"element_id"`
-		ElementType       string `json:"element_type"`
-		CompleteTill      string `json:"complete_till,omitempty"`
-		TaskType          string `json:"task_type"`
+	TaskAdd struct {
+		ElementID         int    `json:"element_id,string"`
+		ElementType       int    `json:"element_type,string"`
+		CompleteTill      int    `json:"complete_till,omitempty"`
+		TaskType          int    `json:"task_type,string"`
 		Text              string `json:"text"`
-		CreatedAt         string `json:"created_at,omitempty"`
-		UpdatedAt         string `json:"updated_at,omitempty"`
-		ResponsibleUserID string `json:"responsible_user_id,omitempty"`
+		CreatedAt         int    `json:"created_at,string,omitempty"`
+		UpdatedAt         int    `json:"updated_at,string,omitempty"`
+		ResponsibleUserID int    `json:"responsible_user_id,string,omitempty"`
 		IsCompleted       bool   `json:"is_completed,omitempty"`
-		CreatedBy         string `json:"created_by,omitempty"`
-		RequestID         string `json:"request_id,omitempty"`
+		CreatedBy         int    `json:"created_by,string,omitempty"`
+		RequestID         int    `json:"request_id,string,omitempty"`
 	}
 
 	AddTaskRequest struct {
-		Add []*TaskPost `json:"add"`
+		Add []*TaskAdd `json:"add"`
 	}
 
 	GetTaskResponse struct {

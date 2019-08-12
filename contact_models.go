@@ -12,30 +12,30 @@ type (
 
 	ContactAdd struct {
 		Name              string             `json:"name"`
-		CreatedAt         string             `json:"created_at,omitempty"`
-		UpdatedAt         string             `json:"updated_at,omitempty"`
-		ResponsibleUserID string             `json:"responsible_user_id,omitempty"`
-		CreatedBy         string             `json:"created_by,omitempty"`
+		CreatedAt         int                `json:"created_at,string,omitempty"`
+		UpdatedAt         int                `json:"updated_at,string,omitempty"`
+		ResponsibleUserID int                `json:"responsible_user_id,string,omitempty"`
+		CreatedBy         int                `json:"created_by,string,omitempty"`
 		CompanyName       string             `json:"company_name,omitempty"`
 		Tags              string             `json:"tags,omitempty"`
 		LeadsID           []string           `json:"leads_id,omitempty"`
-		CustomersID       string             `json:"customers_id,omitempty"`
-		CompanyID         string             `json:"company_id,omitempty"`
+		CustomersID       int                `json:"customers_id,string,omitempty"`
+		CompanyID         int                `json:"company_id,string,omitempty"`
 		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
 	}
 
 	ContactUpdate struct {
-		ID                string             `json:"id"`
+		ID                int                `json:"id,string"`
 		Name              string             `json:"name,omitempty"`
-		CreatedAt         string             `json:"created_at,omitempty"`
-		UpdatedAt         string             `json:"updated_at"`
-		ResponsibleUserID string             `json:"responsible_user_id,omitempty"`
-		CreatedBy         string             `json:"created_by,omitempty"`
+		CreatedAt         int                `json:"created_at,string,omitempty"`
+		UpdatedAt         int                `json:"updated_at,string"`
+		ResponsibleUserID int                `json:"responsible_user_id,string,omitempty"`
+		CreatedBy         int                `json:"created_by,string,omitempty"`
 		CompanyName       string             `json:"company_name,omitempty"`
 		Tags              string             `json:"tags,omitempty"`
-		LeadsID           string             `json:"leads_id,omitempty"`
-		CustomersID       string             `json:"customers_id,omitempty"`
-		CompanyID         string             `json:"company_id,omitempty"`
+		LeadsID           []string           `json:"leads_id,omitempty"`
+		CustomersID       int                `json:"customers_id,string,omitempty"`
+		CompanyID         int                `json:"company_id,string,omitempty"`
 		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
 		Unlink            *Unlink            `json:"unlink,omitempty"`
 	}

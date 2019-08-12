@@ -25,10 +25,10 @@ func (c *ClientInfo) AddContact(contact *ContactAdd) (int, error) {
 }
 
 func (c *ClientInfo) UpdateContact(contact *ContactUpdate) (int, error) {
-	if contact.ID == "" {
+	if contact.ID == 0 {
 		return 0, errors.New("ID is empty")
 	}
-	if contact.UpdatedAt == "" {
+	if contact.UpdatedAt == 0 {
 		return 0, errors.New("updatedAt is empty")
 	}
 

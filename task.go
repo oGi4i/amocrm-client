@@ -18,14 +18,14 @@ const (
 	InProgressTasksTaskFilterStatus = 0
 )
 
-func (c *ClientInfo) AddTask(task *TaskPost) (int, error) {
-	if task.ElementID == "" {
+func (c *ClientInfo) AddTask(task *TaskAdd) (int, error) {
+	if task.ElementID == 0 {
 		return 0, errors.New("elementID is empty")
 	}
-	if task.ElementType == "" {
+	if task.ElementType == 0 {
 		return 0, errors.New("elementType is empty")
 	}
-	if task.TaskType == "" {
+	if task.TaskType == 0 {
 		return 0, errors.New("taskType is empty")
 	}
 	if task.Text == "" {
@@ -33,7 +33,7 @@ func (c *ClientInfo) AddTask(task *TaskPost) (int, error) {
 	}
 
 	url := c.Url + apiUrls["tasks"]
-	resp, err := c.DoPost(url, &AddTaskRequest{Add: []*TaskPost{task}})
+	resp, err := c.DoPost(url, &AddTaskRequest{Add: []*TaskAdd{task}})
 	if err != nil {
 		return 0, err
 	}

@@ -23,7 +23,7 @@ func (c *ClientInfo) AddLead(lead *LeadAdd) (int, error) {
 	if lead.Name == "" {
 		return 0, errors.New("name is empty")
 	}
-	if lead.StatusID == "" {
+	if lead.StatusID == 0 {
 		return 0, errors.New("statusID is empty")
 	}
 
@@ -37,10 +37,10 @@ func (c *ClientInfo) AddLead(lead *LeadAdd) (int, error) {
 }
 
 func (c *ClientInfo) UpdateLead(lead *LeadUpdate) (int, error) {
-	if lead.ID == "" {
+	if lead.ID == 0 {
 		return 0, errors.New("ID is empty")
 	}
-	if lead.UpdatedAt == "" {
+	if lead.UpdatedAt == 0 {
 		return 0, errors.New("updatedAt is empty")
 	}
 

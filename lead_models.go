@@ -19,33 +19,33 @@ type (
 
 	LeadAdd struct {
 		Name              string             `json:"name"`
-		CreatedAt         string             `json:"created_at,omitempty"`
-		UpdatedAt         string             `json:"updated_at,omitempty"`
-		StatusID          string             `json:"status_id"`
-		PipelineID        string             `json:"pipeline_id,omitempty"`
-		ResponsibleUserID string             `json:"responsible_user_id,omitempty"`
-		Sale              string             `json:"sale,omitempty"`
+		CreatedAt         int                `json:"created_at,string,omitempty"`
+		UpdatedAt         int                `json:"updated_at,string,omitempty"`
+		StatusID          int                `json:"status_id,string"`
+		PipelineID        int                `json:"pipeline_id,string,omitempty"`
+		ResponsibleUserID int                `json:"responsible_user_id,string,omitempty"`
+		Sale              int                `json:"sale,string,omitempty"`
 		Tags              string             `json:"tags,omitempty"`
 		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
 		ContactsID        []string           `json:"contacts_id,omitempty"`
-		CompanyID         string             `json:"company_id,omitempty"`
-		RequestID         string             `json:"request_id,omitempty"`
+		CompanyID         int                `json:"company_id,string,omitempty"`
+		RequestID         int                `json:"request_id,string,omitempty"`
 	}
 
 	LeadUpdate struct {
-		ID                string             `json:"id"`
+		ID                int                `json:"id,string"`
 		Name              string             `json:"name,omitempty"`
-		CreatedAt         string             `json:"created_at,omitempty"`
-		UpdatedAt         string             `json:"updated_at"`
-		StatusID          string             `json:"status_id,omitempty"`
-		PipelineID        string             `json:"pipeline_id,omitempty"`
-		ResponsibleUserID string             `json:"responsible_user_id,omitempty"`
-		Sale              string             `json:"sale,omitempty"`
+		CreatedAt         int                `json:"created_at,string,omitempty"`
+		UpdatedAt         int                `json:"updated_at,string"`
+		StatusID          int                `json:"status_id,string,omitempty"`
+		PipelineID        int                `json:"pipeline_id,string,omitempty"`
+		ResponsibleUserID int                `json:"responsible_user_id,string,omitempty"`
+		Sale              int                `json:"sale,string,omitempty"`
 		Tags              string             `json:"tags,omitempty"`
 		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
 		ContactsID        []string           `json:"contacts_id,omitempty"`
-		CompanyID         string             `json:"company_id,omitempty"`
-		RequestID         string             `json:"request_id,omitempty"`
+		CompanyID         int                `json:"company_id,string,omitempty"`
+		RequestID         int                `json:"request_id,string,omitempty"`
 		Unlink            *Unlink            `json:"unlink,omitempty"`
 	}
 
