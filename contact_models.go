@@ -3,7 +3,7 @@ package amocrm
 type (
 	//RequestParams параметры GET запроса
 	ContactRequestParams struct {
-		ID                int    `validate:"omitempty"`
+		ID                []int  `validate:"omitempty,gt=0,dive,required"`
 		LimitRows         int    `validate:"required_with=LimitOffset,lte=500"`
 		LimitOffset       int    `validate:"omitempty"`
 		ResponsibleUserID int    `validate:"omitempty"`

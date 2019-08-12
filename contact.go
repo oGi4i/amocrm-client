@@ -2,6 +2,7 @@ package amocrm
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -44,8 +45,8 @@ func (c *ClientInfo) GetContact(reqParams *ContactRequestParams) ([]*Contact, er
 		return nil, err
 	}
 
-	if reqParams.ID != 0 {
-		addValues["id"] = strconv.Itoa(reqParams.ID)
+	if reqParams.ID != nil {
+		addValues["id"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.ID)), ","), "[]")
 	}
 	if reqParams.LimitRows != 0 {
 		addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
