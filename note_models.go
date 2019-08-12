@@ -2,72 +2,72 @@ package amocrm
 
 type (
 	NotePostParameters struct {
-		UNIQ       string `json:"UNIQ"`
-		LINK       string `json:"LINK"`
-		PHONE      string `json:"PHONE"`
-		DURATION   int    `json:"DURATION"`
-		SRC        string `json:"SRC"`
-		FROM       string `json:"FROM,omitempty"`
-		CallStatus int    `json:"call_status"`
-		CallResult string `json:"call_result,omitempty"`
-		Text       string `json:"text,omitempty"`
+		UNIQ       string `json:"UNIQ" validate:"required"`
+		LINK       string `json:"LINK" validate:"required"`
+		PHONE      string `json:"PHONE" validate:"required"`
+		DURATION   int    `json:"DURATION" validate:"required"`
+		SRC        string `json:"SRC" validate:"required"`
+		FROM       string `json:"FROM,omitempty" validate:"omitempty"`
+		CallStatus int    `json:"call_status" validate:"required"`
+		CallResult string `json:"call_result,omitempty" validate:"omitempty"`
+		Text       string `json:"text,omitempty" validate:"omitempty"`
 	}
 
-	NotePost struct {
-		ElementID         int                 `json:"element_id"`
-		ElementType       int                 `json:"element_type"`
-		Text              string              `json:"text,omitempty"`
-		NoteType          int                 `json:"note_type"`
-		CreatedAt         string              `json:"created_at,omitempty"`
-		UpdatedAt         int                 `json:"updated_at,omitempty"`
-		ResponsibleUserID int                 `json:"responsible_user_id,omitempty"`
-		CreatedBy         int                 `json:"created_by,omitempty"`
-		Params            *NotePostParameters `json:"params,omitempty"`
+	NoteAdd struct {
+		ElementID         int                 `json:"element_id" validate:"required"`
+		ElementType       int                 `json:"element_type" validate:"oneof=1 2 3 4 12"`
+		Text              string              `json:"text,omitempty" validate:"omitempty"`
+		NoteType          int                 `json:"note_type" validate:"omitempty"`
+		CreatedAt         string              `json:"created_at,omitempty" validate:"omitempty"`
+		UpdatedAt         int                 `json:"updated_at,omitempty" validate:"omitempty"`
+		ResponsibleUserID int                 `json:"responsible_user_id,omitempty" validate:"omitempty"`
+		CreatedBy         int                 `json:"created_by,omitempty" validate:"omitempty"`
+		Params            *NotePostParameters `json:"params,omitempty" validate:"omitempty"`
 	}
 
 	AddNoteRequest struct {
-		Add []*NotePost `json:"add"`
+		Add []*NoteAdd `json:"add" validate:"required"`
 	}
 
 	GetNoteResponse struct {
-		Links    *Links `json:"_links"`
+		Links    *Links `json:"_links" validate:"omitempty"`
 		Embedded struct {
-			Items []*Note `json:"items"`
-		} `json:"_embedded"`
-		Response *AmoError `json:"response"`
+			Items []*Note `json:"items" validate:"required"`
+		} `json:"_embedded" validate:"omitempty"`
+		Response *AmoError `json:"response" validate:"omitempty"`
 	}
 
 	Note struct {
-		ID                int             `json:"id"`
-		CreatedBy         int             `json:"created_by"`
-		AccountID         int             `json:"account_id"`
-		GroupID           int             `json:"group_id"`
-		IsEditable        bool            `json:"is_editable"`
-		ElementID         int             `json:"element_id"`
-		ElementType       int             `json:"element_type"`
-		Text              string          `json:"text"`
-		NoteType          int             `json:"note_type"`
-		CreatedAt         int             `json:"created_at"`
-		UpdatedAt         int             `json:"updated_at"`
-		ResponsibleUserID int             `json:"responsible_user_id"`
-		Parameters        *NoteParameters `json:"params,omitempty"`
-		Links             *Links          `json:"_links"`
+		ID                int             `json:"id" validate:"required"`
+		CreatedBy         int             `json:"created_by" validate:"required"`
+		AccountID         int             `json:"account_id" validate:"required"`
+		GroupID           int             `json:"group_id" validate:"omitempty"`
+		IsEditable        bool            `json:"is_editable" validate:"omitempty"`
+		ElementID         int             `json:"element_id" validate:"required"`
+		ElementType       int             `json:"element_type" validate:"oneof=1 2 3 4 12"`
+		Text              string          `json:"text" validate:"required"`
+		NoteType          int             `json:"note_type" validate:"required"`
+		CreatedAt         int             `json:"created_at" validate:"required"`
+		UpdatedAt         int             `json:"updated_at" validate:"required"`
+		ResponsibleUserID int             `json:"responsible_user_id" validate:"required"`
+		Parameters        *NoteParameters `json:"params,omitempty" validate:"omitempty"`
+		Links             *Links          `json:"_links" validate:"required"`
 	}
 
 	NoteParameters struct {
-		Text    string `json:"text"`
-		Service string `json:"service"`
+		Text    string `json:"text" validate:"required"`
+		Service string `json:"service" validate:"required"`
 	}
 
 	NoteType struct {
-		ID         int    `json:"id"`
-		Code       string `json:"code"`
-		IsEditable bool   `json:"is_editable"`
+		ID         int    `json:"id" validate:"required"`
+		Code       string `json:"code" validate:"required"`
+		IsEditable bool   `json:"is_editable" validate:"omitempty"`
 	}
 
 	NoteTask struct {
-		ID    int    `json:"id"`
-		Text  string `json:"text"`
-		Links *Links `json:"_links"`
+		ID    int    `json:"id" validate:"omitempty"`
+		Text  string `json:"text" validate:"omitempty"`
+		Links *Links `json:"_links" validate:"omitempty"`
 	}
 )

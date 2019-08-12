@@ -1,27 +1,38 @@
 package amocrm
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strconv"
+)
 
-func (c *ClientInfo) GetPipelines(reqParams *PipelineRequestParams) (*PipelineResponse, error) {
+func (c *ClientInfo) GetPipelines(reqParams *PipelineRequestParams) (*GetPipelineResponse, error) {
 	addValues := map[string]string{}
-	pipeline := new(PipelineResponse)
-	var err error
-	if reqParams.ID != "" {
-		addValues["id"] = reqParams.ID
+	pipelineResponse := new(GetPipelineResponse)
+	if err := Validate.Struct(reqParams); err != nil {
+		return nil, err
 	}
+
+	if reqParams.ID != 0 {
+		addValues["id"] = strconv.Itoa(reqParams.ID)
+	}
+
 	url := c.Url + apiUrls["pipelines"]
 	body, err := c.DoGet(url, addValues)
 	if err != nil {
-		return pipeline, err
+		return pipelineResponse, err
 	}
-	err = json.Unmarshal(body, pipeline)
+	err = json.Unmarshal(body, pipelineResponse)
 	if err != nil {
 		return nil, err
 	}
 
-	if pipeline.Response != nil {
-		return nil, pipeline.Response
+	if pipelineResponse.Response != nil {
+		return nil, pipelineResponse.Response
 	}
 
-	return pipeline, nil
+	if err := Validate.Struct(pipelineResponse); err != nil {
+		return nil, err
+	}
+
+	return pipelineResponse, nil
 }

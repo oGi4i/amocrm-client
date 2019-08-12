@@ -12,19 +12,6 @@ import (
 	"time"
 )
 
-type (
-	PostResponse struct {
-		ID        int `json:"id"`
-		RequestID int `json:"request_id"`
-		Embedded  struct {
-			Items []struct {
-				ID int `json:"id"`
-			} `json:"items"`
-		} `json:"_embedded"`
-		Response *AmoError `json:"response"`
-	}
-)
-
 func New(accountURL string, login string, hash string) (*ClientInfo, error) {
 	var err error
 
@@ -66,12 +53,18 @@ func New(accountURL string, login string, hash string) (*ClientInfo, error) {
 		if err != nil {
 			return nil, err
 		}
+
 		if len(authResponse.Response.Accounts) > 0 {
 			c.Timezone = authResponse.Response.Accounts[0].Timezone
 		}
 		if !authResponse.Response.Auth {
 			return nil, errors.New(authResponse.Response.Error)
 		}
+
+		if err := Validate.Struct(authResponse); err != nil {
+			return nil, err
+		}
+
 		return c, nil
 	} else {
 		err = errors.New("Wrong http status: " + string(resp.StatusCode))

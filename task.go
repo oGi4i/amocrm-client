@@ -2,7 +2,6 @@ package amocrm
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -19,17 +18,8 @@ const (
 )
 
 func (c *ClientInfo) AddTask(task *TaskAdd) (int, error) {
-	if task.ElementID == 0 {
-		return 0, errors.New("elementID is empty")
-	}
-	if task.ElementType == 0 {
-		return 0, errors.New("elementType is empty")
-	}
-	if task.TaskType == 0 {
-		return 0, errors.New("taskType is empty")
-	}
-	if task.Text == "" {
-		return 0, errors.New("text is empty")
+	if err := Validate.Struct(task); err != nil {
+		return 0, err
 	}
 
 	url := c.Url + apiUrls["tasks"]
@@ -44,26 +34,27 @@ func (c *ClientInfo) AddTask(task *TaskAdd) (int, error) {
 func (c *ClientInfo) GetTask(reqParams *TaskRequestParams) ([]*Task, error) {
 	addValues := make(map[string]string)
 	tasks := new(GetTaskResponse)
-	var err error
+	if err := Validate.Struct(reqParams); err != nil {
+		return nil, err
+	}
 
-	if len(reqParams.ID) > 0 {
+	if reqParams.ID != nil {
 		addValues["id"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.ID)), ","), "[]")
-	} else {
-		if reqParams.LimitRows != 0 {
-			addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
-			if reqParams.LimitOffset != 0 {
-				addValues["limit_offset"] = strconv.Itoa(reqParams.LimitOffset)
-			}
+	}
+	if reqParams.LimitRows != 0 {
+		addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
+		if reqParams.LimitOffset != 0 {
+			addValues["limit_offset"] = strconv.Itoa(reqParams.LimitOffset)
 		}
-		if len(reqParams.ElementID) > 0 {
-			addValues["element_id"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.ElementID)), ","), "[]")
-		}
-		if reqParams.ResponsibleUserID != 0 {
-			addValues["responsible_user_id"] = strconv.Itoa(reqParams.ResponsibleUserID)
-		}
-		if reqParams.Type != "" {
-			addValues["type"] = reqParams.Type
-		}
+	}
+	if reqParams.ElementID != nil {
+		addValues["element_id"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.ElementID)), ","), "[]")
+	}
+	if reqParams.ResponsibleUserID != 0 {
+		addValues["responsible_user_id"] = strconv.Itoa(reqParams.ResponsibleUserID)
+	}
+	if reqParams.Type != "" {
+		addValues["type"] = reqParams.Type
 	}
 
 	url := c.Url + apiUrls["tasks"]
@@ -79,6 +70,10 @@ func (c *ClientInfo) GetTask(reqParams *TaskRequestParams) ([]*Task, error) {
 
 	if tasks.Response != nil {
 		return nil, tasks.Response
+	}
+
+	if err := Validate.Struct(tasks); err != nil {
+		return nil, err
 	}
 
 	return tasks.Embedded.Items, err

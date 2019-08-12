@@ -1,23 +1,17 @@
 package amocrm
 
 import (
-	"errors"
 	"fmt"
 )
 
-func (c *ClientInfo) AddNote(note *NotePost) (int, error) {
-	if note.ElementID == 0 {
-		return 0, errors.New("elementID is empty")
+func (c *ClientInfo) AddNote(note *NoteAdd) (int, error) {
+	if err := Validate.Struct(note); err != nil {
+		return 0, err
 	}
-	if note.ElementType == 0 {
-		return 0, errors.New("elementType is empty")
-	}
-	if note.NoteType == 0 {
-		return 0, errors.New("noteType is empty")
-	}
+
 	url := c.Url + apiUrls["notes"]
 	fmt.Println(note)
-	resp, err := c.DoPost(url, &AddNoteRequest{Add: []*NotePost{note}})
+	resp, err := c.DoPost(url, &AddNoteRequest{Add: []*NoteAdd{note}})
 	if err != nil {
 		return 0, err
 	}

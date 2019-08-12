@@ -3,112 +3,96 @@ package amocrm
 type (
 	//RequestParams параметры GET запроса
 	LeadRequestParams struct {
-		ID                []int
-		LimitRows         int
-		LimitOffset       int
-		ResponsibleUserID int
-		Query             string
-		Status            []int
-		Filter            *LeadRequestFilter
+		ID                []int              `validate:"omitempty,gt=0,dive,required"`
+		LimitRows         int                `validate:"required_with=LimitOffset,lte=500"`
+		LimitOffset       int                `validate:"omitempty"`
+		ResponsibleUserID int                `validate:"omitempty"`
+		Query             string             `validate:"omitempty"`
+		Status            []int              `validate:"omitempty,gt=0,dive,required"`
+		Filter            *LeadRequestFilter `validate:"omitempty"`
 	}
 
 	LeadRequestFilter struct {
-		Tasks  int
-		Active int
+		Tasks  int `validate:"omitempty,oneof=1 2"`
+		Active int `validate:"omitempty,eq=1"`
 	}
 
 	LeadAdd struct {
-		Name              string             `json:"name"`
-		CreatedAt         int                `json:"created_at,string,omitempty"`
-		UpdatedAt         int                `json:"updated_at,string,omitempty"`
-		StatusID          int                `json:"status_id,string"`
-		PipelineID        int                `json:"pipeline_id,string,omitempty"`
-		ResponsibleUserID int                `json:"responsible_user_id,string,omitempty"`
-		Sale              int                `json:"sale,string,omitempty"`
-		Tags              string             `json:"tags,omitempty"`
-		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
-		ContactsID        []string           `json:"contacts_id,omitempty"`
-		CompanyID         int                `json:"company_id,string,omitempty"`
-		RequestID         int                `json:"request_id,string,omitempty"`
+		Name              string             `json:"name" validate:"required"`
+		CreatedAt         int                `json:"created_at,string,omitempty" validate:"omitempty"`
+		UpdatedAt         int                `json:"updated_at,string,omitempty" validate:"omitempty"`
+		StatusID          int                `json:"status_id,string" validate:"required"`
+		PipelineID        int                `json:"pipeline_id,string,omitempty" validate:"omitempty"`
+		ResponsibleUserID int                `json:"responsible_user_id,string,omitempty" validate:"omitempty"`
+		Sale              int                `json:"sale,string,omitempty" validate:"omitempty"`
+		Tags              string             `json:"tags,omitempty" validate:"omitempty"`
+		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty" validate:"omitempty,gt=0,dive,required"`
+		ContactsID        []string           `json:"contacts_id,omitempty" validate:"omitempty,gt=0,dive,required"`
+		CompanyID         int                `json:"company_id,string,omitempty" validate:"omitempty"`
+		RequestID         int                `json:"request_id,string,omitempty" validate:"omitempty"`
 	}
 
 	LeadUpdate struct {
-		ID                int                `json:"id,string"`
-		Name              string             `json:"name,omitempty"`
-		CreatedAt         int                `json:"created_at,string,omitempty"`
-		UpdatedAt         int                `json:"updated_at,string"`
-		StatusID          int                `json:"status_id,string,omitempty"`
-		PipelineID        int                `json:"pipeline_id,string,omitempty"`
-		ResponsibleUserID int                `json:"responsible_user_id,string,omitempty"`
-		Sale              int                `json:"sale,string,omitempty"`
-		Tags              string             `json:"tags,omitempty"`
-		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty"`
-		ContactsID        []string           `json:"contacts_id,omitempty"`
-		CompanyID         int                `json:"company_id,string,omitempty"`
-		RequestID         int                `json:"request_id,string,omitempty"`
-		Unlink            *Unlink            `json:"unlink,omitempty"`
+		ID                int                `json:"id,string" validate:"required"`
+		Name              string             `json:"name,omitempty" validate:"omitempty"`
+		CreatedAt         int                `json:"created_at,string,omitempty" validate:"omitempty"`
+		UpdatedAt         int                `json:"updated_at,string" validate:"required"`
+		StatusID          int                `json:"status_id,string,omitempty" validate:"omitempty"`
+		PipelineID        int                `json:"pipeline_id,string,omitempty" validate:"omitempty"`
+		ResponsibleUserID int                `json:"responsible_user_id,string,omitempty" validate:"omitempty"`
+		Sale              int                `json:"sale,string,omitempty" validate:"omitempty"`
+		Tags              string             `json:"tags,omitempty" validate:"omitempty"`
+		CustomFields      []*CustomFieldPost `json:"custom_fields,omitempty" validate:"omitempty,gt=0,dive,required"`
+		ContactsID        []string           `json:"contacts_id,omitempty" validate:"omitempty,gt=0,dive,required"`
+		CompanyID         int                `json:"company_id,string,omitempty" validate:"omitempty"`
+		RequestID         int                `json:"request_id,string,omitempty" validate:"omitempty"`
+		Unlink            *Unlink            `json:"unlink,omitempty" validate:"omitempty"`
 	}
 
 	AddLeadRequest struct {
-		Add []*LeadAdd `json:"add"`
+		Add []*LeadAdd `json:"add" validate:"required,dive,required"`
 	}
 
 	UpdateLeadRequest struct {
-		Update []*LeadUpdate `json:"update"`
+		Update []*LeadUpdate `json:"update" validate:"required,dive,required"`
 	}
 
 	GetLeadResponse struct {
-		Links    *Links `json:"_links"`
+		Links    *Links `json:"_links" validate:"omitempty"`
 		Embedded struct {
-			Items []*Lead `json:"items"`
-		} `json:"_embedded"`
-		Response *AmoError `json:"response"`
+			Items []*Lead `json:"items" validate:"required,dive,required"`
+		} `json:"_embedded" validate:"omitempty"`
+		Response *AmoError `json:"response" validate:"omitempty"`
 	}
 
 	Lead struct {
-		ID                int    `json:"id"`
-		Name              string `json:"name"`
-		ResponsibleUserID int    `json:"responsible_user_id"`
-		CreatedBy         int    `json:"created_by"`
-		CreatedAt         int    `json:"created_at"`
-		UpdatedAt         int    `json:"updated_at"`
-		AccountID         int    `json:"account_id"`
-		IsDeleted         bool   `json:"is_deleted"`
+		ID                int    `json:"id" validate:"required"`
+		Name              string `json:"name" validate:"required"`
+		ResponsibleUserID int    `json:"responsible_user_id" validate:"required"`
+		CreatedBy         int    `json:"created_by" validate:"required"`
+		CreatedAt         int    `json:"created_at" validate:"required"`
+		UpdatedAt         int    `json:"updated_at" validate:"required"`
+		AccountID         int    `json:"account_id" validate:"required"`
+		IsDeleted         bool   `json:"is_deleted" validate:"omitempty"`
 		MainContact       struct {
-			ID    int    `json:"id"`
-			Links *Links `json:"_links"`
-		} `json:"main_contact"`
-		GroupID       int            `json:"group_id"`
-		ClosedAt      int            `json:"closed_at"`
-		ClosestTaskAt int            `json:"closest_task_at"`
-		Tags          []*Tag         `json:"tags"`
-		CustomFields  []*CustomField `json:"custom_fields,omitempty"`
+			ID    int    `json:"id" validate:"omitempty"`
+			Links *Links `json:"_links" validate:"omitempty"`
+		} `json:"main_contact,omitempty" validate:"omitempty"`
+		GroupID       int            `json:"group_id,omitempty" validate:"omitempty"`
+		ClosedAt      int            `json:"closed_at,omitempty" validate:"omitempty"`
+		ClosestTaskAt int            `json:"closest_task_at,omitempty" validate:"omitempty"`
+		Tags          []*Tag         `json:"tags,omitempty" validate:"omitempty,dive,required"`
+		CustomFields  []*CustomField `json:"custom_fields,omitempty" validate:"omitempty"`
 		Contact       struct {
-			ID    []int  `json:"id"`
-			Links *Links `json:"_links"`
-		} `json:"contacts"`
-		StatusID int `json:"status_id"`
-		Sale     int `json:"sale"`
+			ID    []int  `json:"id" validate:"omitempty,dive,required"`
+			Links *Links `json:"_links" validate:"omitempty"`
+		} `json:"contacts,omitempty" validate:"omitempty"`
+		StatusID int `json:"status_id" validate:"required"`
+		Sale     int `json:"sale,omitempty" validate:"omitempty"`
 		Pipeline struct {
-			ID    int    `json:"id"`
-			Links *Links `json:"_links"`
-		} `json:"pipeline"`
-		Links *Links `json:"_links"`
-	}
-
-	LeadCustomField struct {
-		ID          int    `json:"id"`
-		Name        string `json:"name"`
-		FieldType   int    `json:"field_type"`
-		Sort        int    `json:"sort"`
-		IsMultiple  bool   `json:"is_multiple"`
-		IsSystem    bool   `json:"is_system"`
-		IsEditable  bool   `json:"is_editable"`
-		IsRequired  bool   `json:"is_required"`
-		IsDeletable bool   `json:"is_deletable"`
-		IsVisible   bool   `json:"is_visible"`
-		Params      struct {
-		} `json:"params"`
-		Enums map[string]string `json:"enums"`
+			ID    int    `json:"id" validate:"required"`
+			Links *Links `json:"_links" validate:"required"`
+		} `json:"pipeline" validate:"required"`
+		Links *Links `json:"_links" validate:"required"`
 	}
 )

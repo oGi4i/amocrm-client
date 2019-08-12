@@ -8,10 +8,13 @@ import (
 func (c *ClientInfo) GetAccount(reqParams *AccountRequestParams) (*AccountResponse, error) {
 	addValues := map[string]string{}
 	account := new(AccountResponse)
-	var err error
-	if reqParams.With != nil {
-		addValues["with"] = strings.Join(reqParams.With, ",")
+
+	if err := Validate.Struct(reqParams); err != nil {
+		return nil, err
 	}
+
+	addValues["with"] = strings.Join(reqParams.With, ",")
+
 	url := c.Url + apiUrls["account"]
 	body, err := c.DoGet(url, addValues)
 	if err != nil {
@@ -27,5 +30,10 @@ func (c *ClientInfo) GetAccount(reqParams *AccountRequestParams) (*AccountRespon
 
 		return nil, amoError
 	}
+
+	if err := Validate.Struct(account); err != nil {
+		return nil, err
+	}
+
 	return account, nil
 }

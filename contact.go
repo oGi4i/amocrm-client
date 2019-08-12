@@ -2,7 +2,6 @@ package amocrm
 
 import (
 	"encoding/json"
-	"errors"
 	"strconv"
 	"strings"
 )
@@ -12,8 +11,8 @@ var (
 )
 
 func (c *ClientInfo) AddContact(contact *ContactAdd) (int, error) {
-	if contact.Name == "" {
-		return 0, errors.New("name is empty")
+	if err := Validate.Struct(contact); err != nil {
+		return 0, err
 	}
 
 	url := c.Url + apiUrls["contacts"]
@@ -25,11 +24,8 @@ func (c *ClientInfo) AddContact(contact *ContactAdd) (int, error) {
 }
 
 func (c *ClientInfo) UpdateContact(contact *ContactUpdate) (int, error) {
-	if contact.ID == 0 {
-		return 0, errors.New("ID is empty")
-	}
-	if contact.UpdatedAt == 0 {
-		return 0, errors.New("updatedAt is empty")
+	if err := Validate.Struct(contact); err != nil {
+		return 0, err
 	}
 
 	url := c.Url + apiUrls["contacts"]
@@ -43,24 +39,25 @@ func (c *ClientInfo) UpdateContact(contact *ContactUpdate) (int, error) {
 func (c *ClientInfo) GetContact(reqParams *ContactRequestParams) ([]*Contact, error) {
 	addValues := map[string]string{}
 	contacts := new(GetContactResponse)
-	var err error
+
+	if err := Validate.Struct(reqParams); err != nil {
+		return nil, err
+	}
 
 	if reqParams.ID != 0 {
 		addValues["id"] = strconv.Itoa(reqParams.ID)
-
-	} else {
-		if reqParams.LimitRows != 0 {
-			addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
-			if reqParams.LimitOffset != 0 {
-				addValues["limit_offset"] = strconv.Itoa(reqParams.LimitOffset)
-			}
+	}
+	if reqParams.LimitRows != 0 {
+		addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
+		if reqParams.LimitOffset != 0 {
+			addValues["limit_offset"] = strconv.Itoa(reqParams.LimitOffset)
 		}
-		if reqParams.ResponsibleUserID != 0 {
-			addValues["responsible_user_id"] = strconv.Itoa(reqParams.ResponsibleUserID)
-		}
-		if reqParams.Query != "" {
-			addValues["query"] = reqParams.Query
-		}
+	}
+	if reqParams.ResponsibleUserID != 0 {
+		addValues["responsible_user_id"] = strconv.Itoa(reqParams.ResponsibleUserID)
+	}
+	if reqParams.Query != "" {
+		addValues["query"] = reqParams.Query
 	}
 
 	url := c.Url + apiUrls["contacts"]
@@ -83,6 +80,10 @@ func (c *ClientInfo) GetContact(reqParams *ContactRequestParams) ([]*Contact, er
 
 	if contacts.Response != nil {
 		return nil, contacts.Response
+	}
+
+	if err := Validate.Struct(contacts); err != nil {
+		return nil, err
 	}
 
 	return contacts.Embedded.Items, err

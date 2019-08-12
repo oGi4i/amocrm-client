@@ -146,7 +146,7 @@ var (
 
 type (
 	AmoError struct {
-		ErrorDetail string `json:"error"`
-		ErrorCode   int    `json:"error_code,string"`
+		ErrorDetail string `json:"error" validate:"required"`
+		ErrorCode   int    `json:"error_code,string" validate:"required"`
 	}
 )

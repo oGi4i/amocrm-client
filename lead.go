@@ -2,7 +2,6 @@ package amocrm
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -20,11 +19,8 @@ var (
 )
 
 func (c *ClientInfo) AddLead(lead *LeadAdd) (int, error) {
-	if lead.Name == "" {
-		return 0, errors.New("name is empty")
-	}
-	if lead.StatusID == 0 {
-		return 0, errors.New("statusID is empty")
+	if err := Validate.Struct(lead); err != nil {
+		return 0, err
 	}
 
 	url := c.Url + apiUrls["leads"]
@@ -37,11 +33,8 @@ func (c *ClientInfo) AddLead(lead *LeadAdd) (int, error) {
 }
 
 func (c *ClientInfo) UpdateLead(lead *LeadUpdate) (int, error) {
-	if lead.ID == 0 {
-		return 0, errors.New("ID is empty")
-	}
-	if lead.UpdatedAt == 0 {
-		return 0, errors.New("updatedAt is empty")
+	if err := Validate.Struct(lead); err != nil {
+		return 0, err
 	}
 
 	url := c.Url + apiUrls["leads"]
@@ -55,27 +48,29 @@ func (c *ClientInfo) UpdateLead(lead *LeadUpdate) (int, error) {
 
 func (c *ClientInfo) GetLead(reqParams *LeadRequestParams) ([]*Lead, error) {
 	addValues := make(map[string]string)
-	leads := new(GetLeadResponse)
-	var err error
+	leadResponse := new(GetLeadResponse)
 
-	if len(reqParams.ID) > 0 {
+	if err := Validate.Struct(reqParams); err != nil {
+		return nil, err
+	}
+
+	if reqParams.ID != nil {
 		addValues["id"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.ID)), ","), "[]")
-	} else {
-		if reqParams.LimitRows != 0 {
-			addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
-			if reqParams.LimitOffset != 0 {
-				addValues["limit_offset"] = strconv.Itoa(reqParams.LimitOffset)
-			}
+	}
+	if reqParams.LimitRows != 0 {
+		addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
+		if reqParams.LimitOffset != 0 {
+			addValues["limit_offset"] = strconv.Itoa(reqParams.LimitOffset)
 		}
-		if reqParams.ResponsibleUserID != 0 {
-			addValues["responsible_user_id"] = strconv.Itoa(reqParams.ResponsibleUserID)
-		}
-		if reqParams.Query != "" {
-			addValues["query"] = reqParams.Query
-		}
-		if len(reqParams.Status) > 0 {
-			addValues["status"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.Status)), ","), "[]")
-		}
+	}
+	if reqParams.ResponsibleUserID != 0 {
+		addValues["responsible_user_id"] = strconv.Itoa(reqParams.ResponsibleUserID)
+	}
+	if reqParams.Query != "" {
+		addValues["query"] = reqParams.Query
+	}
+	if reqParams.Status != nil {
+		addValues["status"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.Status)), ","), "[]")
 	}
 
 	url := c.Url + apiUrls["leads"]
@@ -84,22 +79,26 @@ func (c *ClientInfo) GetLead(reqParams *LeadRequestParams) ([]*Lead, error) {
 		return nil, err
 	}
 
-	err = json.Unmarshal(body, leads)
+	err = json.Unmarshal(body, leadResponse)
 	if err != nil {
 		// fix bad json serialization, where nil array is serialized as nil object
 		stringBody := string(body)
 		for _, s := range leadArrayFields {
 			stringBody = strings.ReplaceAll(stringBody, "\""+s+"\":{}", "\""+s+"\":[]")
 		}
-		err = json.Unmarshal([]byte(stringBody), leads)
+		err = json.Unmarshal([]byte(stringBody), leadResponse)
 		if err != nil {
 			return nil, err
 		}
 	}
 
-	if leads.Response != nil {
-		return nil, leads.Response
+	if leadResponse.Response != nil {
+		return nil, leadResponse.Response
 	}
 
-	return leads.Embedded.Items, err
+	if err := Validate.Struct(leadResponse); err != nil {
+		return nil, err
+	}
+
+	return leadResponse.Embedded.Items, err
 }
