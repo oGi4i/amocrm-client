@@ -31,6 +31,20 @@ func (c *ClientInfo) AddTask(task *TaskAdd) (int, error) {
 	return c.GetResponseID(resp)
 }
 
+func (c *ClientInfo) UpdateTask(task *TaskUpdate) (int, error) {
+	if err := Validate.Struct(task); err != nil {
+		return 0, err
+	}
+
+	url := c.Url + apiUrls["tasks"]
+	resp, err := c.DoPost(url, &UpdateTaskRequest{Update: []*TaskUpdate{task}})
+	if err != nil {
+		return 0, err
+	}
+
+	return c.GetResponseID(resp)
+}
+
 func (c *ClientInfo) GetTask(reqParams *TaskRequestParams) ([]*Task, error) {
 	addValues := make(map[string]string)
 	tasks := new(GetTaskResponse)

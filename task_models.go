@@ -30,8 +30,27 @@ type (
 		RequestID         int    `json:"request_id,string,omitempty" validate:"omitempty"`
 	}
 
+	TaskUpdate struct {
+		ID                int    `json:"id,string" validate:"required"`
+		ElementID         int    `json:"element_id,string,omitempty" validate:"omitempty"`
+		ElementType       int    `json:"element_type,string,omitempty" validate:"omitempty,oneof=1 2 3 12"`
+		CompleteTill      int    `json:"complete_till,omitempty" validate:"omitempty"`
+		TaskType          int    `json:"task_type,string,omitempty" validate:"omitempty"`
+		Text              string `json:"text" validate:"omitempty"`
+		CreatedAt         int    `json:"created_at,string,omitempty" validate:"omitempty"`
+		UpdatedAt         int    `json:"updated_at,string" validate:"required"`
+		ResponsibleUserID int    `json:"responsible_user_id,string,omitempty" validate:"omitempty"`
+		IsCompleted       bool   `json:"is_completed,omitempty" validate:"omitempty"`
+		CreatedBy         int    `json:"created_by,string,omitempty" validate:"omitempty"`
+		RequestID         int    `json:"request_id,string,omitempty" validate:"omitempty"`
+	}
+
 	AddTaskRequest struct {
 		Add []*TaskAdd `json:"add" validate:"required,dive,required"`
+	}
+
+	UpdateTaskRequest struct {
+		Update []*TaskUpdate `json:"update" validate:"required,dive,required"`
 	}
 
 	GetTaskResponse struct {
