@@ -13,6 +13,11 @@ const (
 	CompanyTaskElementType  = 3
 	CustomerTaskElementType = 12
 
+	ContactTaskType  = "contact"
+	LeadTaskType     = "lead"
+	CompanyTaskType  = "company"
+	CustomerTaskType = "customer"
+
 	CompletedTasksTaskFilterStatus  = 1
 	InProgressTasksTaskFilterStatus = 0
 )
