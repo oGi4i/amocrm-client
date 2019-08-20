@@ -1,5 +1,24 @@
 package amocrm
 
+const (
+	TextCustomFieldType = iota + 1
+	NumericCustomFieldType
+	CheckboxCustomFieldType
+	SelectCustomFieldType
+	MultiSelectCustomFieldType
+	DateCustomFieldType
+	UrlCustomFieldType
+	MultiTextCustomFieldType
+	TextAreaCustomFieldType
+	RadioButtonCustomFieldType
+	StreetAddressCustomFieldType
+	SmartAddressCustomFieldType
+	BirthDayCustomFieldType
+	LegalEntityCustomFieldType
+	ItemsCustomFieldType
+	OrgLegalNameCustomFieldType
+)
+
 type (
 	CustomField struct {
 		ID       int            `json:"id" validate:"required"`

@@ -1,7 +1,6 @@
 package amocrm
 
 type (
-	//RequestParams параметры GET запроса
 	AccountRequestParams struct {
 		With []string `validate:"omitempty"`
 	}

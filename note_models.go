@@ -1,6 +1,15 @@
 package amocrm
 
 type (
+	NoteRequestParams struct {
+		Type        string `validate:"required,oneof=lead contact company task"`
+		ID          []int  `validate:"omitempty,gt=0,dive,required"`
+		LimitRows   int    `validate:"required_with=LimitOffset,lte=500"`
+		LimitOffset int    `validate:"omitempty"`
+		ElementID   []int  `validate:"omitempty,gt=0,dive,required"`
+		NoteType    []int  `validate:"omitempty,gt=0,dive,required"`
+	}
+
 	NotePostParameters struct {
 		UNIQ       string `json:"UNIQ" validate:"required"`
 		LINK       string `json:"LINK" validate:"required"`
