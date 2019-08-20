@@ -1,7 +1,7 @@
 package amocrm
 
 const (
-	TextCustomFieldType = iota + 1
+	TextCustomFieldType int = iota + 1
 	NumericCustomFieldType
 	CheckboxCustomFieldType
 	SelectCustomFieldType

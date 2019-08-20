@@ -7,6 +7,13 @@ import (
 	"strings"
 )
 
+const (
+	ContactNoteType = "contact"
+	LeadNoteType    = "lead"
+	CompanyNoteType = "company"
+	TaskNoteType    = "task"
+)
+
 func (c *ClientInfo) AddNote(note *NoteAdd) (int, error) {
 	if err := Validate.Struct(note); err != nil {
 		return 0, err
