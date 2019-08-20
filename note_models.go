@@ -64,8 +64,9 @@ type (
 	}
 
 	NoteParameters struct {
-		Text    string `json:"text" validate:"required"`
-		Service string `json:"service" validate:"required"`
+		Text    string `json:"TEXT" validate:"required"`
+		Service string `json:"service" validate:"omitempty"`
+		HTML    string `json:"HTML" validate:"omitempty"`
 	}
 
 	NoteType struct {

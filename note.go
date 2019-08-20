@@ -29,6 +29,7 @@ func (c *ClientInfo) GetNote(reqParams *NoteRequestParams) ([]*Note, error) {
 		return nil, err
 	}
 
+	addValues["type"] = reqParams.Type
 	if reqParams.ID != nil {
 		addValues["id"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(reqParams.ID)), ","), "[]")
 	}
@@ -53,15 +54,7 @@ func (c *ClientInfo) GetNote(reqParams *NoteRequestParams) ([]*Note, error) {
 
 	err = json.Unmarshal(body, noteResponse)
 	if err != nil {
-		// fix bad json serialization, where nil array is serialized as nil object
-		stringBody := string(body)
-		for _, s := range leadArrayFields {
-			stringBody = strings.ReplaceAll(stringBody, "\""+s+"\":{}", "\""+s+"\":[]")
-		}
-		err = json.Unmarshal([]byte(stringBody), noteResponse)
-		if err != nil {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	if noteResponse.Response != nil {
@@ -73,4 +66,13 @@ func (c *ClientInfo) GetNote(reqParams *NoteRequestParams) ([]*Note, error) {
 	}
 
 	return noteResponse.Embedded.Items, err
+}
+
+func (c *ClientInfo) DownloadAttachment(url string) ([]byte, error) {
+	response, err := c.DoGet(url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	return response, nil
 }
