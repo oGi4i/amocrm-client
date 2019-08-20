@@ -59,6 +59,7 @@ type (
 		CreatedAt         int             `json:"created_at" validate:"required"`
 		UpdatedAt         int             `json:"updated_at" validate:"required"`
 		ResponsibleUserID int             `json:"responsible_user_id" validate:"required"`
+		Attachment        string          `json:"attachment" validate:"omitempty"`
 		Parameters        *NoteParameters `json:"params,omitempty" validate:"omitempty"`
 		Links             *Links          `json:"_links" validate:"required"`
 	}
