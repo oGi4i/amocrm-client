@@ -68,7 +68,8 @@ func (c *ClientInfo) GetNote(reqParams *NoteRequestParams) ([]*Note, error) {
 	return noteResponse.Embedded.Items, err
 }
 
-func (c *ClientInfo) DownloadAttachment(url string) ([]byte, error) {
+func (c *ClientInfo) DownloadAttachment(attachment string) ([]byte, error) {
+	url := c.Url + apiUrls["download"] + attachment
 	response, err := c.DoGet(url, nil)
 	if err != nil {
 		return nil, err
