@@ -2,7 +2,7 @@ package amocrm
 
 type (
 	AccountRequestParams struct {
-		With []string `validate:"oneof=custom_fields users messenger notifications pipelines groups note_types task_types"`
+		With []string `validate:"omitempty,dive,oneof=custom_fields users messenger notifications pipelines groups note_types task_types"`
 	}
 
 	AccountResponse struct {
