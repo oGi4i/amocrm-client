@@ -5,6 +5,17 @@ import (
 	"strings"
 )
 
+const (
+	AccountWithCustomFields  = "custom_fields"
+	AccountWithUsers         = "users"
+	AccountWithMessenger     = "messenger"
+	AccountWithNotifications = "notifications"
+	AccountWithPipelines     = "pipelines"
+	AccountWithGroups        = "groups"
+	AccountWithNoteTypes     = "note_types"
+	AccountWithTaskTypes     = "task_types"
+)
+
 func (c *ClientInfo) GetAccount(reqParams *AccountRequestParams) (*AccountResponse, error) {
 	addValues := map[string]string{}
 	account := new(AccountResponse)
