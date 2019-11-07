@@ -7,16 +7,17 @@ type (
 	}
 
 	User struct {
-		ID       int    `json:"id" validate:"required"`
-		Name     string `json:"name" validate:"required"`
-		LastName string `json:"last_name,omitempty" validate:"omitempty"`
-		Login    string `json:"login" validate:"required"`
-		Language string `json:"language" validate:"required"`
-		GroupID  int    `json:"group_id" validate:"omitempty"`
-		IsActive bool   `json:"is_active" validate:"omitempty"`
-		IsFree   bool   `json:"is_free" validate:"omitempty"`
-		IsAdmin  bool   `json:"is_admin" validate:"omitempty"`
-		Rights   struct {
+		ID          int    `json:"id" validate:"required"`
+		Name        string `json:"name" validate:"required"`
+		LastName    string `json:"last_name,omitempty" validate:"omitempty"`
+		Login       string `json:"login" validate:"required"`
+		Language    string `json:"language" validate:"required"`
+		GroupID     int    `json:"group_id" validate:"omitempty"`
+		IsActive    bool   `json:"is_active" validate:"omitempty"`
+		IsFree      bool   `json:"is_free" validate:"omitempty"`
+		IsAdmin     bool   `json:"is_admin" validate:"omitempty"`
+		PhoneNumber string `json:"phone_number" validate:"omitempty"`
+		Rights      struct {
 			Mail          string `json:"mail" validate:"required"`
 			IncomingLeads string `json:"incoming_leads" validate:"required"`
 			Catalogs      string `json:"catalogs" validate:"required"`
