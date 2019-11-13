@@ -21,6 +21,11 @@ func (c *ClientInfo) GetPipelines(reqParams *PipelineRequestParams) (*GetPipelin
 	if err != nil {
 		return pipelineResponse, err
 	}
+
+	if len(body) == 0 {
+		return nil, nil
+	}
+
 	err = json.Unmarshal(body, pipelineResponse)
 	if err != nil {
 		return nil, err

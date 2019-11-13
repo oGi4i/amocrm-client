@@ -66,6 +66,11 @@ func (c *ClientInfo) GetContact(reqParams *ContactRequestParams) ([]*Contact, er
 	if err != nil {
 		return nil, err
 	}
+
+	if len(body) == 0 {
+		return nil, nil
+	}
+
 	err = json.Unmarshal(body, contacts)
 	if err != nil {
 		// fix bad json serialization, where nil array is serialized as nil object

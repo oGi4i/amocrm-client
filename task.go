@@ -82,6 +82,10 @@ func (c *ClientInfo) GetTask(reqParams *TaskRequestParams) ([]*Task, error) {
 		return nil, err
 	}
 
+	if len(body) == 0 {
+		return nil, nil
+	}
+
 	err = json.Unmarshal(body, tasks)
 	if err != nil {
 		return nil, err

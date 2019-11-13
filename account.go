@@ -31,6 +31,11 @@ func (c *ClientInfo) GetAccount(reqParams *AccountRequestParams) (*AccountRespon
 	if err != nil {
 		return nil, err
 	}
+
+	if len(body) == 0 {
+		return nil, nil
+	}
+
 	err = json.Unmarshal(body, account)
 	if err != nil {
 		amoError := new(AmoError)
