@@ -1,13 +1,11 @@
 package amocrm
 
 type (
-	CustomFieldType int
-
 	CustomField struct {
-		ID       CustomFieldType `json:"id" validate:"required"`
-		Name     string          `json:"name" validate:"required"`
-		Values   []*CustomValue  `json:"values" validate:"required,dive,required"`
-		IsSystem bool            `json:"is_system" validate:"omitempty"`
+		ID       int            `json:"id" validate:"required"`
+		Name     string         `json:"name" validate:"required"`
+		Values   []*CustomValue `json:"values" validate:"required,dive,required"`
+		IsSystem bool           `json:"is_system" validate:"omitempty"`
 	}
 
 	CustomValue struct {
@@ -25,6 +23,8 @@ type (
 		Value   string `json:"value" validate:"required"`
 		Subtype string `json:"subtype,omitempty" validate:"omitempty"`
 	}
+
+	CustomFieldType int
 
 	CustomFieldInfo struct {
 		ID          int             `json:"id" validate:"required"`
