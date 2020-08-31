@@ -1,30 +1,13 @@
 package amocrm
 
-const (
-	TextCustomFieldType int = iota + 1
-	NumericCustomFieldType
-	CheckboxCustomFieldType
-	SelectCustomFieldType
-	MultiSelectCustomFieldType
-	DateCustomFieldType
-	UrlCustomFieldType
-	MultiTextCustomFieldType
-	TextAreaCustomFieldType
-	RadioButtonCustomFieldType
-	StreetAddressCustomFieldType
-	SmartAddressCustomFieldType
-	BirthDayCustomFieldType
-	LegalEntityCustomFieldType
-	ItemsCustomFieldType
-	OrgLegalNameCustomFieldType
-)
-
 type (
+	CustomFieldType int
+
 	CustomField struct {
-		ID       int            `json:"id" validate:"required"`
-		Name     string         `json:"name" validate:"required"`
-		Values   []*CustomValue `json:"values" validate:"required,dive,required"`
-		IsSystem bool           `json:"is_system" validate:"omitempty"`
+		ID       CustomFieldType `json:"id" validate:"required"`
+		Name     string          `json:"name" validate:"required"`
+		Values   []*CustomValue  `json:"values" validate:"required,dive,required"`
+		IsSystem bool            `json:"is_system" validate:"omitempty"`
 	}
 
 	CustomValue struct {
@@ -33,17 +16,17 @@ type (
 		Subtype string `json:"subtype,omitempty" validate:"omitempty"`
 	}
 
-	CustomFieldPost struct {
+	UpdateCustomField struct {
 		ID     int           `json:"id" validate:"required"`
 		Values []interface{} `json:"values" validate:"required,dive,required"`
 	}
 
-	CustomValuePost struct {
+	UpdateCustomValue struct {
 		Value   string `json:"value" validate:"required"`
 		Subtype string `json:"subtype,omitempty" validate:"omitempty"`
 	}
 
-	GetCustomField struct {
+	CustomFieldInfo struct {
 		ID          int    `json:"id" validate:"required"`
 		Name        string `json:"name" validate:"required"`
 		FieldType   int    `json:"field_type" validate:"required"`
@@ -59,4 +42,23 @@ type (
 		} `json:"params" validate:"omitempty"`
 		Enums map[string]string `json:"enums" validate:"omitempty,dive,required"`
 	}
+)
+
+const (
+	TextCustomFieldType CustomFieldType = iota + 1
+	NumericCustomFieldType
+	CheckboxCustomFieldType
+	SelectCustomFieldType
+	MultiSelectCustomFieldType
+	DateCustomFieldType
+	URLCustomFieldType
+	MultiTextCustomFieldType
+	TextAreaCustomFieldType
+	RadioButtonCustomFieldType
+	StreetAddressCustomFieldType
+	SmartAddressCustomFieldType
+	BirthDayCustomFieldType
+	LegalEntityCustomFieldType
+	ItemsCustomFieldType
+	OrgLegalNameCustomFieldType
 )

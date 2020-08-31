@@ -1,5 +1,23 @@
 package amocrm
 
+import "fmt"
+
+type (
+	Error string
+
+	AmoError struct {
+		ErrorDetail string `json:"error" validate:"required"`
+		ErrorCode   int    `json:"error_code,string" validate:"required"`
+	}
+)
+
+func (e Error) Error() string {
+	return string(e)
+}
+func (e *AmoError) Error() string {
+	return fmt.Sprintf("%s: %s", amoErrorTypeMap[e.ErrorCode], e.ErrorDetail)
+}
+
 const (
 	AccountNotFoundCode          = 101
 	BodyMustBeJSONCode           = 102
@@ -9,7 +27,7 @@ const (
 	InvalidCredentialsCode    = 110
 	CaptchaInputRequiredCode  = 111
 	DisabledAccountCode       = 112
-	UnauthorizedIpAddressCode = 113
+	UnauthorizedIPAddressCode = 113
 
 	ContactAddEmptyArrayCode                = 201
 	ContactAddInsufficientAccessRightsCode  = 202
@@ -55,7 +73,7 @@ const (
 	InvalidCredentials    = "invalid_credentials"
 	CaptchaInputRequired  = "captcha_input_required"
 	DisabledAccount       = "disabled_account"
-	UnauthorizedIpAddress = "unauthorized_ip_address"
+	UnauthorizedIPAddress = "unauthorized_ip_address"
 
 	ContactAddEmptyArray                = "contact_add_empty_array"
 	ContactAddInsufficientAccessRights  = "contact_add_insufficient_access_rights"
@@ -95,7 +113,13 @@ const (
 )
 
 var (
-	AmoErrorTypeMap = map[int]string{
+	ErrEmptyLogin         Error = "empty_login"
+	ErrEmptyAPIHash       Error = "empty_api_hash"
+	ErrEmptyPhoneNumber   Error = "empty_phone_number"
+	ErrInvalidEventType   Error = "invalid_event_type"
+	ErrEmptyResponseItems Error = "empty_response_items"
+
+	amoErrorTypeMap = map[int]string{
 		AccountNotFoundCode:          AccountNotFound,
 		BodyMustBeJSONCode:           BodyMustBeJSON,
 		InvalidRequestParametersCode: InvalidRequestParameters,
@@ -104,7 +128,7 @@ var (
 		InvalidCredentialsCode:    InvalidCredentials,
 		CaptchaInputRequiredCode:  CaptchaInputRequired,
 		DisabledAccountCode:       DisabledAccount,
-		UnauthorizedIpAddressCode: UnauthorizedIpAddress,
+		UnauthorizedIPAddressCode: UnauthorizedIPAddress,
 
 		ContactAddEmptyArrayCode:                ContactAddEmptyArray,
 		ContactAddInsufficientAccessRightsCode:  ContactAddInsufficientAccessRights,
@@ -141,12 +165,5 @@ var (
 		RateLimitExceededCode: RateLimitExceeded,
 
 		NoContentCode: NoContent,
-	}
-)
-
-type (
-	AmoError struct {
-		ErrorDetail string `json:"error" validate:"required"`
-		ErrorCode   int    `json:"error_code,string" validate:"required"`
 	}
 )
