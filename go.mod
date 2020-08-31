@@ -1,4 +1,4 @@
-module github.com/ogi4i/amocrm_client
+module github.com/ogi4i/amocrm-client
 
 go 1.15
 

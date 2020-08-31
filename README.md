@@ -5,7 +5,7 @@
 import(
     "fmt"
 
-    "github.com/ogi4i/amocrm_client"
+    "github.com/ogi4i/amocrm-client"
 )
 //Connect AMO
 amo, err := amocrm.New("https://example.amocrm.ru", "example@gmail.com", "453af17f1fdsfsd7792aec4676690567")
