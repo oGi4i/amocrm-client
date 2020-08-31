@@ -27,17 +27,17 @@ type (
 	}
 
 	CustomFieldInfo struct {
-		ID          int    `json:"id" validate:"required"`
-		Name        string `json:"name" validate:"required"`
-		FieldType   int    `json:"field_type" validate:"required"`
-		Sort        int    `json:"sort" validate:"required"`
-		Code        string `json:"code" validate:"omitempty"`
-		IsMultiple  bool   `json:"is_multiple" validate:"omitempty"`
-		IsSystem    bool   `json:"is_system" validate:"omitempty"`
-		IsEditable  bool   `json:"is_editable" validate:"omitempty"`
-		IsRequired  bool   `json:"is_required" validate:"omitempty"`
-		IsDeletable bool   `json:"is_deletable" validate:"omitempty"`
-		IsVisible   bool   `json:"is_visible" validate:"omitempty"`
+		ID          int             `json:"id" validate:"required"`
+		Name        string          `json:"name" validate:"required"`
+		FieldType   CustomFieldType `json:"field_type" validate:"required"`
+		Sort        int             `json:"sort" validate:"required"`
+		Code        string          `json:"code" validate:"omitempty"`
+		IsMultiple  bool            `json:"is_multiple" validate:"omitempty"`
+		IsSystem    bool            `json:"is_system" validate:"omitempty"`
+		IsEditable  bool            `json:"is_editable" validate:"omitempty"`
+		IsRequired  bool            `json:"is_required" validate:"omitempty"`
+		IsDeletable bool            `json:"is_deletable" validate:"omitempty"`
+		IsVisible   bool            `json:"is_visible" validate:"omitempty"`
 		Params      struct {
 		} `json:"params" validate:"omitempty"`
 		Enums map[string]string `json:"enums" validate:"omitempty,dive,required"`
