@@ -202,8 +202,8 @@ func fixBadArraySerialization(body []byte, fields [][]byte) []byte {
 	var old, new []byte
 
 	for _, field := range fields {
-		old = append(append([]byte(`"`), field...), []byte(`":{}"`)...)
-		new = append(append([]byte(`"`), field...), []byte(`":[]"`)...)
+		old = append(append([]byte(`"`), field...), []byte(`":{}`)...)
+		new = append(append([]byte(`"`), field...), []byte(`":[]`)...)
 		body = bytes.ReplaceAll(body, old, new)
 	}
 
