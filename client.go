@@ -111,7 +111,7 @@ func (c *Client) Authorize(ctx context.Context) error {
 		return err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
 	resp, err := c.client.Do(req.WithContext(ctx))
 	if err != nil {
