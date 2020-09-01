@@ -6,17 +6,18 @@ import (
 	"encoding/json"
 	"errors"
 	"io/ioutil"
-	"log"
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
+	"sync"
 	"time"
 
 	"gopkg.in/go-playground/validator.v9"
 )
 
 type (
+	ClientOption func(c *Client)
+
 	Client struct {
 		userLogin string
 		apiHash   string
@@ -25,6 +26,7 @@ type (
 		cookie    []*http.Cookie
 		client    *http.Client
 		validator *validator.Validate
+		mu        sync.RWMutex
 	}
 
 	PostResponse struct {
@@ -58,9 +60,11 @@ const (
 	tasksURI     = "/api/v2/tasks"
 	pipelinesURI = "/api/v2/pipelines"
 	downloadURI  = "/download/"
+
+	defaultHTTPTimeout = 5 * time.Second
 )
 
-func NewClient(accountURL string, login string, hash string) (*Client, error) {
+func NewClient(accountURL string, login string, hash string, opts ...ClientOption) (*Client, error) {
 	if login == "" {
 		return nil, ErrEmptyLogin
 	}
@@ -68,41 +72,67 @@ func NewClient(accountURL string, login string, hash string) (*Client, error) {
 		return nil, ErrEmptyAPIHash
 	}
 
-	c := &Client{
-		userLogin: login,
-		apiHash:   hash,
-	}
-
 	_, err := url.Parse(accountURL)
 	if err != nil {
 		return nil, err
 	}
 
-	c.baseURL = accountURL
+	c := &Client{
+		userLogin: login,
+		apiHash:   hash,
+		baseURL:   accountURL,
+		client: &http.Client{
+			Transport: http.DefaultTransport,
+			Timeout:   defaultHTTPTimeout,
+		},
+		validator: validator.New(),
+	}
 
+	for _, o := range opts {
+		o(c)
+	}
+
+	return c, nil
+}
+
+func WithHTTPTimeout(d time.Duration) ClientOption {
+	return func(c *Client) {
+		c.client.Timeout = d
+	}
+}
+
+func (c *Client) Authorize(ctx context.Context) error {
 	values := url.Values{}
 	values.Set("USER_LOGIN", c.userLogin)
 	values.Set("USER_HASH", c.apiHash)
 
-	body := strings.NewReader(values.Encode())
-	resp, err := http.Post(c.baseURL+authURI, "application/x-www-form-urlencoded", body)
+	req, err := http.NewRequest(http.MethodPost, c.baseURL+authURI, bytes.NewBufferString(values.Encode()))
 	if err != nil {
-		return nil, err
+		return err
+	}
+
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.client.Do(req.WithContext(ctx))
+	if err != nil {
+		return err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode == 200 {
+		c.mu.Lock()
+		defer c.mu.Unlock()
 		c.cookie = resp.Cookies()
 
 		body, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		authResponse := new(AuthResponse)
 		err = json.Unmarshal(body, authResponse)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		if len(authResponse.Response.Accounts) > 0 {
@@ -110,17 +140,17 @@ func NewClient(accountURL string, login string, hash string) (*Client, error) {
 		}
 
 		if !authResponse.Response.Auth {
-			return nil, errors.New(authResponse.Response.Error)
+			return errors.New(authResponse.Response.Error)
 		}
 
 		if err := c.validator.Struct(authResponse); err != nil {
-			return nil, err
+			return err
 		}
 
-		return c, nil
+		return nil
 	}
 
-	return nil, errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
+	return errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
 }
 
 func (c *Client) DownloadAttachment(ctx context.Context, attachment string) ([]byte, error) {
@@ -133,9 +163,11 @@ func (c *Client) doGet(ctx context.Context, url string, params map[string]string
 		return nil, err
 	}
 
+	c.mu.RLock()
 	for _, cookie := range c.cookie {
 		req.AddCookie(cookie)
 	}
+	c.mu.RUnlock()
 
 	q := req.URL.Query()
 	for k, v := range params {
@@ -169,23 +201,12 @@ func (c *Client) doPost(ctx context.Context, url string, data interface{}) (*htt
 	}
 
 	req.Header.Set("Content-Type", "application/json")
+
+	c.mu.RLock()
 	for _, cookie := range c.cookie {
 		req.AddCookie(cookie)
 	}
-
-	log.Printf("Request: Created: %s; URL: %s; Headers: %v; Body: %v", time.Now().Format(time.RFC3339), req.URL, req.Header, data)
-
-	return c.client.Do(req.WithContext(ctx))
-}
-
-func (c *Client) DoPostWithoutCookie(ctx context.Context, url string, data string) (*http.Response, error) {
-	req, err := http.NewRequest(http.MethodPost, url, strings.NewReader(data))
-	if err != nil {
-		return nil, err
-	}
-
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	c.mu.RUnlock()
 
 	return c.client.Do(req.WithContext(ctx))
 }
