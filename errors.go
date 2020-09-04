@@ -113,11 +113,11 @@ const (
 )
 
 var (
-	ErrEmptyLogin         Error = "empty_login"
-	ErrEmptyAPIHash       Error = "empty_api_hash"
-	ErrEmptyPhoneNumber   Error = "empty_phone_number"
-	ErrInvalidEventType   Error = "invalid_event_type"
-	ErrEmptyResponseItems Error = "empty_response_items"
+	ErrEmptyClientID        Error = "empty_client_id"
+	ErrEmptyClientSecret    Error = "empty_client_secret"
+	ErrEmptyRefreshToken    Error = "empty_refresh_token"
+	ErrInvalidAuthTokenType Error = "invalid_auth_token_type"
+	ErrEmptyResponseItems   Error = "empty_response_items"
 
 	amoErrorTypeMap = map[int]string{
 		AccountNotFoundCode:          AccountNotFound,
