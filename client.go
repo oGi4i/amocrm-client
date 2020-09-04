@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strconv"
 	"sync"
 	"time"
 
@@ -18,15 +16,20 @@ import (
 type (
 	ClientOption func(c *Client)
 
+	AuthToken struct {
+		mu           sync.RWMutex
+		AccessToken  string
+		RefreshToken string
+		ExpiresAt    time.Time
+	}
+
 	Client struct {
-		userLogin string
-		apiHash   string
-		timezone  string
-		baseURL   string
-		cookie    []*http.Cookie
-		client    *http.Client
-		validator *validator.Validate
-		mu        sync.RWMutex
+		clientID     string
+		clientSecret string
+		baseURL      string
+		client       *http.Client
+		validator    *validator.Validate
+		token        *AuthToken
 	}
 
 	PostResponse struct {
@@ -39,20 +42,10 @@ type (
 		} `json:"_embedded" validate:"omitempty"`
 		Response *AmoError `json:"response" validate:"omitempty"`
 	}
-
-	AuthResponse struct {
-		Response struct {
-			Auth       bool           `json:"auth" validate:"required"`
-			Accounts   []*AuthAccount `json:"accounts" validate:"omitempty,dive,required"`
-			User       *AuthUser      `json:"user" validate:"required"`
-			ServerTime int            `json:"server_time" validate:"required"`
-			Error      string         `json:"error" validate:"omitempty"`
-		} `json:"response" validate:"required"`
-	}
 )
 
 const (
-	authURI      = "/private/api/auth.php?type=json"
+	authURI      = "/oauth2/access_token"
 	notesURI     = "/api/v2/notes"
 	contactsURI  = "/api/v2/contacts"
 	accountURI   = "/api/v2/account"
@@ -64,12 +57,15 @@ const (
 	defaultHTTPTimeout = 5 * time.Second
 )
 
-func NewClient(accountURL string, login string, hash string, opts ...ClientOption) (*Client, error) {
-	if login == "" {
-		return nil, ErrEmptyLogin
+func NewClient(clientID, clientSecret, refreshToken, accountURL string, opts ...ClientOption) (*Client, error) {
+	if clientID == "" {
+		return nil, ErrEmptyClientID
 	}
-	if hash == "" {
-		return nil, ErrEmptyAPIHash
+	if clientSecret == "" {
+		return nil, ErrEmptyClientSecret
+	}
+	if refreshToken == "" {
+		return nil, ErrEmptyRefreshToken
 	}
 
 	_, err := url.Parse(accountURL)
@@ -78,9 +74,12 @@ func NewClient(accountURL string, login string, hash string, opts ...ClientOptio
 	}
 
 	c := &Client{
-		userLogin: login,
-		apiHash:   hash,
-		baseURL:   accountURL,
+		clientID:     clientID,
+		clientSecret: clientID,
+		baseURL:      accountURL,
+		token: &AuthToken{
+			RefreshToken: refreshToken,
+		},
 		client: &http.Client{
 			Transport: http.DefaultTransport,
 			Timeout:   defaultHTTPTimeout,
@@ -101,58 +100,6 @@ func WithHTTPTimeout(d time.Duration) ClientOption {
 	}
 }
 
-func (c *Client) Authorize(ctx context.Context) error {
-	values := url.Values{}
-	values.Set("USER_LOGIN", c.userLogin)
-	values.Set("USER_HASH", c.apiHash)
-
-	req, err := http.NewRequest(http.MethodPost, c.baseURL+authURI, bytes.NewBufferString(values.Encode()))
-	if err != nil {
-		return err
-	}
-
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	resp, err := c.client.Do(req.WithContext(ctx))
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode == 200 {
-		c.mu.Lock()
-		defer c.mu.Unlock()
-		c.cookie = resp.Cookies()
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		authResponse := new(AuthResponse)
-		err = json.Unmarshal(body, authResponse)
-		if err != nil {
-			return err
-		}
-
-		if len(authResponse.Response.Accounts) > 0 {
-			c.timezone = authResponse.Response.Accounts[0].Timezone
-		}
-
-		if !authResponse.Response.Auth {
-			return errors.New(authResponse.Response.Error)
-		}
-
-		if err := c.validator.Struct(authResponse); err != nil {
-			return err
-		}
-
-		return nil
-	}
-
-	return errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
-}
-
 func (c *Client) DownloadAttachment(ctx context.Context, attachment string) ([]byte, error) {
 	return c.doGet(ctx, c.baseURL+downloadURI+attachment, nil)
 }
@@ -163,11 +110,7 @@ func (c *Client) doGet(ctx context.Context, url string, params map[string]string
 		return nil, err
 	}
 
-	c.mu.RLock()
-	for _, cookie := range c.cookie {
-		req.AddCookie(cookie)
-	}
-	c.mu.RUnlock()
+	c.withAuthToken(req)
 
 	q := req.URL.Query()
 	for k, v := range params {
@@ -202,11 +145,7 @@ func (c *Client) doPost(ctx context.Context, url string, data interface{}) (*htt
 
 	req.Header.Set("Content-Type", "application/json")
 
-	c.mu.RLock()
-	for _, cookie := range c.cookie {
-		req.AddCookie(cookie)
-	}
-	c.mu.RUnlock()
+	c.withAuthToken(req)
 
 	return c.client.Do(req.WithContext(ctx))
 }
