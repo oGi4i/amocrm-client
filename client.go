@@ -181,6 +181,10 @@ func (c *Client) doGet(ctx context.Context, url string, params map[string]string
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode >= 400 {
+		return nil, errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
+	}
+
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -213,6 +217,10 @@ func (c *Client) doPost(ctx context.Context, url string, data interface{}) ([]by
 		return nil, err
 	}
 	defer resp.Body.Close()
+
+	if resp.StatusCode >= 400 {
+		return nil, errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
+	}
 
 	respBody, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
