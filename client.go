@@ -119,38 +119,38 @@ func (c *Client) Authorize(ctx context.Context) error {
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 200 {
-		c.mu.Lock()
-		defer c.mu.Unlock()
-		c.cookie = resp.Cookies()
-
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		authResponse := new(AuthResponse)
-		err = json.Unmarshal(body, authResponse)
-		if err != nil {
-			return err
-		}
-
-		if len(authResponse.Response.Accounts) > 0 {
-			c.timezone = authResponse.Response.Accounts[0].Timezone
-		}
-
-		if !authResponse.Response.Auth {
-			return errors.New(authResponse.Response.Error)
-		}
-
-		if err := c.validator.Struct(authResponse); err != nil {
-			return err
-		}
-
-		return nil
+	if resp.StatusCode != 200 {
+		return errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
 	}
 
-	return errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
+	c.mu.Lock()
+	c.cookie = resp.Cookies()
+	c.mu.Unlock()
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	authResponse := new(AuthResponse)
+	err = json.Unmarshal(body, authResponse)
+	if err != nil {
+		return err
+	}
+
+	if len(authResponse.Response.Accounts) > 0 {
+		c.timezone = authResponse.Response.Accounts[0].Timezone
+	}
+
+	if !authResponse.Response.Auth {
+		return errors.New(authResponse.Response.Error)
+	}
+
+	if err := c.validator.Struct(authResponse); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *Client) DownloadAttachment(ctx context.Context, attachment string) ([]byte, error) {
@@ -189,13 +189,13 @@ func (c *Client) doGet(ctx context.Context, url string, params map[string]string
 	return body, nil
 }
 
-func (c *Client) doPost(ctx context.Context, url string, data interface{}) (*http.Response, error) {
-	body, err := json.Marshal(data)
+func (c *Client) doPost(ctx context.Context, url string, data interface{}) ([]byte, error) {
+	reqBody, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(body))
+	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return nil, err
 	}
@@ -208,17 +208,26 @@ func (c *Client) doPost(ctx context.Context, url string, data interface{}) (*htt
 	}
 	c.mu.RUnlock()
 
-	return c.client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req.WithContext(ctx))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return respBody, nil
 }
 
-func (c *Client) getResponseID(resp *http.Response) (int, error) {
+func (c *Client) getResponseID(body []byte) (int, error) {
 	result := new(PostResponse)
-	dec := json.NewDecoder(resp.Body)
-
-	err := dec.Decode(result)
+	err := json.Unmarshal(body, result)
 	if err != nil {
 		amoError := new(AmoError)
-		err = dec.Decode(amoError)
+		err = json.Unmarshal(body, amoError)
 		if err != nil {
 			return 0, err
 		}
