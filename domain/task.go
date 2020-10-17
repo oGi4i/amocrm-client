@@ -1,10 +1,4 @@
-package amocrm
-
-import (
-	"context"
-	"encoding/json"
-	"strconv"
-)
+package domain
 
 type (
 	TaskRequestType string
@@ -70,7 +64,7 @@ type (
 		Embedded struct {
 			Items []*Task `json:"items" validate:"required,dive,required"`
 		} `json:"_embedded" validate:"omitempty"`
-		Response *AmoError `json:"response" validate:"omitempty"`
+		ErrorResponse *AmoError `json:"response" validate:"omitempty"`
 	}
 
 	Task struct {
@@ -92,8 +86,11 @@ type (
 	}
 
 	TaskType struct {
-		ID   int    `json:"id" validate:"required"`
-		Name string `json:"name" validate:"required"`
+		ID     uint64 `json:"id" validate:"required"`
+		Name   string `json:"name" validate:"required"`
+		Color  string `json:"color" validate:"omitempty"`
+		IconID uint64 `json:"icon_id" validate:"omitempty"`
+		Code   string `json:"code" validate:"required"`
 	}
 )
 
@@ -111,85 +108,3 @@ const (
 	CompletedStatusTaskFilter  TaskRequestStatusFilter = 1
 	InProgressStatusTaskFilter TaskRequestStatusFilter = 0
 )
-
-func (c *Client) AddTask(ctx context.Context, task *TaskAdd) (int, error) {
-	if err := c.validator.Struct(task); err != nil {
-		return 0, err
-	}
-
-	resp, err := c.doPost(ctx, c.baseURL+tasksURI, &AddTaskRequest{Add: []*TaskAdd{task}})
-	if err != nil {
-		return 0, err
-	}
-
-	return c.getResponseID(resp)
-}
-
-func (c *Client) UpdateTask(ctx context.Context, task *TaskUpdate) (int, error) {
-	if err := c.validator.Struct(task); err != nil {
-		return 0, err
-	}
-
-	resp, err := c.doPost(ctx, c.baseURL+tasksURI, &UpdateTaskRequest{Update: []*TaskUpdate{task}})
-	if err != nil {
-		return 0, err
-	}
-
-	return c.getResponseID(resp)
-}
-
-func (c *Client) GetTasks(ctx context.Context, reqParams *TaskRequestParams) ([]*Task, error) {
-	if err := c.validator.Struct(reqParams); err != nil {
-		return nil, err
-	}
-
-	addValues := make(map[string]string)
-	if reqParams.ID != nil {
-		addValues["id"] = joinIntSlice(reqParams.ID)
-	}
-	if reqParams.LimitRows != 0 {
-		addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
-		if reqParams.LimitOffset != 0 {
-			addValues["limit_offset"] = strconv.Itoa(reqParams.LimitOffset)
-		}
-	}
-	if reqParams.ElementID != nil {
-		addValues["element_id"] = joinIntSlice(reqParams.ElementID)
-	}
-	if reqParams.ResponsibleUserID != 0 {
-		addValues["responsible_user_id"] = strconv.Itoa(reqParams.ResponsibleUserID)
-	}
-	if reqParams.Type != "" {
-		addValues["type"] = string(reqParams.Type)
-	}
-
-	body, err := c.doGet(ctx, c.baseURL+tasksURI, addValues)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(body) == 0 {
-		return nil, nil
-	}
-
-	taskResponse := new(GetTaskResponse)
-	err = json.Unmarshal(body, taskResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	if taskResponse.Response != nil {
-		return nil, taskResponse.Response
-	}
-
-	err = c.validator.Struct(taskResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(taskResponse.Embedded.Items) == 0 {
-		return nil, ErrEmptyResponseItems
-	}
-
-	return taskResponse.Embedded.Items, nil
-}

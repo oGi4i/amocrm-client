@@ -1,10 +1,11 @@
-package amocrm
+package client
 
 import (
 	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
+	"github.com/ogi4i/amocrm-client/domain"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -12,11 +13,11 @@ import (
 	"sync"
 	"time"
 
-	"gopkg.in/go-playground/validator.v9"
+	"github.com/go-playground/validator/v10"
 )
 
 type (
-	ClientOption func(c *Client)
+	Option func(c *Client)
 
 	Client struct {
 		userLogin string
@@ -37,39 +38,43 @@ type (
 				ID int `json:"id" validate:"omitempty"`
 			} `json:"items" validate:"required,dive,required"`
 		} `json:"_embedded" validate:"omitempty"`
-		Response *AmoError `json:"response" validate:"omitempty"`
+		ErrorResponse *domain.AmoError `json:"response" validate:"omitempty"`
 	}
 
 	AuthResponse struct {
 		Response struct {
-			Auth       bool           `json:"auth" validate:"required"`
-			Accounts   []*AuthAccount `json:"accounts" validate:"omitempty,dive,required"`
-			User       *AuthUser      `json:"user" validate:"required"`
-			ServerTime int            `json:"server_time" validate:"required"`
-			Error      string         `json:"error" validate:"omitempty"`
+			Auth       bool             `json:"auth" validate:"required"`
+			Accounts   []*AuthAccount   `json:"accounts" validate:"omitempty,dive,required"`
+			User       *domain.AuthUser `json:"user" validate:"required"`
+			ServerTime int              `json:"server_time" validate:"required"`
+			Error      string           `json:"error" validate:"omitempty"`
 		} `json:"response" validate:"required"`
 	}
 )
 
 const (
 	authURI      = "/private/api/auth.php?type=json"
-	notesURI     = "/api/v2/notes"
+	notesURI     = "/api/v2/note"
 	contactsURI  = "/api/v2/contacts"
-	accountURI   = "/api/v2/account"
-	leadsURI     = "/api/v2/leads"
+	accountURI   = "/api/v4/account"
+	leadsURI     = "/api/v4/leads"
 	tasksURI     = "/api/v2/tasks"
-	pipelinesURI = "/api/v2/pipelines"
+	pipelinesURI = "/api/v4/leads/pipelines"
 	downloadURI  = "/download/"
 
-	defaultHTTPTimeout = 5 * time.Second
+	contentTypeHeader  = "ContentType"
+	successContentType = "application/hal+json"
+	errorContentType   = "application/problem+json"
+
+	defaultHTTPTimeout = 10 * time.Second
 )
 
-func NewClient(accountURL string, login string, hash string, opts ...ClientOption) (*Client, error) {
+func NewClient(accountURL string, login string, hash string, opts ...Option) (*Client, error) {
 	if login == "" {
-		return nil, ErrEmptyLogin
+		return nil, domain.ErrEmptyLogin
 	}
 	if hash == "" {
-		return nil, ErrEmptyAPIHash
+		return nil, domain.ErrEmptyAPIHash
 	}
 
 	_, err := url.Parse(accountURL)
@@ -95,7 +100,7 @@ func NewClient(accountURL string, login string, hash string, opts ...ClientOptio
 	return c, nil
 }
 
-func WithHTTPTimeout(d time.Duration) ClientOption {
+func WithHTTPTimeout(d time.Duration) Option {
 	return func(c *Client) {
 		c.client.Timeout = d
 	}
@@ -157,11 +162,13 @@ func (c *Client) DownloadAttachment(ctx context.Context, attachment string) ([]b
 	return c.doGet(ctx, c.baseURL+downloadURI+attachment, nil)
 }
 
-func (c *Client) doGet(ctx context.Context, url string, params map[string]string) ([]byte, error) {
-	req, err := http.NewRequest(http.MethodGet, url, nil)
+func (c *Client) doGet(ctx context.Context, url string, params url.Values) ([]byte, error) {
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
+
+	req.URL.RawQuery = params.Encode()
 
 	c.mu.RLock()
 	for _, cookie := range c.cookie {
@@ -169,19 +176,13 @@ func (c *Client) doGet(ctx context.Context, url string, params map[string]string
 	}
 	c.mu.RUnlock()
 
-	q := req.URL.Query()
-	for k, v := range params {
-		q.Add(k, v)
-	}
-	req.URL.RawQuery = q.Encode()
-
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode >= 400 {
+	if !isSuccessResponse(resp) {
 		return nil, errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
 	}
 
@@ -193,18 +194,18 @@ func (c *Client) doGet(ctx context.Context, url string, params map[string]string
 	return body, nil
 }
 
-func (c *Client) doPost(ctx context.Context, url string, data interface{}) ([]byte, error) {
+func (c *Client) do(ctx context.Context, url string, method string, data interface{}) ([]byte, error) {
 	reqBody, err := json.Marshal(data)
 	if err != nil {
 		return nil, err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(reqBody))
+	req, err := http.NewRequest(method, url, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set(contentTypeHeader, "application/json")
 
 	c.mu.RLock()
 	for _, cookie := range c.cookie {
@@ -218,7 +219,7 @@ func (c *Client) doPost(ctx context.Context, url string, data interface{}) ([]by
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode >= 400 {
+	if !isSuccessResponse(resp) {
 		return nil, errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
 	}
 
@@ -234,21 +235,26 @@ func (c *Client) getResponseID(body []byte) (int, error) {
 	result := new(PostResponse)
 	err := json.Unmarshal(body, result)
 	if err != nil {
-		amoError := new(AmoError)
-		err = json.Unmarshal(body, amoError)
-		if err != nil {
-			return 0, err
-		}
-
-		return 0, amoError
+		return 0, err
 	}
 
 	if len(result.Embedded.Items) == 0 {
-		if result.Response != nil {
-			return 0, result.Response
+		if result.ErrorResponse != nil {
+			return 0, result.ErrorResponse
 		}
-		return 0, ErrEmptyResponseItems
+		return 0, domain.ErrEmptyResponse
 	}
 
 	return result.Embedded.Items[0].ID, nil
+}
+
+func isSuccessResponse(resp *http.Response) bool {
+	switch resp.Header.Get(contentTypeHeader) {
+	case successContentType:
+		return true
+	case errorContentType:
+		return false
+	default:
+		return false
+	}
 }

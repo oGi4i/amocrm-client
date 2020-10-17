@@ -1,18 +1,18 @@
-package amocrm
+package domain
 
 type (
 	AuthUser struct {
-		ID       int    `json:"id" validate:"required"`
+		ID       uint64 `json:"id" validate:"required"`
 		Language string `json:"language" validate:"required"`
 	}
 
 	User struct {
-		ID          int    `json:"id" validate:"required"`
+		ID          uint64 `json:"id" validate:"required"`
 		Name        string `json:"name" validate:"required"`
 		LastName    string `json:"last_name,omitempty" validate:"omitempty"`
 		Login       string `json:"login" validate:"required"`
 		Language    string `json:"language" validate:"required"`
-		GroupID     int    `json:"group_id" validate:"omitempty"`
+		GroupID     uint64 `json:"group_id" validate:"omitempty"`
 		IsActive    bool   `json:"is_active" validate:"omitempty"`
 		IsFree      bool   `json:"is_free" validate:"omitempty"`
 		IsAdmin     bool   `json:"is_admin" validate:"omitempty"`
@@ -39,5 +39,10 @@ type (
 			TaskEdit      string `json:"task_edit" validate:"required"`
 			TaskDelete    string `json:"task_delete" validate:"required"`
 		} `json:"rights" validate:"required"`
+	}
+
+	UserGroup struct {
+		ID   uint64 `json:"id" validate:"required"`
+		Name string `json:"name" validate:"required"`
 	}
 )

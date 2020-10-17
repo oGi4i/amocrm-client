@@ -1,10 +1,4 @@
-package amocrm
-
-import (
-	"context"
-	"encoding/json"
-	"strconv"
-)
+package domain
 
 type (
 	NoteRequestType string
@@ -51,7 +45,7 @@ type (
 		Embedded struct {
 			Items []*Note `json:"items" validate:"required"`
 		} `json:"_embedded" validate:"omitempty"`
-		Response *AmoError `json:"response" validate:"omitempty"`
+		ErrorResponse *AmoError `json:"response" validate:"omitempty"`
 	}
 
 	Note struct {
@@ -97,70 +91,3 @@ const (
 	CompanyNoteType NoteRequestType = "company"
 	TaskNoteType    NoteRequestType = "task"
 )
-
-func (c *Client) AddNote(ctx context.Context, note *NoteAdd) (int, error) {
-	if err := c.validator.Struct(note); err != nil {
-		return 0, err
-	}
-
-	resp, err := c.doPost(ctx, c.baseURL+notesURI, &AddNoteRequest{Add: []*NoteAdd{note}})
-	if err != nil {
-		return 0, err
-	}
-
-	return c.getResponseID(resp)
-}
-
-func (c *Client) GetNotes(ctx context.Context, reqParams *NoteRequestParams) ([]*Note, error) {
-	if err := c.validator.Struct(reqParams); err != nil {
-		return nil, err
-	}
-
-	addValues := make(map[string]string)
-	addValues["type"] = string(reqParams.Type)
-	if reqParams.ID != nil {
-		addValues["id"] = joinIntSlice(reqParams.ID)
-	}
-	if reqParams.LimitRows != 0 {
-		addValues["limit_rows"] = strconv.Itoa(reqParams.LimitRows)
-		if reqParams.LimitOffset != 0 {
-			addValues["limit_offset"] = strconv.Itoa(reqParams.LimitOffset)
-		}
-	}
-	if reqParams.ElementID != nil {
-		addValues["element_id"] = joinIntSlice(reqParams.ElementID)
-	}
-	if reqParams.NoteType != nil {
-		addValues["note_type"] = joinIntSlice(reqParams.NoteType)
-	}
-
-	body, err := c.doGet(ctx, c.baseURL+notesURI, addValues)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(body) == 0 {
-		return nil, nil
-	}
-
-	noteResponse := new(GetNoteResponse)
-	err = json.Unmarshal(body, noteResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	if noteResponse.Response != nil {
-		return nil, noteResponse.Response
-	}
-
-	err = c.validator.Struct(noteResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(noteResponse.Embedded.Items) == 0 {
-		return nil, ErrEmptyResponseItems
-	}
-
-	return noteResponse.Embedded.Items, nil
-}

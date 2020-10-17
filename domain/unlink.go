@@ -1,4 +1,4 @@
-package amocrm
+package domain
 
 type Unlink struct {
 	LeadsID    []int `json:"leads_id,omitempty" validate:"omitempty,gt=0,dive,required"`

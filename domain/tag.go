@@ -1,6 +1,6 @@
-package amocrm
+package domain
 
 type Tag struct {
-	ID   int    `json:"id" validate:"required"`
+	ID   int64  `json:"id" validate:"required"`
 	Name string `json:"name" validate:"required"`
 }

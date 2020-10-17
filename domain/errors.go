@@ -1,4 +1,4 @@
-package amocrm
+package domain
 
 import "fmt"
 
@@ -113,11 +113,9 @@ const (
 )
 
 var (
-	ErrEmptyLogin         Error = "empty_login"
-	ErrEmptyAPIHash       Error = "empty_api_hash"
-	ErrEmptyPhoneNumber   Error = "empty_phone_number"
-	ErrInvalidEventType   Error = "invalid_event_type"
-	ErrEmptyResponseItems Error = "empty_response_items"
+	ErrEmptyLogin    Error = "empty_login"
+	ErrEmptyAPIHash  Error = "empty_api_hash"
+	ErrEmptyResponse Error = "empty_response"
 
 	amoErrorTypeMap = map[int]string{
 		AccountNotFoundCode:          AccountNotFound,

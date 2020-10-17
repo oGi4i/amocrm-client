@@ -1,4 +1,4 @@
-package amocrm
+package domain
 
 type (
 	CustomField struct {
@@ -15,8 +15,8 @@ type (
 	}
 
 	UpdateCustomField struct {
-		ID     int           `json:"id" validate:"required"`
-		Values []interface{} `json:"values" validate:"required,dive,required"`
+		FieldID int           `json:"field_id" validate:"required"`
+		Values  []interface{} `json:"values" validate:"required,dive,required"`
 	}
 
 	UpdateCustomValue struct {

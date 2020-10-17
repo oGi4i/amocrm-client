@@ -26,7 +26,7 @@ linters-settings:
     min-len:         2
     min-occurrences: 2
   goimports:
-    local-prefixes: mikrotik_provisioning
+    local-prefixes: github.com/ogi4i/amocrm-client
   errchek:
     check-type-assertions: false
   nakedret:
