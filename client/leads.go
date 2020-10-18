@@ -53,7 +53,7 @@ type (
 		Tags []*domain.Tag `json:"tags" validate:"omitempty"`
 	}
 
-	AddLeadRequestData struct {
+	AddLeadsRequestData struct {
 		Name               string                      `json:"name,omitempty" validate:"omitempty"`
 		Price              uint64                      `json:"price,omitempty" validate:"omitempty"`
 		StatusID           uint64                      `json:"status_id,omitempty" validate:"omitempty"`
@@ -70,11 +70,15 @@ type (
 		RequestID          string                      `json:"request_id,omitempty" validate:"omitempty"`
 	}
 
+	AddLeadsRequest struct {
+		Add []*AddLeadsRequestData `validate:"required,gt=0,dive,required"`
+	}
+
 	UpdateLeadRequestDataEmbedded struct {
 		Tags []*domain.Tag `json:"tags" validate:"omitempty,dive,required"`
 	}
 
-	UpdateLeadRequestData struct {
+	UpdateLeadsRequestData struct {
 		ID                 uint64                         `json:"id" validate:"required"`
 		Name               string                         `json:"name,omitempty" validate:"omitempty"`
 		Price              uint64                         `json:"price,omitempty" validate:"omitempty"`
@@ -90,6 +94,10 @@ type (
 		CustomFieldsValues []*domain.UpdateCustomField    `json:"custom_fields_values,omitempty" validate:"omitempty,gt=0,dive,required"`
 		Embedded           *UpdateLeadRequestDataEmbedded `json:"_embedded,omitempty" validate:"omitempty"`
 		RequestID          string                         `json:"request_id,omitempty" validate:"omitempty"`
+	}
+
+	UpdateLeadsRequest struct {
+		Update []*UpdateLeadsRequestData `validate:"required,gt=0,dive,required"`
 	}
 
 	AddLeadsResponseItem struct {
@@ -268,14 +276,12 @@ func (f *GetLeadsRequestFilter) appendGetRequestFilter(params url.Values) {
 	}
 }
 
-func (c *Client) AddLeads(ctx context.Context, leads []*AddLeadRequestData) ([]*AddLeadsResponseItem, error) {
-	for _, lead := range leads {
-		if err := c.validator.Struct(lead); err != nil {
-			return nil, err
-		}
+func (c *Client) AddLeads(ctx context.Context, req *AddLeadsRequest) ([]*AddLeadsResponseItem, error) {
+	if err := c.validator.Struct(req); err != nil {
+		return nil, err
 	}
 
-	body, err := c.do(ctx, c.baseURL+leadsURI, http.MethodPost, leads)
+	body, err := c.do(ctx, c.baseURL+leadsURI, http.MethodPost, req.Add)
 	if err != nil {
 		return nil, err
 	}
@@ -298,14 +304,12 @@ func (c *Client) AddLeads(ctx context.Context, leads []*AddLeadRequestData) ([]*
 	return resp.Embedded.Leads, nil
 }
 
-func (c *Client) UpdateLeads(ctx context.Context, leads []*UpdateLeadRequestData) ([]*UpdateLeadsResponseItem, error) {
-	for _, lead := range leads {
-		if err := c.validator.Struct(lead); err != nil {
-			return nil, err
-		}
+func (c *Client) UpdateLeads(ctx context.Context, req *UpdateLeadsRequest) ([]*UpdateLeadsResponseItem, error) {
+	if err := c.validator.Struct(req); err != nil {
+		return nil, err
 	}
 
-	body, err := c.do(ctx, c.baseURL+leadsURI, http.MethodPatch, leads)
+	body, err := c.do(ctx, c.baseURL+leadsURI, http.MethodPatch, req.Update)
 	if err != nil {
 		return nil, err
 	}
@@ -328,12 +332,16 @@ func (c *Client) UpdateLeads(ctx context.Context, leads []*UpdateLeadRequestData
 	return resp.Embedded.Leads, nil
 }
 
-func (c *Client) UpdateLead(ctx context.Context, leadID uint64, reqData *UpdateLeadRequestData) (*UpdateLeadsResponseItem, error) {
-	if err := c.validator.Struct(reqData); err != nil {
+func (c *Client) UpdateLead(ctx context.Context, leadID uint64, req *UpdateLeadsRequestData) (*UpdateLeadsResponseItem, error) {
+	if leadID == 0 {
+		return nil, ErrInvalidLeadID
+	}
+
+	if err := c.validator.Struct(req); err != nil {
 		return nil, err
 	}
 
-	body, err := c.do(ctx, c.baseURL+leadsURI+"/"+strconv.FormatUint(leadID, 10), http.MethodPatch, reqData)
+	body, err := c.do(ctx, c.baseURL+leadsURI+"/"+strconv.FormatUint(leadID, 10), http.MethodPatch, req)
 	if err != nil {
 		return nil, err
 	}
@@ -357,6 +365,10 @@ func (c *Client) UpdateLead(ctx context.Context, leadID uint64, reqData *UpdateL
 }
 
 func (c *Client) GetLeadByID(ctx context.Context, leadID uint64, with []GetLeadsRequestWith) (*domain.Lead, error) {
+	if leadID == 0 {
+		return nil, ErrInvalidLeadID
+	}
+
 	params := make(url.Values)
 	if with != nil {
 		params.Add("with", joinGetLeadsRequestWith(with))

@@ -59,7 +59,7 @@ const (
 	contactsURI  = "/api/v4/contacts"
 	accountURI   = "/api/v4/account"
 	leadsURI     = "/api/v4/leads"
-	tasksURI     = "/api/v2/tasks"
+	tasksURI     = "/api/v4/tasks"
 	pipelinesURI = "/api/v4/leads/pipelines"
 	downloadURI  = "/download/"
 
@@ -227,23 +227,6 @@ func (c *Client) do(ctx context.Context, url string, method string, data interfa
 	}
 
 	return respBody, nil
-}
-
-func (c *Client) getResponseID(body []byte) (int, error) {
-	result := new(PostResponse)
-	err := json.Unmarshal(body, result)
-	if err != nil {
-		return 0, err
-	}
-
-	if len(result.Embedded.Items) == 0 {
-		if result.ErrorResponse != nil {
-			return 0, result.ErrorResponse
-		}
-		return 0, ErrEmptyResponse
-	}
-
-	return result.Embedded.Items[0].ID, nil
 }
 
 func isSuccessResponse(resp *http.Response) bool {

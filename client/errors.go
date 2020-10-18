@@ -7,7 +7,13 @@ func (e Error) Error() string {
 }
 
 const (
-	ErrEmptyLogin    Error = "empty_login"
-	ErrEmptyAPIHash  Error = "empty_api_hash"
-	ErrEmptyResponse Error = "empty_response"
+	ErrEmptyLogin              Error = "empty_login"
+	ErrEmptyAPIHash            Error = "empty_api_hash"
+	ErrEmptyResponse           Error = "empty_response"
+	ErrInvalidContactID        Error = "invalid_contact_id"
+	ErrInvalidLeadID           Error = "invalid_lead_id"
+	ErrInvalidPipelineID       Error = "invalid_pipeline_id"
+	ErrInvalidPipelineStatusID Error = "invalid_pipeline_status_id"
+	ErrInvalidTaskID           Error = "invalid_task_id"
+	ErrInvalidTaskResult       Error = "invalid_task_result"
 )

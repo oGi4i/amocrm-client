@@ -63,6 +63,10 @@ type (
 		RequestID          string                      `json:"request_id,omitempty" validate:"omitempty"`
 	}
 
+	AddContactsRequest struct {
+		Add []*AddContactRequestData `validate:"required,gt=0,dive,required"`
+	}
+
 	AddContactsResponseItem struct {
 		ID        uint64        `json:"id" validate:"required"`
 		RequestID string        `json:"request_id" validate:"required"`
@@ -79,7 +83,7 @@ type (
 		ErrorResponse *domain.AmoError             `json:"response,omitempty" validate:"omitempty"`
 	}
 
-	UpdateContactRequestData struct {
+	UpdateContactsRequestData struct {
 		ID                 uint64                      `json:"id" validate:"required"`
 		Name               string                      `json:"name,omitempty" validate:"omitempty"`
 		FirstName          string                      `json:"first_name,omitempty" validate:"omitempty"`
@@ -92,6 +96,10 @@ type (
 		CustomFieldsValues []*domain.UpdateCustomField `json:"custom_fields_values,omitempty" validate:"omitempty,gt=0,dive,required"`
 		Embedded           *ContactRequestDataEmbedded `json:"_embedded,omitempty" validate:"omitempty"`
 		RequestID          string                      `json:"request_id,omitempty" validate:"omitempty"`
+	}
+
+	UpdateContactsRequest struct {
+		Update []*UpdateContactsRequestData `validate:"required,gt=0,dive,required"`
 	}
 
 	UpdateContactsResponseItem struct {
@@ -219,14 +227,12 @@ func (f *GetContactsRequestFilter) appendGetRequestFilter(params url.Values) {
 	}
 }
 
-func (c *Client) AddContacts(ctx context.Context, contacts []*AddContactRequestData) ([]*AddContactsResponseItem, error) {
-	for _, contact := range contacts {
-		if err := c.validator.Struct(contact); err != nil {
-			return nil, err
-		}
+func (c *Client) AddContacts(ctx context.Context, req *AddContactsRequest) ([]*AddContactsResponseItem, error) {
+	if err := c.validator.Struct(req); err != nil {
+		return nil, err
 	}
 
-	body, err := c.do(ctx, c.baseURL+contactsURI, http.MethodPost, contacts)
+	body, err := c.do(ctx, c.baseURL+contactsURI, http.MethodPost, req.Add)
 	if err != nil {
 		return nil, err
 	}
@@ -249,14 +255,12 @@ func (c *Client) AddContacts(ctx context.Context, contacts []*AddContactRequestD
 	return resp.Embedded.Contacts, nil
 }
 
-func (c *Client) UpdateContacts(ctx context.Context, contacts []*UpdateContactRequestData) ([]*UpdateContactsResponseItem, error) {
-	for _, lead := range contacts {
-		if err := c.validator.Struct(lead); err != nil {
-			return nil, err
-		}
+func (c *Client) UpdateContacts(ctx context.Context, req *UpdateContactsRequest) ([]*UpdateContactsResponseItem, error) {
+	if err := c.validator.Struct(req); err != nil {
+		return nil, err
 	}
 
-	body, err := c.do(ctx, c.baseURL+contactsURI, http.MethodPatch, contacts)
+	body, err := c.do(ctx, c.baseURL+contactsURI, http.MethodPatch, req.Update)
 	if err != nil {
 		return nil, err
 	}
@@ -279,12 +283,16 @@ func (c *Client) UpdateContacts(ctx context.Context, contacts []*UpdateContactRe
 	return resp.Embedded.Contacts, nil
 }
 
-func (c *Client) UpdateContact(ctx context.Context, contactID uint64, contact *UpdateContactRequestData) (*UpdateContactsResponseItem, error) {
-	if err := c.validator.Struct(contact); err != nil {
+func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *UpdateContactsRequestData) (*UpdateContactsResponseItem, error) {
+	if contactID == 0 {
+		return nil, ErrInvalidContactID
+	}
+
+	if err := c.validator.Struct(req); err != nil {
 		return nil, err
 	}
 
-	body, err := c.do(ctx, c.baseURL+contactsURI+"/"+strconv.FormatUint(contactID, 10), http.MethodPatch, contact)
+	body, err := c.do(ctx, c.baseURL+contactsURI+"/"+strconv.FormatUint(contactID, 10), http.MethodPatch, req)
 	if err != nil {
 		return nil, err
 	}
@@ -308,6 +316,10 @@ func (c *Client) UpdateContact(ctx context.Context, contactID uint64, contact *U
 }
 
 func (c *Client) GetContactByID(ctx context.Context, contactID uint64, with []GetContactsRequestWith) (*domain.Contact, error) {
+	if contactID == 0 {
+		return nil, ErrInvalidContactID
+	}
+
 	params := make(url.Values)
 	if with != nil {
 		params.Add("with", joinGetContactsRequestWith(with))

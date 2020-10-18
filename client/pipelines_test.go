@@ -308,22 +308,24 @@ func TestAddPipelines(t *testing.T) {
 		requestBodyWant                = `[{"name":"Воронка доп продаж","sort":20,"is_main":false,"is_unsorted_on":true,"request_id":"123","_embedded":{"statuses":[{"id":142,"name":"Мое название для успешных сделок"},{"name":"Первичный контакт","sort":10,"color":"#fffeb2"}]}}]`
 	)
 
-	sampleAddPipelinesRequest := []*AddPipelineData{
-		{
-			Name:         "Воронка доп продаж",
-			Sort:         20,
-			IsUnsortedOn: true,
-			RequestID:    "123",
-			Embedded: &domain.PipelineEmbedded{
-				Statuses: []*domain.PipelineStatus{
-					{
-						ID:   142,
-						Name: "Мое название для успешных сделок",
-					},
-					{
-						Name:  "Первичный контакт",
-						Sort:  10,
-						Color: domain.ShalimarPipelineStatusColor,
+	sampleAddPipelinesRequest := &AddPipelinesRequest{
+		Add: []*AddPipelinesRequestData{
+			{
+				Name:         "Воронка доп продаж",
+				Sort:         20,
+				IsUnsortedOn: true,
+				RequestID:    "123",
+				Embedded: &AddPipelinesRequestDataEmbedded{
+					Statuses: []*domain.EmbeddedPipelineStatus{
+						{
+							ID:   142,
+							Name: "Мое название для успешных сделок",
+						},
+						{
+							Name:  "Первичный контакт",
+							Sort:  10,
+							Color: domain.ShalimarPipelineStatusColor,
+						},
 					},
 				},
 			},
@@ -474,7 +476,7 @@ func TestUpdatePipeline(t *testing.T) {
 		requestBodyWant                  = `{"name":"Новое название для воронки","sort":100,"is_main":false,"is_unsorted_on":false}`
 	)
 
-	sampleUpdatePipelineRequest := &UpdatePipelineData{
+	sampleUpdatePipelineRequest := &UpdatePipelineRequest{
 		Name:         "Новое название для воронки",
 		IsMain:       false,
 		IsUnsortedOn: false,

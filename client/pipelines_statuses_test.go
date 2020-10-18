@@ -12,46 +12,46 @@ import (
 	"testing"
 )
 
-func TestAddPipelineStatusDataValidation(t *testing.T) {
+func TestAddPipelineStatusesRequestValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Невалидный цвет в запросе", func(t *testing.T) {
-		data := &AddPipelineStatusData{Color: "#ffffff"}
-		assert.EqualError(t, v.Struct(data), "Key: 'AddPipelineStatusData.Color' Error:Field validation for 'Color' failed on the 'oneof' tag")
+		data := &AddPipelineStatusesRequest{Add: []*AddPipelineStatusesRequestData{{Color: "#ffffff"}}}
+		assert.EqualError(t, v.Struct(data), "Key: 'AddPipelineStatusesRequest.Add[0].Color' Error:Field validation for 'Color' failed on the 'oneof' tag")
 	})
 }
 
-func TestUpdatePipelineStatusDataValidation(t *testing.T) {
+func TestUpdatePipelineStatusRequestValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Невалидный цвет в запросе", func(t *testing.T) {
-		data := &UpdatePipelineStatusData{Color: "#ffffff"}
-		assert.EqualError(t, v.Struct(data), "Key: 'UpdatePipelineStatusData.Color' Error:Field validation for 'Color' failed on the 'oneof' tag")
+		data := &UpdatePipelineStatusRequest{Color: "#ffffff"}
+		assert.EqualError(t, v.Struct(data), "Key: 'UpdatePipelineStatusRequest.Color' Error:Field validation for 'Color' failed on the 'oneof' tag")
 	})
 }
 
-func TestAddPipelineStatusResponseValidation(t *testing.T) {
+func TestAddPipelineStatusesResponseValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Ни одного обязательного параметра в ответе", func(t *testing.T) {
-		data := &AddPipelineStatusResponse{}
-		assert.EqualError(t, v.Struct(data), `Key: 'AddPipelineStatusResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag
-Key: 'AddPipelineStatusResponse.Embedded' Error:Field validation for 'Embedded' failed on the 'required' tag`)
+		data := &AddPipelineStatusesResponse{}
+		assert.EqualError(t, v.Struct(data), `Key: 'AddPipelineStatusesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag
+Key: 'AddPipelineStatusesResponse.Embedded' Error:Field validation for 'Embedded' failed on the 'required' tag`)
 	})
 
 	t.Run("Пустой массив Statuses в ответе", func(t *testing.T) {
-		data := &AddPipelineStatusResponse{TotalItems: 1, Embedded: &domain.PipelineEmbedded{Statuses: []*domain.PipelineStatus{}}}
-		assert.EqualError(t, v.Struct(data), "Key: 'AddPipelineStatusResponse.Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
+		data := &AddPipelineStatusesResponse{TotalItems: 1, Embedded: &domain.PipelineEmbedded{Statuses: []*domain.PipelineStatus{}}}
+		assert.EqualError(t, v.Struct(data), "Key: 'AddPipelineStatusesResponse.Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
 	})
 
 	t.Run("Ни одного обязательного параметра в Status в ответе", func(t *testing.T) {
-		data := &AddPipelineStatusResponse{TotalItems: 1, Embedded: &domain.PipelineEmbedded{Statuses: []*domain.PipelineStatus{{}}}}
-		assert.EqualError(t, v.Struct(data), `Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].ID' Error:Field validation for 'ID' failed on the 'required' tag
-Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].Name' Error:Field validation for 'Name' failed on the 'required' tag
-Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].Sort' Error:Field validation for 'Sort' failed on the 'required' tag
-Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].PipelineID' Error:Field validation for 'PipelineID' failed on the 'required' tag
-Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].AccountID' Error:Field validation for 'AccountID' failed on the 'required' tag
-Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].Links' Error:Field validation for 'Links' failed on the 'required' tag`)
+		data := &AddPipelineStatusesResponse{TotalItems: 1, Embedded: &domain.PipelineEmbedded{Statuses: []*domain.PipelineStatus{{}}}}
+		assert.EqualError(t, v.Struct(data), `Key: 'AddPipelineStatusesResponse.Embedded.Statuses[0].ID' Error:Field validation for 'ID' failed on the 'required' tag
+Key: 'AddPipelineStatusesResponse.Embedded.Statuses[0].Name' Error:Field validation for 'Name' failed on the 'required' tag
+Key: 'AddPipelineStatusesResponse.Embedded.Statuses[0].Sort' Error:Field validation for 'Sort' failed on the 'required' tag
+Key: 'AddPipelineStatusesResponse.Embedded.Statuses[0].PipelineID' Error:Field validation for 'PipelineID' failed on the 'required' tag
+Key: 'AddPipelineStatusesResponse.Embedded.Statuses[0].AccountID' Error:Field validation for 'AccountID' failed on the 'required' tag
+Key: 'AddPipelineStatusesResponse.Embedded.Statuses[0].Links' Error:Field validation for 'Links' failed on the 'required' tag`)
 	})
 }
 
@@ -153,6 +153,15 @@ func TestGetPipelineStatuses(t *testing.T) {
 		assert.Empty(t, responseGot)
 	})
 
+	t.Run("Невалидный запрос", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.GetPipelineStatuses(ctx, 0)
+		assert.EqualError(t, err, ErrInvalidPipelineID.Error())
+		assert.Empty(t, responseGot)
+	})
+
 	t.Run("Невалидный ответ", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add(contentTypeHeader, successContentType)
@@ -212,6 +221,24 @@ func TestGetPipelineStatusByID(t *testing.T) {
 		assert.Empty(t, responseGot)
 	})
 
+	t.Run("Невалидный pipelineID в запросе", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.GetPipelineStatusByID(ctx, 0, 32392156)
+		assert.EqualError(t, err, ErrInvalidPipelineID.Error())
+		assert.Empty(t, responseGot)
+	})
+
+	t.Run("Невалидный statusID в запросе", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.GetPipelineStatusByID(ctx, 3177727, 0)
+		assert.EqualError(t, err, ErrInvalidPipelineStatusID.Error())
+		assert.Empty(t, responseGot)
+	})
+
 	t.Run("Невалидный ответ", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add(contentTypeHeader, successContentType)
@@ -233,16 +260,18 @@ func TestAddPipelineStatuses(t *testing.T) {
 		requestBodyWant                       = `[{"name":"Новый этап","sort":100,"color":"#fffeb2"},{"name":"Новый этап 2","sort":200,"color":"#fffeb2"}]`
 	)
 
-	sampleAddPipelineStatusesRequest := []*AddPipelineStatusData{
-		{
-			Name:  "Новый этап",
-			Sort:  100,
-			Color: domain.ShalimarPipelineStatusColor,
-		},
-		{
-			Name:  "Новый этап 2",
-			Sort:  200,
-			Color: domain.ShalimarPipelineStatusColor,
+	sampleAddPipelineStatusesRequest := &AddPipelineStatusesRequest{
+		Add: []*AddPipelineStatusesRequestData{
+			{
+				Name:  "Новый этап",
+				Sort:  100,
+				Color: domain.ShalimarPipelineStatusColor,
+			},
+			{
+				Name:  "Новый этап 2",
+				Sort:  200,
+				Color: domain.ShalimarPipelineStatusColor,
+			},
 		},
 	}
 
@@ -317,8 +346,17 @@ func TestAddPipelineStatuses(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelineStatuses(ctx, 3270355, sampleAddPipelineStatusesRequest)
-		assert.EqualError(t, err, "Key: 'AddPipelineStatusResponse.Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
+		assert.EqualError(t, err, "Key: 'AddPipelineStatusesResponse.Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
+		assert.Empty(t, responseGot)
+	})
+
+	t.Run("Невалидный pipelineID в запросе", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.AddPipelineStatuses(ctx, 0, sampleAddPipelineStatusesRequest)
+		assert.EqualError(t, err, ErrInvalidPipelineID.Error())
 		assert.Empty(t, responseGot)
 	})
 
@@ -334,7 +372,7 @@ func TestAddPipelineStatuses(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelineStatuses(ctx, 3270355, sampleAddPipelineStatusesRequest)
-		assert.EqualError(t, err, "Key: 'AddPipelineStatusResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag")
+		assert.EqualError(t, err, "Key: 'AddPipelineStatusesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag")
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -346,7 +384,7 @@ func TestUpdatePipelineStatuse(t *testing.T) {
 		requestBodyWant                         = `{"name":"Новое название для статуса","color":"#c1e0ff"}`
 	)
 
-	sampleUpdatePipelineStatusRequest := &UpdatePipelineStatusData{
+	sampleUpdatePipelineStatusRequest := &UpdatePipelineStatusRequest{
 		Name:  "Новое название для статуса",
 		Color: domain.MediumPattensBluePipelineStatusColor,
 	}
@@ -398,6 +436,24 @@ func TestUpdatePipelineStatuse(t *testing.T) {
 		assert.Empty(t, responseGot)
 	})
 
+	t.Run("Невалидный pipelineID в запросе", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.UpdatePipelineStatus(ctx, 0, 32392156, sampleUpdatePipelineStatusRequest)
+		assert.EqualError(t, err, ErrInvalidPipelineID.Error())
+		assert.Empty(t, responseGot)
+	})
+
+	t.Run("Невалидный statusID в запросе", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.UpdatePipelineStatus(ctx, 3177727, 0, sampleUpdatePipelineStatusRequest)
+		assert.EqualError(t, err, ErrInvalidPipelineStatusID.Error())
+		assert.Empty(t, responseGot)
+	})
+
 	t.Run("Невалидный ответ", func(t *testing.T) {
 		var requestBodyGot []byte
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -430,6 +486,22 @@ func TestDeletePipelineStatus(t *testing.T) {
 
 		err = client.DeletePipelineStatus(ctx, 3177727, 32392165)
 		assert.NoError(t, err)
+	})
+
+	t.Run("Невалидный pipelineID в запросе", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		err = client.DeletePipelineStatus(ctx, 0, 32392156)
+		assert.EqualError(t, err, ErrInvalidPipelineID.Error())
+	})
+
+	t.Run("Невалидный statusID в запросе", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		err = client.DeletePipelineStatus(ctx, 3177727, 0)
+		assert.EqualError(t, err, ErrInvalidPipelineStatusID.Error())
 	})
 
 	t.Run("Ошибка при обработке", func(t *testing.T) {

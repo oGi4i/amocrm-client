@@ -21,13 +21,21 @@ type (
 		ErrorResponse *domain.AmoError           `json:"response" validate:"omitempty"`
 	}
 
-	AddPipelineData struct {
-		Name         string                   `json:"name" validate:"omitempty"`
-		Sort         uint64                   `json:"sort" validate:"omitempty"`
-		IsMain       bool                     `json:"is_main" validate:"omitempty"`
-		IsUnsortedOn bool                     `json:"is_unsorted_on" validate:"omitempty"`
-		RequestID    string                   `json:"request_id,omitempty" validate:"omitempty"`
-		Embedded     *domain.PipelineEmbedded `json:"_embedded" validate:"omitempty,gt=0,dive,required"`
+	AddPipelinesRequestDataEmbedded struct {
+		Statuses []*domain.EmbeddedPipelineStatus `json:"statuses" validate:"required,gt=0,dive,required"`
+	}
+
+	AddPipelinesRequestData struct {
+		Name         string                           `json:"name" validate:"omitempty"`
+		Sort         uint64                           `json:"sort" validate:"omitempty"`
+		IsMain       bool                             `json:"is_main" validate:"omitempty"`
+		IsUnsortedOn bool                             `json:"is_unsorted_on" validate:"omitempty"`
+		RequestID    string                           `json:"request_id,omitempty" validate:"omitempty"`
+		Embedded     *AddPipelinesRequestDataEmbedded `json:"_embedded" validate:"omitempty,gt=0,dive,required"`
+	}
+
+	AddPipelinesRequest struct {
+		Add []*AddPipelinesRequestData `validate:"required,gt=0,dive,required"`
 	}
 
 	AddPipelinesResponseEmbedded struct {
@@ -41,7 +49,7 @@ type (
 		ErrorResponse *domain.AmoError              `json:"response" validate:"omitempty"`
 	}
 
-	UpdatePipelineData struct {
+	UpdatePipelineRequest struct {
 		Name         string `json:"name" validate:"omitempty"`
 		Sort         uint64 `json:"sort" validate:"omitempty"`
 		IsMain       bool   `json:"is_main" validate:"omitempty"`
@@ -77,6 +85,10 @@ func (c *Client) GetPipelines(ctx context.Context) ([]*domain.Pipeline, error) {
 }
 
 func (c *Client) GetPipelineByID(ctx context.Context, pipelineID uint64) (*domain.Pipeline, error) {
+	if pipelineID == 0 {
+		return nil, ErrInvalidPipelineID
+	}
+
 	body, err := c.doGet(ctx, c.baseURL+pipelinesURI+"/"+strconv.FormatUint(pipelineID, 10), nil)
 	if err != nil {
 		return nil, err
@@ -99,8 +111,12 @@ func (c *Client) GetPipelineByID(ctx context.Context, pipelineID uint64) (*domai
 	return response, nil
 }
 
-func (c *Client) AddPipelines(ctx context.Context, pipelines []*AddPipelineData) ([]*domain.Pipeline, error) {
-	body, err := c.do(ctx, c.baseURL+pipelinesURI, http.MethodPost, pipelines)
+func (c *Client) AddPipelines(ctx context.Context, req *AddPipelinesRequest) ([]*domain.Pipeline, error) {
+	if err := c.validator.Struct(req); err != nil {
+		return nil, err
+	}
+
+	body, err := c.do(ctx, c.baseURL+pipelinesURI, http.MethodPost, req.Add)
 	if err != nil {
 		return nil, err
 	}
@@ -122,8 +138,12 @@ func (c *Client) AddPipelines(ctx context.Context, pipelines []*AddPipelineData)
 	return response.Embedded.Pipelines, nil
 }
 
-func (c *Client) UpdatePipeline(ctx context.Context, pipelineID uint64, pipeline *UpdatePipelineData) (*domain.Pipeline, error) {
-	body, err := c.do(ctx, c.baseURL+pipelinesURI+"/"+strconv.FormatUint(pipelineID, 10), http.MethodPatch, pipeline)
+func (c *Client) UpdatePipeline(ctx context.Context, pipelineID uint64, req *UpdatePipelineRequest) (*domain.Pipeline, error) {
+	if pipelineID == 0 {
+		return nil, ErrInvalidPipelineID
+	}
+
+	body, err := c.do(ctx, c.baseURL+pipelinesURI+"/"+strconv.FormatUint(pipelineID, 10), http.MethodPatch, req)
 	if err != nil {
 		return nil, err
 	}
@@ -146,6 +166,10 @@ func (c *Client) UpdatePipeline(ctx context.Context, pipelineID uint64, pipeline
 }
 
 func (c *Client) DeletePipeline(ctx context.Context, pipelineID uint64) error {
+	if pipelineID == 0 {
+		return ErrInvalidPipelineID
+	}
+
 	_, err := c.do(ctx, c.baseURL+pipelinesURI+"/"+strconv.FormatUint(pipelineID, 10), http.MethodDelete, nil)
 	if err != nil {
 		return err

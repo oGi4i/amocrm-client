@@ -8,7 +8,7 @@ type (
 	AccountEmbedded struct {
 		AmojoRights      *AmojoRights      `json:"amojo_rights" validate:"omitempty"`                    // Объект настроек чатов (требует параметра `with=amojo_rights` в запросе)
 		UsersGroups      []*UserGroup      `json:"users_groups" validate:"omitempty,gt=0,dive,required"` // Массив объектов группы пользователей (требует параметра `with=user_groups` в запросе)
-		TaskTypes        []*TaskType       `json:"task_types" validate:"omitempty,gt=0,dive,required"`   // Типы задач, доступные в аккаунте (требует параметра `with=task_types` в запросе)
+		TaskTypes        []*TaskTypeInfo   `json:"task_types" validate:"omitempty,gt=0,dive,required"`   // Типы задач, доступные в аккаунте (требует параметра `with=task_types` в запросе)
 		DatetimeSettings *DatetimeSettings `json:"datetime_settings" validate:"omitempty"`               // Настройки и форматы даты и времени в аккаунте (требует параметра `with=datetime_settings` в запросе)
 		EntityNames      *EntityNames      `json:"entity_names" validate:"omitempty"`                    // Настройки названия сущностей (требует параметра `with=entity_names` в запросе)
 	}

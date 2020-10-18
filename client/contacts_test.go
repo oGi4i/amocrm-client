@@ -241,13 +241,13 @@ func TestUpdateContactRequestDataValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Нет ID контакта в запросе", func(t *testing.T) {
-		data := &UpdateContactRequestData{}
-		assert.EqualError(t, v.Struct(data), "Key: 'UpdateContactRequestData.ID' Error:Field validation for 'ID' failed on the 'required' tag")
+		data := &UpdateContactsRequestData{}
+		assert.EqualError(t, v.Struct(data), "Key: 'UpdateContactsRequestData.ID' Error:Field validation for 'ID' failed on the 'required' tag")
 	})
 
 	t.Run("Пустой массив параметров CustomFieldsValues в запросе", func(t *testing.T) {
-		data := &UpdateContactRequestData{ID: 1, CustomFieldsValues: []*domain.UpdateCustomField{}}
-		assert.EqualError(t, v.Struct(data), "Key: 'UpdateContactRequestData.CustomFieldsValues' Error:Field validation for 'CustomFieldsValues' failed on the 'gt' tag")
+		data := &UpdateContactsRequestData{ID: 1, CustomFieldsValues: []*domain.UpdateCustomField{}}
+		assert.EqualError(t, v.Struct(data), "Key: 'UpdateContactsRequestData.CustomFieldsValues' Error:Field validation for 'CustomFieldsValues' failed on the 'gt' tag")
 	})
 }
 
@@ -539,6 +539,15 @@ func TestGetContactByID(t *testing.T) {
 		assert.Empty(t, responseGot)
 	})
 
+	t.Run("Невалидный запрос", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.GetContactByID(ctx, 0, sampleGetContactByIDRequestParams)
+		assert.EqualError(t, err, ErrInvalidContactID.Error())
+		assert.Empty(t, responseGot)
+	})
+
 	t.Run("Невалидный ответ", func(t *testing.T) {
 		requestParamsGot := make(url.Values)
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -563,17 +572,19 @@ func TestAddContacts(t *testing.T) {
 		sampleAddContactsResponseBody = `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts"}},"_embedded":{"contacts":[{"id":40401635,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/40401635"}}},{"id":40401636,"request_id":"1","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/40401636"}}}]}}`
 	)
 
-	sampleAddContactsRequest := []*AddContactRequestData{
-		{
-			FirstName: "Петр",
-			LastName:  "Смирнов",
-			CustomFieldsValues: []*domain.UpdateCustomField{
-				{ID: 271316, Values: []interface{}{map[string]string{"value": "Директор"}}},
+	sampleAddContactsRequest := &AddContactsRequest{
+		Add: []*AddContactRequestData{
+			{
+				FirstName: "Петр",
+				LastName:  "Смирнов",
+				CustomFieldsValues: []*domain.UpdateCustomField{
+					{ID: 271316, Values: []interface{}{map[string]string{"value": "Директор"}}},
+				},
 			},
-		},
-		{
-			Name:      "Владимир Смирнов",
-			CreatedBy: 47272,
+			{
+				Name:      "Владимир Смирнов",
+				CreatedBy: 47272,
+			},
 		},
 	}
 
@@ -650,13 +661,15 @@ func TestUpdateContacts(t *testing.T) {
 		sampleUpdateContactsResponseBody = `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts"}},"_embedded":{"contacts":[{"id":3,"name":"Иван Иванов","updated_at":1590945248,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/3"}}}]}}`
 	)
 
-	sampleUpdateContactsRequest := []*UpdateContactRequestData{
-		{
-			ID:        3,
-			FirstName: "Иван",
-			LastName:  "Иванов",
-			CustomFieldsValues: []*domain.UpdateCustomField{
-				{ID: 66192, Name: "Телефон", Values: []interface{}{map[string]string{"value": "79999999999", "enum_code": "WORK"}}},
+	sampleUpdateContactsRequest := &UpdateContactsRequest{
+		Update: []*UpdateContactsRequestData{
+			{
+				ID:        3,
+				FirstName: "Иван",
+				LastName:  "Иванов",
+				CustomFieldsValues: []*domain.UpdateCustomField{
+					{ID: 66192, Name: "Телефон", Values: []interface{}{map[string]string{"value": "79999999999", "enum_code": "WORK"}}},
+				},
 			},
 		},
 	}
@@ -730,7 +743,7 @@ func TestUpdateContact(t *testing.T) {
 		sampleUpdateContactResponseBody = `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts"}},"_embedded":{"contacts":[{"id":3,"name":"Иван Иванов","updated_at":1590945248,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/3"}}}]}}`
 	)
 
-	sampleUpdateContactRequest := &UpdateContactRequestData{
+	sampleUpdateContactRequest := &UpdateContactsRequestData{
 		ID:        3,
 		FirstName: "Иван",
 		LastName:  "Иванов",
@@ -779,6 +792,15 @@ func TestUpdateContact(t *testing.T) {
 		responseGot, err := client.UpdateContact(ctx, 3, sampleUpdateContactRequest)
 		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
+		assert.Empty(t, responseGot)
+	})
+
+	t.Run("Невалидный запрос", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.UpdateContact(ctx, 0, sampleUpdateContactRequest)
+		assert.EqualError(t, err, ErrInvalidContactID.Error())
 		assert.Empty(t, responseGot)
 	})
 

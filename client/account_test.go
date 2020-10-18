@@ -107,7 +107,7 @@ Key: 'Account.Links' Error:Field validation for 'Links' failed on the 'required'
 	})
 
 	t.Run("Пустой массив TaskTypes в ответе", func(t *testing.T) {
-		req := &domain.AccountEmbedded{TaskTypes: []*domain.TaskType{}}
+		req := &domain.AccountEmbedded{TaskTypes: []*domain.TaskTypeInfo{}}
 		assert.EqualError(t, v.Struct(req), "Key: 'AccountEmbedded.TaskTypes' Error:Field validation for 'TaskTypes' failed on the 'gt' tag")
 	})
 }
@@ -143,7 +143,7 @@ func TestGetAccount(t *testing.T) {
 		Embedded: &domain.AccountEmbedded{
 			AmojoRights: &domain.AmojoRights{CanDirect: true, CanCreateGroups: true},
 			UsersGroups: []*domain.UserGroup{{ID: 1, Name: "Отдел продаж"}},
-			TaskTypes: []*domain.TaskType{
+			TaskTypes: []*domain.TaskTypeInfo{
 				{ID: 1, Name: "Связаться", Code: "FOLLOW_UP"},
 				{ID: 2, Name: "Встреча", Code: "MEETING"},
 			},

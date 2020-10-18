@@ -194,7 +194,7 @@ func TestGetLeadsRequestFilter(t *testing.T) {
 	}
 }
 
-func TestLeadGetRequestParamsValidation(t *testing.T) {
+func TestGetLeadsRequestParamsValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Пустой массив параметров with в запросе", func(t *testing.T) {
@@ -293,26 +293,26 @@ func TestLeadGetRequestParamsValidation(t *testing.T) {
 	})
 }
 
-func TestAddLeadRequestDataValidation(t *testing.T) {
+func TestAddLeadsRequestDataValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Пустой массив параметров CustomFieldsValues в запросе", func(t *testing.T) {
-		data := &AddLeadRequestData{CustomFieldsValues: []*domain.UpdateCustomField{}}
-		assert.EqualError(t, v.Struct(data), "Key: 'AddLeadRequestData.CustomFieldsValues' Error:Field validation for 'CustomFieldsValues' failed on the 'gt' tag")
+		data := &AddLeadsRequestData{CustomFieldsValues: []*domain.UpdateCustomField{}}
+		assert.EqualError(t, v.Struct(data), "Key: 'AddLeadsRequestData.CustomFieldsValues' Error:Field validation for 'CustomFieldsValues' failed on the 'gt' tag")
 	})
 }
 
-func TestUpdateLeadRequestDataValidation(t *testing.T) {
+func TestUpdateLeadsRequestDataValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Нет ID сделки в запросе", func(t *testing.T) {
-		data := &UpdateLeadRequestData{}
-		assert.EqualError(t, v.Struct(data), "Key: 'UpdateLeadRequestData.ID' Error:Field validation for 'ID' failed on the 'required' tag")
+		data := &UpdateLeadsRequestData{}
+		assert.EqualError(t, v.Struct(data), "Key: 'UpdateLeadsRequestData.ID' Error:Field validation for 'ID' failed on the 'required' tag")
 	})
 
 	t.Run("Пустой массив параметров CustomFieldsValues в запросе", func(t *testing.T) {
-		data := &UpdateLeadRequestData{ID: 1, CustomFieldsValues: []*domain.UpdateCustomField{}}
-		assert.EqualError(t, v.Struct(data), "Key: 'UpdateLeadRequestData.CustomFieldsValues' Error:Field validation for 'CustomFieldsValues' failed on the 'gt' tag")
+		data := &UpdateLeadsRequestData{ID: 1, CustomFieldsValues: []*domain.UpdateCustomField{}}
+		assert.EqualError(t, v.Struct(data), "Key: 'UpdateLeadsRequestData.CustomFieldsValues' Error:Field validation for 'CustomFieldsValues' failed on the 'gt' tag")
 	})
 }
 
@@ -571,6 +571,15 @@ func TestGetLeadByID(t *testing.T) {
 		assert.Empty(t, responseGot)
 	})
 
+	t.Run("Невалидный запрос", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.GetLeadByID(ctx, 0, sampleGetLeadsRequestParams.With)
+		assert.EqualError(t, err, ErrInvalidLeadID.Error())
+		assert.Empty(t, responseGot)
+	})
+
 	t.Run("Невалидный ответ", func(t *testing.T) {
 		requestParamsGot := make(url.Values)
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -589,25 +598,27 @@ func TestGetLeadByID(t *testing.T) {
 	})
 }
 
-func TestAddLead(t *testing.T) {
+func TestAddLeads(t *testing.T) {
 	const (
-		requestBodyWant           = `[{"name":"Сделка для примера 1","price":20000,"custom_fields_values":[{"field_id":294471,"values":[{"value":"Наш первый клиент"}]}]},{"name":"Сделка для примера 2","price":10000,"_embedded":{"tags":[{"id":2719,"name":""}]}}]`
-		sampleAddLeadResponseBody = `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads"}},"_embedded":{"leads":[{"id":10185151,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/10185151"}}},{"id":10185153,"request_id":"1","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/10185153"}}}]}}`
+		requestBodyWant            = `[{"name":"Сделка для примера 1","price":20000,"custom_fields_values":[{"field_id":294471,"values":[{"value":"Наш первый клиент"}]}]},{"name":"Сделка для примера 2","price":10000,"_embedded":{"tags":[{"id":2719,"name":""}]}}]`
+		sampleAddLeadsResponseBody = `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads"}},"_embedded":{"leads":[{"id":10185151,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/10185151"}}},{"id":10185153,"request_id":"1","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/10185153"}}}]}}`
 	)
 
-	sampleAddLeadRequest := []*AddLeadRequestData{
-		{
-			Name:      "Сделка для примера 1",
-			Price:     20000,
-			CreatedBy: 0,
-			CustomFieldsValues: []*domain.UpdateCustomField{
-				{ID: 294471, Values: []interface{}{map[string]string{"value": "Наш первый клиент"}}},
+	sampleAddLeadsRequest := &AddLeadsRequest{
+		Add: []*AddLeadsRequestData{
+			{
+				Name:      "Сделка для примера 1",
+				Price:     20000,
+				CreatedBy: 0,
+				CustomFieldsValues: []*domain.UpdateCustomField{
+					{ID: 294471, Values: []interface{}{map[string]string{"value": "Наш первый клиент"}}},
+				},
 			},
-		},
-		{
-			Name:     "Сделка для примера 2",
-			Price:    10000,
-			Embedded: &AddLeadRequestDataEmbedded{Tags: []*domain.Tag{{ID: 2719}}},
+			{
+				Name:     "Сделка для примера 2",
+				Price:    10000,
+				Embedded: &AddLeadRequestDataEmbedded{Tags: []*domain.Tag{{ID: 2719}}},
+			},
 		},
 	}
 
@@ -631,13 +642,13 @@ func TestAddLead(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestBodyGot, _ = ioutil.ReadAll(r.Body)
 			w.Header().Add(contentTypeHeader, successContentType)
-			_, _ = io.WriteString(w, sampleAddLeadResponseBody)
+			_, _ = io.WriteString(w, sampleAddLeadsResponseBody)
 		}))
 
 		client, err := NewClient(server.URL, "login", "hash")
 		assert.NoError(t, err)
 
-		responseGot, err := client.AddLeads(ctx, sampleAddLeadRequest)
+		responseGot, err := client.AddLeads(ctx, sampleAddLeadsRequest)
 		assert.NoError(t, err)
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Exactly(t, responseWant, responseGot)
@@ -654,7 +665,7 @@ func TestAddLead(t *testing.T) {
 		client, err := NewClient(server.URL, "login", "hash")
 		assert.NoError(t, err)
 
-		responseGot, err := client.AddLeads(ctx, sampleAddLeadRequest)
+		responseGot, err := client.AddLeads(ctx, sampleAddLeadsRequest)
 		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
@@ -671,7 +682,7 @@ func TestAddLead(t *testing.T) {
 		client, err := NewClient(server.URL, "login", "hash")
 		assert.NoError(t, err)
 
-		responseGot, err := client.AddLeads(ctx, sampleAddLeadRequest)
+		responseGot, err := client.AddLeads(ctx, sampleAddLeadsRequest)
 		assert.EqualError(t, err, "Key: 'AddLeadsResponse.Embedded' Error:Field validation for 'Embedded' failed on the 'required' tag")
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
@@ -684,21 +695,23 @@ func TestUpdateLeads(t *testing.T) {
 		sampleUpdateLeadsResponseBody = `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads"}},"_embedded":{"leads":[{"id":54886,"updated_at":1589556420,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/54886"}}},{"id":54884,"updated_at":1589556420,"request_id":"1","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/54884"}}}]}}`
 	)
 
-	sampleUpdateLeadsRequest := []*UpdateLeadRequestData{
-		{
-			ID:           54886,
-			PipelineID:   47521,
-			StatusID:     143,
-			ClosedAt:     1589297221,
-			LossReasonID: 7323,
-		},
-		{
-			ID:         54884,
-			Price:      50000,
-			PipelineID: 47521,
-			StatusID:   525743,
-			Embedded: &UpdateLeadRequestDataEmbedded{
-				Tags: []*domain.Tag{},
+	sampleUpdateLeadsRequest := &UpdateLeadsRequest{
+		Update: []*UpdateLeadsRequestData{
+			{
+				ID:           54886,
+				PipelineID:   47521,
+				StatusID:     143,
+				ClosedAt:     1589297221,
+				LossReasonID: 7323,
+			},
+			{
+				ID:         54884,
+				Price:      50000,
+				PipelineID: 47521,
+				StatusID:   525743,
+				Embedded: &UpdateLeadRequestDataEmbedded{
+					Tags: []*domain.Tag{},
+				},
 			},
 		},
 	}
@@ -778,7 +791,7 @@ func TestUpdateLead(t *testing.T) {
 		sampleUpdateLeadResponseBody = `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads"}},"_embedded":{"leads":[{"id":54884,"updated_at":1589556420,"request_id":"1","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/54884"}}}]}}`
 	)
 
-	sampleUpdateLeadRequest := &UpdateLeadRequestData{
+	sampleUpdateLeadRequest := &UpdateLeadsRequestData{
 		ID:         54884,
 		Price:      50000,
 		PipelineID: 47521,
@@ -828,6 +841,15 @@ func TestUpdateLead(t *testing.T) {
 		responseGot, err := client.UpdateLead(ctx, 54884, sampleUpdateLeadRequest)
 		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
+		assert.Empty(t, responseGot)
+	})
+
+	t.Run("Невалидный запрос", func(t *testing.T) {
+		client, err := NewClient("localhost:1234", "login", "hash")
+		assert.NoError(t, err)
+
+		responseGot, err := client.UpdateLead(ctx, 0, sampleUpdateLeadRequest)
+		assert.EqualError(t, err, ErrInvalidLeadID.Error())
 		assert.Empty(t, responseGot)
 	})
 
