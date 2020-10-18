@@ -5,13 +5,13 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/ogi4i/amocrm-client/request"
 	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
 
 	"github.com/ogi4i/amocrm-client/domain"
+	"github.com/ogi4i/amocrm-client/request"
 )
 
 type (

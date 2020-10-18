@@ -7,10 +7,10 @@ func (e Error) Error() string {
 }
 
 const (
-	ErrEmptyClientID        Error = "empty_client_id"
-	ErrEmptyClientSecret    Error = "empty_client_secret"
-	ErrEmptyRefreshToken    Error = "empty_refresh_token"
-	ErrInvalidAuthTokenType Error = "invalid_auth_token_type"
+	ErrEmptyClientID          Error = "empty_client_id"
+	ErrEmptyClientSecret      Error = "empty_client_secret"
+	ErrEmptyAuthorizationCode Error = "empty_authorization_code"
+	ErrInvalidAuthTokenType   Error = "invalid_auth_token_type"
 
 	ErrEmptyResponse Error = "empty_response"
 

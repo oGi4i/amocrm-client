@@ -2,16 +2,18 @@ package client
 
 import (
 	"context"
-	"github.com/go-playground/validator/v10"
-	"github.com/ogi4i/amocrm-client/domain"
-	"github.com/ogi4i/amocrm-client/request"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/ogi4i/amocrm-client/domain"
+	"github.com/ogi4i/amocrm-client/request"
 )
 
 func TestJoinGetContactsRequestWithSlice(t *testing.T) {
@@ -251,6 +253,7 @@ func TestUpdateContactRequestDataValidation(t *testing.T) {
 	})
 }
 
+//nolint:dupl
 func TestGetContactsResponseValidation(t *testing.T) {
 	v := validator.New()
 
@@ -281,6 +284,7 @@ Key: 'GetContactsResponse.Embedded.Contacts[0].Links' Error:Field validation for
 	})
 }
 
+//nolint:dupl
 func TestAddContactsResponseValidation(t *testing.T) {
 	v := validator.New()
 
@@ -303,6 +307,7 @@ Key: 'AddContactsResponse.Embedded.Contacts[0].Links' Error:Field validation for
 	})
 }
 
+//nolint:dupl
 func TestUpdateContactsResponseValidation(t *testing.T) {
 	v := validator.New()
 

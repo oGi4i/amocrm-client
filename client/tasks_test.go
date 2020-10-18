@@ -2,16 +2,18 @@ package client
 
 import (
 	"context"
-	"github.com/go-playground/validator/v10"
-	"github.com/ogi4i/amocrm-client/domain"
-	"github.com/ogi4i/amocrm-client/request"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
 	"testing"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/ogi4i/amocrm-client/domain"
+	"github.com/ogi4i/amocrm-client/request"
 )
 
 func TestGetTasksRequestFilter(t *testing.T) {
@@ -189,6 +191,7 @@ func TestUpdateTasksRequestDataValidation(t *testing.T) {
 	})
 }
 
+//nolint:dupl
 func TestGetTasksResponseValidation(t *testing.T) {
 	v := validator.New()
 
@@ -691,12 +694,6 @@ func TestCompleteTask(t *testing.T) {
 		requestBodyWant              = `{"id":4747929,"is_completed":true,"result":{"text":"Удалось связаться с клиентом"}}`
 		sampleUpdateTaskResponseBody = `{"id":4747929,"updated_at":1588770600,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/tasks/4747929"}}}`
 	)
-
-	//sampleUpdateTaskRequest := &UpdateTasksRequestData{
-	//	ID:           4747929,
-	//	IsCompleted: true,
-	//	Result: &domain.TaskResult{Text: "Удалось связаться с клиентом"},
-	//}
 
 	responseWant := &UpdateTasksResponseItem{
 		ID:        4747929,

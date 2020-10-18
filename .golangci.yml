@@ -99,5 +99,5 @@ issues:
     # golint: allow any comments
     - comment on exported type (.+) should be of the form (.+)
     # golint: allow capitalized errors
-    # - error strings should not be capitalized or end with punctuation or a newline
+    - error strings should not be capitalized or end with punctuation or a newline
     - 'shadow: declaration of "ctx" shadows declaration at line (.+)'

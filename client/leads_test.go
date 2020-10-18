@@ -2,7 +2,6 @@ package client
 
 import (
 	"context"
-	"github.com/go-playground/validator/v10"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -10,6 +9,7 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/stretchr/testify/assert"
 
 	"github.com/ogi4i/amocrm-client/domain"
@@ -316,6 +316,7 @@ func TestUpdateLeadsRequestDataValidation(t *testing.T) {
 	})
 }
 
+//nolint:dupl
 func TestGetLeadsResponseValidation(t *testing.T) {
 	v := validator.New()
 

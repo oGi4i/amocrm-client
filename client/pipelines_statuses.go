@@ -3,9 +3,10 @@ package client
 import (
 	"context"
 	"encoding/json"
-	"github.com/ogi4i/amocrm-client/domain"
 	"net/http"
 	"strconv"
+
+	"github.com/ogi4i/amocrm-client/domain"
 )
 
 type (

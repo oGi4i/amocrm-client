@@ -2,14 +2,16 @@ package client
 
 import (
 	"context"
-	"github.com/go-playground/validator/v10"
-	"github.com/ogi4i/amocrm-client/domain"
-	"github.com/stretchr/testify/assert"
 	"io"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/go-playground/validator/v10"
+	"github.com/stretchr/testify/assert"
+
+	"github.com/ogi4i/amocrm-client/domain"
 )
 
 func TestAddPipelineStatusesRequestValidation(t *testing.T) {
@@ -55,6 +57,7 @@ Key: 'AddPipelineStatusesResponse.Embedded.Statuses[0].Links' Error:Field valida
 	})
 }
 
+//nolint:dupl
 func TestGetPipelineStatuses(t *testing.T) {
 	const sampleGetPipelineStatusesResponseBody = `{"_total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#ffdc7f","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}},{"id":32392159,"name":"Первичный контакт","sort":20,"is_editable":true,"pipeline_id":3177727,"color":"#ccc8f9","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"}}},{"id":32392165,"name":"Принимают решение","sort":30,"is_editable":true,"pipeline_id":3177727,"color":"#c1e0ff","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"}}},{"id":142,"name":"Успешно реализовано","sort":10000,"is_editable":false,"pipeline_id":3177727,"color":"#f2f3f4","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"}}},{"id":143,"name":"Закрыто и не реализовано","sort":11000,"is_editable":false,"pipeline_id":3177727,"color":"#e6e8ea","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"}}}]}}]}}`
 

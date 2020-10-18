@@ -19,10 +19,11 @@ type (
 	Option func(c *Client)
 
 	AuthToken struct {
-		mu           sync.RWMutex
-		AccessToken  string
-		RefreshToken string
-		ExpiresAt    time.Time
+		mu                sync.RWMutex
+		AuthorizationCode string
+		AccessToken       string
+		RefreshToken      string
+		ExpiresAt         time.Time
 	}
 
 	Client struct {
@@ -48,7 +49,7 @@ const (
 const (
 	contentTypeHeader = "ContentType"
 
-	applicationJsonContentType = "application/json"
+	applicationJSONContentType = "application/json"
 
 	successContentType = "application/hal+json"
 	errorContentType   = "application/problem+json"
@@ -56,15 +57,15 @@ const (
 
 const defaultHTTPTimeout = 10 * time.Second
 
-func NewClient(baseURL, clientID, clientSecret, refreshToken string, opts ...Option) (*Client, error) {
+func NewClient(baseURL, clientID, clientSecret, authorizationCode string, opts ...Option) (*Client, error) {
 	if clientID == "" {
 		return nil, ErrEmptyClientID
 	}
 	if clientSecret == "" {
 		return nil, ErrEmptyClientSecret
 	}
-	if refreshToken == "" {
-		return nil, ErrEmptyRefreshToken
+	if authorizationCode == "" {
+		return nil, ErrEmptyAuthorizationCode
 	}
 
 	_, err := url.ParseRequestURI(baseURL)
@@ -77,7 +78,7 @@ func NewClient(baseURL, clientID, clientSecret, refreshToken string, opts ...Opt
 		clientSecret: clientSecret,
 		baseURL:      baseURL,
 		token: &AuthToken{
-			RefreshToken: refreshToken,
+			AuthorizationCode: authorizationCode,
 		},
 		httpClient: &http.Client{
 			Transport: http.DefaultTransport,
@@ -141,7 +142,7 @@ func (c *Client) do(ctx context.Context, url string, method string, data interfa
 		return nil, err
 	}
 
-	addApplicationJsonContentType(req)
+	addApplicationJSONContentType(req)
 	c.withAuthToken(req)
 
 	resp, err := c.httpClient.Do(req)
@@ -173,6 +174,6 @@ func isSuccessResponse(resp *http.Response) bool {
 	}
 }
 
-func addApplicationJsonContentType(req *http.Request) {
-	req.Header.Set(contentTypeHeader, applicationJsonContentType)
+func addApplicationJSONContentType(req *http.Request) {
+	req.Header.Set(contentTypeHeader, applicationJSONContentType)
 }
