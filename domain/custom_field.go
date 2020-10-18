@@ -21,12 +21,6 @@ type (
 		Values []interface{} `json:"values" validate:"required,dive,required"`
 	}
 
-	UpdateCustomValue struct {
-		Value  string `json:"value" validate:"required"`
-		EnumID uint64 `json:"enum_id,omitempty" validate:"omitempty"`
-		Enum   string `json:"enum,omitempty" validate:"omitempty"`
-	}
-
 	CustomFieldType string
 
 	CustomFieldRemind string

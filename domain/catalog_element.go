@@ -1,9 +1,13 @@
 package domain
 
-type CatalogElement struct {
-	ID       int64 `json:"id" validate:"required"`
-	Metadata struct {
-		Quantity  int64 `json:"quantity" validate:"required"`
-		CatalogID int64 `json:"catalog_id" validate:"required"`
-	} `json:"metadata" validate:"required"`
-}
+type (
+	CatalogElementMetadata struct {
+		Quantity  uint64 `json:"quantity" validate:"required"`
+		CatalogID uint64 `json:"catalog_id" validate:"required"`
+	}
+
+	CatalogElement struct {
+		ID       uint64                  `json:"id" validate:"required"`
+		Metadata *CatalogElementMetadata `json:"metadata" validate:"required"`
+	}
+)
