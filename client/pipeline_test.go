@@ -131,7 +131,7 @@ func TestGetPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelines(ctx)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Empty(t, responseGot)
 	})
 
@@ -145,7 +145,7 @@ func TestGetPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelines(ctx)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Empty(t, responseGot)
 	})
 
@@ -269,7 +269,7 @@ func TestGetPipelineByID(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineByID(ctx, 3177727)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Empty(t, responseGot)
 	})
 
@@ -414,7 +414,7 @@ func TestAddPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -562,7 +562,7 @@ func TestUpdatePipeline(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipeline(ctx, 3177727, sampleUpdatePipelineRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})

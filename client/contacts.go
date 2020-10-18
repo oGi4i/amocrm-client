@@ -232,7 +232,7 @@ func (c *Client) AddContacts(ctx context.Context, contacts []*AddContactRequestD
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	resp := new(AddContactsResponse)
@@ -262,7 +262,7 @@ func (c *Client) UpdateContacts(ctx context.Context, contacts []*UpdateContactRe
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	resp := new(UpdateContactsResponse)
@@ -290,7 +290,7 @@ func (c *Client) UpdateContact(ctx context.Context, contactID uint64, contact *U
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	resp := new(UpdateContactsResponse)
@@ -319,7 +319,7 @@ func (c *Client) GetContactByID(ctx context.Context, contactID uint64, with []Ge
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	resp := new(domain.Contact)
@@ -367,7 +367,7 @@ func (c *Client) GetContacts(ctx context.Context, reqParams *GetContactsRequestP
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	response := new(GetContactsResponse)
@@ -382,7 +382,7 @@ func (c *Client) GetContacts(ctx context.Context, reqParams *GetContactsRequestP
 	}
 
 	if len(response.Embedded.Contacts) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	return response.Embedded.Contacts, nil

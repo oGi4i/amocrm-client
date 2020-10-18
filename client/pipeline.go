@@ -56,7 +56,7 @@ func (c *Client) GetPipelines(ctx context.Context) ([]*domain.Pipeline, error) {
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	response := new(PipelinesResponse)
@@ -70,7 +70,7 @@ func (c *Client) GetPipelines(ctx context.Context) ([]*domain.Pipeline, error) {
 	}
 
 	if len(response.Embedded.Pipelines) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	return response.Embedded.Pipelines, nil
@@ -83,7 +83,7 @@ func (c *Client) GetPipelineByID(ctx context.Context, pipelineID uint64) (*domai
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	response := new(domain.Pipeline)
@@ -106,7 +106,7 @@ func (c *Client) AddPipelines(ctx context.Context, pipelines []*AddPipelineData)
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	response := new(AddPipelinesResponse)
@@ -129,7 +129,7 @@ func (c *Client) UpdatePipeline(ctx context.Context, pipelineID uint64, pipeline
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	response := new(domain.Pipeline)

@@ -281,7 +281,7 @@ func (c *Client) AddLeads(ctx context.Context, leads []*AddLeadRequestData) ([]*
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	resp := new(AddLeadsResponse)
@@ -311,7 +311,7 @@ func (c *Client) UpdateLeads(ctx context.Context, leads []*UpdateLeadRequestData
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	resp := new(UpdateLeadsResponse)
@@ -339,7 +339,7 @@ func (c *Client) UpdateLead(ctx context.Context, leadID uint64, reqData *UpdateL
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	resp := new(UpdateLeadsResponse)
@@ -368,7 +368,7 @@ func (c *Client) GetLeadByID(ctx context.Context, leadID uint64, with []GetLeads
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	resp := new(domain.Lead)
@@ -421,7 +421,7 @@ func (c *Client) GetLeads(ctx context.Context, reqParams *GetLeadsRequestParams)
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	response := new(GetLeadsResponse)
@@ -436,7 +436,7 @@ func (c *Client) GetLeads(ctx context.Context, reqParams *GetLeadsRequestParams)
 	}
 
 	if len(response.Embedded.Leads) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	return response.Embedded.Leads, nil

@@ -84,7 +84,7 @@ func (c *Client) GetTasks(ctx context.Context, reqParams *domain.TaskRequestPara
 	}
 
 	if len(taskResponse.Embedded.Items) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	return taskResponse.Embedded.Items, nil

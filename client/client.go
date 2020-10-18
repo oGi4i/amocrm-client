@@ -20,14 +20,13 @@ type (
 	Option func(c *Client)
 
 	Client struct {
-		userLogin string
-		apiHash   string
-		timezone  string
-		baseURL   string
-		cookie    []*http.Cookie
-		client    *http.Client
-		validator *validator.Validate
-		mu        sync.RWMutex
+		login      string
+		apiHash    string
+		baseURL    string
+		cookie     []*http.Cookie
+		httpClient *http.Client
+		validator  *validator.Validate
+		mu         sync.RWMutex
 	}
 
 	PostResponse struct {
@@ -41,14 +40,16 @@ type (
 		ErrorResponse *domain.AmoError `json:"response" validate:"omitempty"`
 	}
 
+	AuthResponseEmbedded struct {
+		Auth       bool             `json:"auth" validate:"required"`
+		Accounts   []*AuthAccount   `json:"accounts" validate:"required,dive,required"`
+		User       *domain.AuthUser `json:"user" validate:"required"`
+		ServerTime int              `json:"server_time" validate:"required"`
+		Error      string           `json:"error" validate:"omitempty"`
+	}
+
 	AuthResponse struct {
-		Response struct {
-			Auth       bool             `json:"auth" validate:"required"`
-			Accounts   []*AuthAccount   `json:"accounts" validate:"omitempty,dive,required"`
-			User       *domain.AuthUser `json:"user" validate:"required"`
-			ServerTime int              `json:"server_time" validate:"required"`
-			Error      string           `json:"error" validate:"omitempty"`
-		} `json:"response" validate:"required"`
+		Response *AuthResponseEmbedded `json:"response" validate:"required"`
 	}
 )
 
@@ -71,22 +72,22 @@ const (
 
 func NewClient(accountURL string, login string, hash string, opts ...Option) (*Client, error) {
 	if login == "" {
-		return nil, domain.ErrEmptyLogin
+		return nil, ErrEmptyLogin
 	}
 	if hash == "" {
-		return nil, domain.ErrEmptyAPIHash
+		return nil, ErrEmptyAPIHash
 	}
 
-	_, err := url.Parse(accountURL)
+	_, err := url.ParseRequestURI(accountURL)
 	if err != nil {
 		return nil, err
 	}
 
 	c := &Client{
-		userLogin: login,
-		apiHash:   hash,
-		baseURL:   accountURL,
-		client: &http.Client{
+		login:   login,
+		apiHash: hash,
+		baseURL: accountURL,
+		httpClient: &http.Client{
 			Transport: http.DefaultTransport,
 			Timeout:   defaultHTTPTimeout,
 		},
@@ -102,29 +103,23 @@ func NewClient(accountURL string, login string, hash string, opts ...Option) (*C
 
 func WithHTTPTimeout(d time.Duration) Option {
 	return func(c *Client) {
-		c.client.Timeout = d
-	}
-}
-
-func WithCustomValidationTag(tagName string, f func(fl validator.FieldLevel) bool) Option {
-	return func(c *Client) {
-		_ = c.validator.RegisterValidation(tagName, f)
+		c.httpClient.Timeout = d
 	}
 }
 
 func (c *Client) Authorize(ctx context.Context) error {
 	values := url.Values{}
-	values.Set("USER_LOGIN", c.userLogin)
+	values.Set("USER_LOGIN", c.login)
 	values.Set("USER_HASH", c.apiHash)
 
-	req, err := http.NewRequest(http.MethodPost, c.baseURL+authURI, bytes.NewBufferString(values.Encode()))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+authURI, bytes.NewBufferString(values.Encode()))
 	if err != nil {
 		return err
 	}
 
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.Header.Set(contentTypeHeader, "application/x-www-form-urlencoded")
 
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
@@ -134,32 +129,29 @@ func (c *Client) Authorize(ctx context.Context) error {
 		return errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
 	}
 
-	c.mu.Lock()
-	c.cookie = resp.Cookies()
-	c.mu.Unlock()
-
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
-	authResponse := new(AuthResponse)
-	err = json.Unmarshal(body, authResponse)
+	response := new(AuthResponse)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return err
 	}
 
-	if len(authResponse.Response.Accounts) > 0 {
-		c.timezone = authResponse.Response.Accounts[0].Timezone
-	}
-
-	if !authResponse.Response.Auth {
-		return errors.New(authResponse.Response.Error)
-	}
-
-	if err := c.validator.Struct(authResponse); err != nil {
+	err = c.validator.Struct(response)
+	if err != nil {
 		return err
 	}
+
+	if !response.Response.Auth {
+		return errors.New(response.Response.Error)
+	}
+
+	c.mu.Lock()
+	c.cookie = resp.Cookies()
+	c.mu.Unlock()
 
 	return nil
 }
@@ -182,7 +174,7 @@ func (c *Client) doGet(ctx context.Context, url string, params url.Values) ([]by
 	}
 	c.mu.RUnlock()
 
-	resp, err := c.client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
@@ -219,7 +211,7 @@ func (c *Client) do(ctx context.Context, url string, method string, data interfa
 	}
 	c.mu.RUnlock()
 
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := c.httpClient.Do(req.WithContext(ctx))
 	if err != nil {
 		return nil, err
 	}
@@ -248,7 +240,7 @@ func (c *Client) getResponseID(body []byte) (int, error) {
 		if result.ErrorResponse != nil {
 			return 0, result.ErrorResponse
 		}
-		return 0, domain.ErrEmptyResponse
+		return 0, ErrEmptyResponse
 	}
 
 	return result.Embedded.Items[0].ID, nil

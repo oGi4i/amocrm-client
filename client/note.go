@@ -69,7 +69,7 @@ func (c *Client) GetNotes(ctx context.Context, reqParams *domain.NoteRequestPara
 	}
 
 	if len(noteResponse.Embedded.Items) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	return noteResponse.Embedded.Items, nil

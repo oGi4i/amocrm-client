@@ -448,7 +448,7 @@ func TestGetLeads(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeads(ctx, sampleGetLeadsRequestParams)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestParamsWant, requestParamsGot)
 		assert.Empty(t, responseGot)
 	})
@@ -465,7 +465,7 @@ func TestGetLeads(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeads(ctx, sampleGetLeadsRequestParams)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestParamsWant, requestParamsGot)
 		assert.Empty(t, responseGot)
 	})
@@ -566,7 +566,7 @@ func TestGetLeadByID(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeadByID(ctx, 3912171, sampleGetLeadsRequestParams.With)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestParamsWant, requestParamsGot)
 		assert.Empty(t, responseGot)
 	})
@@ -655,7 +655,7 @@ func TestAddLead(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddLeads(ctx, sampleAddLeadRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -749,7 +749,7 @@ func TestUpdateLeads(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLeads(ctx, sampleUpdateLeadsRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -826,7 +826,7 @@ func TestUpdateLead(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLead(ctx, 54884, sampleUpdateLeadRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})

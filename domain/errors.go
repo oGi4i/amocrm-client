@@ -2,18 +2,11 @@ package domain
 
 import "fmt"
 
-type (
-	Error string
-
-	AmoError struct {
-		ErrorDetail string `json:"error" validate:"required"`
-		ErrorCode   int    `json:"error_code,string" validate:"required"`
-	}
-)
-
-func (e Error) Error() string {
-	return string(e)
+type AmoError struct {
+	ErrorDetail string `json:"error" validate:"required"`
+	ErrorCode   int    `json:"error_code,string" validate:"required"`
 }
+
 func (e *AmoError) Error() string {
 	return fmt.Sprintf("%s: %s", amoErrorTypeMap[e.ErrorCode], e.ErrorDetail)
 }
@@ -113,10 +106,6 @@ const (
 )
 
 var (
-	ErrEmptyLogin    Error = "empty_login"
-	ErrEmptyAPIHash  Error = "empty_api_hash"
-	ErrEmptyResponse Error = "empty_response"
-
 	amoErrorTypeMap = map[int]string{
 		AccountNotFoundCode:          AccountNotFound,
 		BodyMustBeJSONCode:           BodyMustBeJSON,

@@ -199,7 +199,7 @@ func TestGetAccount(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetAccount(ctx, sampleGetAccountRequestParams)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestParamsWant, requestParamsGot)
 		assert.Empty(t, responseGot)
 	})

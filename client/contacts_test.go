@@ -422,7 +422,7 @@ func TestGetContacts(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContacts(ctx, sampleGetContactsRequestParams)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestParamsWant, requestParamsGot)
 		assert.Empty(t, responseGot)
 	})
@@ -439,7 +439,7 @@ func TestGetContacts(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContacts(ctx, sampleGetContactsRequestParams)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestParamsWant, requestParamsGot)
 		assert.Empty(t, responseGot)
 	})
@@ -534,7 +534,7 @@ func TestGetContactByID(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContactByID(ctx, 3, sampleGetContactByIDRequestParams)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestParamsWant, requestParamsGot)
 		assert.Empty(t, responseGot)
 	})
@@ -621,7 +621,7 @@ func TestAddContacts(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddContacts(ctx, sampleAddContactsRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -701,7 +701,7 @@ func TestUpdateContacts(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContacts(ctx, sampleUpdateContactsRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -777,7 +777,7 @@ func TestUpdateContact(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContact(ctx, 3, sampleUpdateContactRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})

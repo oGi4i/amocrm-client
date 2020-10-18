@@ -54,7 +54,7 @@ func (c *Client) GetAccount(ctx context.Context, reqParams *AccountGetRequestPar
 	}
 
 	if len(body) == 0 {
-		return nil, domain.ErrEmptyResponse
+		return nil, ErrEmptyResponse
 	}
 
 	response := new(domain.Account)

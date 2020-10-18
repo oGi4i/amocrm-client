@@ -135,7 +135,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Empty(t, responseGot)
 	})
 
@@ -149,7 +149,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Empty(t, responseGot)
 	})
 
@@ -208,7 +208,7 @@ func TestGetPipelineStatusByID(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatusByID(ctx, 3177727, 32392156)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Empty(t, responseGot)
 	})
 
@@ -300,7 +300,7 @@ func TestAddPipelineStatuses(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelineStatuses(ctx, 3270355, sampleAddPipelineStatusesRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -393,7 +393,7 @@ func TestUpdatePipelineStatuse(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipelineStatus(ctx, 3177727, 32392165, sampleUpdatePipelineStatusRequest)
-		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
+		assert.EqualError(t, err, ErrEmptyResponse.Error())
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
