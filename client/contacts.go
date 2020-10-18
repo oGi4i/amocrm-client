@@ -151,6 +151,7 @@ func (o *GetContactsOrder) appendToQuery(params url.Values) {
 	params.Add(fmt.Sprintf("order[%s]", string(o.By)), string(o.Method))
 }
 
+//nolint:dupl
 func (f *GetContactsRequestFilter) validate() error {
 	if f.ID != nil && !f.ID.IsSimpleFilter() && !f.ID.IsMultipleFilter() {
 		return errors.New("ID filter must be simple or multiple type")

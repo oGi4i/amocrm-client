@@ -401,6 +401,7 @@ func (c *Client) GetLeadByID(ctx context.Context, leadID uint64, with []GetLeads
 	return response, nil
 }
 
+//nolint:dupl
 func (c *Client) GetLeads(ctx context.Context, reqParams *GetLeadsRequestParams) ([]*domain.Lead, error) {
 	if err := c.validator.Struct(reqParams); err != nil {
 		return nil, err

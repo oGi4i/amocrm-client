@@ -148,6 +148,7 @@ func (o *GetCompaniesOrder) appendToQuery(params url.Values) {
 	params.Add(fmt.Sprintf("order[%s]", string(o.By)), string(o.Method))
 }
 
+//nolint:dupl
 func (f *GetCompaniesRequestFilter) validate() error {
 	if f.ID != nil && !f.ID.IsSimpleFilter() && !f.ID.IsMultipleFilter() {
 		return errors.New("ID filter must be simple or multiple type")
@@ -353,6 +354,7 @@ func (c *Client) GetCompanyByID(ctx context.Context, companyID uint64, with []Ge
 	return response, nil
 }
 
+//nolint:dupl
 func (c *Client) GetCompanies(ctx context.Context, reqParams *GetCompaniesRequestParams) ([]*domain.Company, error) {
 	if err := c.validator.Struct(reqParams); err != nil {
 		return nil, err

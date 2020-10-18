@@ -10,9 +10,10 @@ import (
 	"testing"
 
 	"github.com/go-playground/validator/v10"
+	"github.com/stretchr/testify/assert"
+
 	"github.com/ogi4i/amocrm-client/domain"
 	"github.com/ogi4i/amocrm-client/request"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestJoinGetCompaniesRequestWith(t *testing.T) {
@@ -253,6 +254,7 @@ func TestUpdateCompaniesRequestDataValidation(t *testing.T) {
 	})
 }
 
+//nolint:dupl
 func TestGetCompaniesResponseValidation(t *testing.T) {
 	v := validator.New()
 
