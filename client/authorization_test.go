@@ -178,7 +178,7 @@ func TestRefreshAuthTokens(t *testing.T) {
 
 	ctx := context.Background()
 
-	t.Run("Успешное обновление токенов с первого раза", func(t *testing.T) {
+	t.Run("Успешное обновление токенов с первой попытки", func(t *testing.T) {
 		var requestBodyGot []byte
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestBodyGot, _ = ioutil.ReadAll(r.Body)
@@ -197,12 +197,12 @@ func TestRefreshAuthTokens(t *testing.T) {
 		client.refreshAuthTokens(ctx)
 
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
-		assert.Equal(t, "ACCESS_TOKEN_VALUE", client.token.AccessToken)
+		assert.Equal(t, newAccessToken, client.token.AccessToken)
 		assert.Equal(t, newRefreshToken, client.token.RefreshToken)
 		assert.Equal(t, time.Now().Add(86400*time.Second).Round(time.Second), client.token.ExpiresAt.Round(time.Second))
 	})
 
-	t.Run("Успешное обновление токенов со второго раза", func(t *testing.T) {
+	t.Run("Успешное обновление токенов со второй попытки", func(t *testing.T) {
 		failedChan := make(chan struct{})
 		failServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -226,17 +226,11 @@ func TestRefreshAuthTokens(t *testing.T) {
 
 		failedAttempts := 0
 		go func() {
-			for {
-				if failedAttempts == 1 {
-					client.token.mu.Lock()
-					client.baseURL = successServer.URL
-					client.token.mu.Unlock()
-					return
-				}
-
-				<-failedChan
-				failedAttempts++
-			}
+			<-failedChan
+			failedAttempts++
+			client.token.mu.Lock()
+			client.baseURL = successServer.URL
+			client.token.mu.Unlock()
 		}()
 
 		client.refreshAuthTokens(ctx)
@@ -248,7 +242,7 @@ func TestRefreshAuthTokens(t *testing.T) {
 		assert.Equal(t, time.Now().Add(86400*time.Second).Round(time.Second), client.token.ExpiresAt.Round(time.Second))
 	})
 
-	t.Run("Успешное обновление токенов с последнего раза", func(t *testing.T) {
+	t.Run("Успешное обновление токенов с последней попытки", func(t *testing.T) {
 		failedChan := make(chan struct{})
 		failServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(http.StatusUnauthorized)

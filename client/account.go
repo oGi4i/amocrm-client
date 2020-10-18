@@ -15,14 +15,6 @@ type (
 	AccountGetRequestParams struct {
 		With []AccountGetRequestWith `validate:"omitempty,dive,oneof=amojo_id amojo_rights user_groups task_types version entity_names datetime_settings"`
 	}
-
-	AuthAccount struct {
-		ID        int    `json:"id" validate:"required"`
-		Name      string `json:"name" validate:"required"`
-		Subdomain string `json:"subdomain" validate:"required"`
-		Language  string `json:"language" validate:"required"`
-		Timezone  string `json:"timezone" validate:"required"`
-	}
 )
 
 const (
@@ -46,7 +38,7 @@ func (c *Client) GetAccount(ctx context.Context, reqParams *AccountGetRequestPar
 
 	params := make(url.Values)
 	if reqParams.With != nil {
-		params.Add("with", joinAccountRequestWithSlice(reqParams.With))
+		params.Add("with", joinAccountRequestWith(reqParams.With))
 	}
 
 	body, err := c.doGet(ctx, c.baseURL+accountURI, params)
@@ -71,7 +63,7 @@ func (c *Client) GetAccount(ctx context.Context, reqParams *AccountGetRequestPar
 	return response, nil
 }
 
-func joinAccountRequestWithSlice(with []AccountGetRequestWith) string {
+func joinAccountRequestWith(with []AccountGetRequestWith) string {
 	if len(with) == 0 {
 		return ""
 	}

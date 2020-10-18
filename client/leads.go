@@ -17,13 +17,11 @@ import (
 type (
 	GetLeadsRequestWith string
 
-	GetLeadsRequestParams struct {
-		With   []GetLeadsRequestWith  `validate:"omitempty,dive,oneof=catalog_elements is_price_modified_by_robot loss_reason contacts only_deleted source_id"` // Дополнительные параметры запроса, позволяющие получить больше данных в ответе
-		Page   uint64                 `validate:"omitempty"`                                                                                                    // Страница выборки
-		Limit  uint64                 `validate:"omitempty,lte=250"`                                                                                            // Количество возвращаемых сущностей за один запрос (максимум - 250)
-		Query  string                 `validate:"omitempty"`                                                                                                    // Поисковый запрос (осуществляет поиск по заполненным полям сущности)
-		Filter *GetLeadsRequestFilter `validate:"omitempty"`                                                                                                    // Фильтр
-		Order  *GetLeadsOrder         `validate:"omitempty"`                                                                                                    // Сортировка результатов
+	GetLeadsOrderBy string
+
+	GetLeadsOrder struct {
+		By     GetLeadsOrderBy     `validate:"required,oneof=id created_at updated_at"`
+		Method request.OrderMethod `validate:"required,oneof=asc desc"`
 	}
 
 	GetLeadsRequestFilter struct {
@@ -42,15 +40,28 @@ type (
 		CustomFieldValues []*request.Filter `validate:"omitempty,gt=0,dive,required"` // Фильтр по дополнительным полям, привязанным к сделке
 	}
 
-	GetLeadsOrderBy string
-
-	GetLeadsOrder struct {
-		By     GetLeadsOrderBy     `validate:"required,oneof=id created_at updated_at"`
-		Method request.OrderMethod `validate:"required,oneof=asc desc"`
+	GetLeadsRequestParams struct {
+		With   []GetLeadsRequestWith  `validate:"omitempty,dive,oneof=catalog_elements is_price_modified_by_robot loss_reason contacts only_deleted source_id"` // Дополнительные параметры запроса, позволяющие получить больше данных в ответе
+		Page   uint64                 `validate:"omitempty"`                                                                                                    // Страница выборки
+		Limit  uint64                 `validate:"omitempty,lte=250"`                                                                                            // Количество возвращаемых сущностей за один запрос (максимум - 250)
+		Query  string                 `validate:"omitempty"`                                                                                                    // Поисковый запрос (осуществляет поиск по заполненным полям сущности)
+		Filter *GetLeadsRequestFilter `validate:"omitempty"`                                                                                                    // Фильтр
+		Order  *GetLeadsOrder         `validate:"omitempty"`                                                                                                    // Сортировка результатов
 	}
 
-	AddLeadRequestDataEmbedded struct {
-		Tags []*domain.Tag `json:"tags" validate:"omitempty"`
+	GetLeadsResponseEmbedded struct {
+		Leads []*domain.Lead `json:"leads" validate:"omitempty,dive,required"`
+	}
+
+	GetLeadsResponse struct {
+		Page          uint64                    `json:"_page" validate:"required"`
+		Links         *domain.Links             `json:"_links" validate:"required"`
+		Embedded      *GetLeadsResponseEmbedded `json:"_embedded" validate:"required"`
+		ErrorResponse *domain.AmoError          `json:"response" validate:"omitempty"`
+	}
+
+	ModifyLeadsEmbedded struct {
+		Tags []*domain.Tag `json:"tags" validate:"omitempty,dive,required"`
 	}
 
 	AddLeadsRequestData struct {
@@ -66,38 +77,12 @@ type (
 		LossReasonID       uint64                      `json:"loss_reason_id,omitempty" validate:"omitempty"`
 		ResponsibleUserID  uint64                      `json:"responsible_user_id,omitempty" validate:"omitempty"`
 		CustomFieldsValues []*domain.UpdateCustomField `json:"custom_fields_values,omitempty" validate:"omitempty,gt=0,dive,required"`
-		Embedded           *AddLeadRequestDataEmbedded `json:"_embedded,omitempty" validate:"omitempty"`
+		Embedded           *ModifyLeadsEmbedded        `json:"_embedded,omitempty" validate:"omitempty"`
 		RequestID          string                      `json:"request_id,omitempty" validate:"omitempty"`
 	}
 
 	AddLeadsRequest struct {
 		Add []*AddLeadsRequestData `validate:"required,gt=0,dive,required"`
-	}
-
-	UpdateLeadRequestDataEmbedded struct {
-		Tags []*domain.Tag `json:"tags" validate:"omitempty,dive,required"`
-	}
-
-	UpdateLeadsRequestData struct {
-		ID                 uint64                         `json:"id" validate:"required"`
-		Name               string                         `json:"name,omitempty" validate:"omitempty"`
-		Price              uint64                         `json:"price,omitempty" validate:"omitempty"`
-		StatusID           uint64                         `json:"status_id,omitempty" validate:"omitempty"`
-		PipelineID         uint64                         `json:"pipeline_id,omitempty" validate:"omitempty"`
-		CreatedBy          uint64                         `json:"created_by,omitempty" validate:"omitempty"`
-		UpdatedBy          uint64                         `json:"updated_by,omitempty" validate:"omitempty"`
-		ClosedAt           uint64                         `json:"closed_at,omitempty" validate:"omitempty"`
-		CreatedAt          uint64                         `json:"created_at,omitempty" validate:"omitempty"`
-		UpdatedAt          uint64                         `json:"updated_at,omitempty" validate:"omitempty"`
-		LossReasonID       uint64                         `json:"loss_reason_id,omitempty" validate:"omitempty"`
-		ResponsibleUserID  uint64                         `json:"responsible_user_id,omitempty" validate:"omitempty"`
-		CustomFieldsValues []*domain.UpdateCustomField    `json:"custom_fields_values,omitempty" validate:"omitempty,gt=0,dive,required"`
-		Embedded           *UpdateLeadRequestDataEmbedded `json:"_embedded,omitempty" validate:"omitempty"`
-		RequestID          string                         `json:"request_id,omitempty" validate:"omitempty"`
-	}
-
-	UpdateLeadsRequest struct {
-		Update []*UpdateLeadsRequestData `validate:"required,gt=0,dive,required"`
 	}
 
 	AddLeadsResponseItem struct {
@@ -107,13 +92,35 @@ type (
 	}
 
 	AddLeadsResponseEmbedded struct {
-		Leads []*AddLeadsResponseItem `json:"leads" validate:"omitempty,gt=0,dive,required"`
+		Leads []*AddLeadsResponseItem `json:"leads" validate:"required,gt=0,dive,required"`
 	}
 
 	AddLeadsResponse struct {
 		Links         *domain.Links             `json:"_links" validate:"required"`
 		Embedded      *AddLeadsResponseEmbedded `json:"_embedded" validate:"required"`
 		ErrorResponse *domain.AmoError          `json:"response" validate:"omitempty"`
+	}
+
+	UpdateLeadsRequestData struct {
+		ID                 uint64                      `json:"id" validate:"required"`
+		Name               string                      `json:"name,omitempty" validate:"omitempty"`
+		Price              uint64                      `json:"price,omitempty" validate:"omitempty"`
+		StatusID           uint64                      `json:"status_id,omitempty" validate:"omitempty"`
+		PipelineID         uint64                      `json:"pipeline_id,omitempty" validate:"omitempty"`
+		CreatedBy          uint64                      `json:"created_by,omitempty" validate:"omitempty"`
+		UpdatedBy          uint64                      `json:"updated_by,omitempty" validate:"omitempty"`
+		ClosedAt           uint64                      `json:"closed_at,omitempty" validate:"omitempty"`
+		CreatedAt          uint64                      `json:"created_at,omitempty" validate:"omitempty"`
+		UpdatedAt          uint64                      `json:"updated_at,omitempty" validate:"omitempty"`
+		LossReasonID       uint64                      `json:"loss_reason_id,omitempty" validate:"omitempty"`
+		ResponsibleUserID  uint64                      `json:"responsible_user_id,omitempty" validate:"omitempty"`
+		CustomFieldsValues []*domain.UpdateCustomField `json:"custom_fields_values,omitempty" validate:"omitempty,gt=0,dive,required"`
+		Embedded           *ModifyLeadsEmbedded        `json:"_embedded,omitempty" validate:"omitempty"`
+		RequestID          string                      `json:"request_id,omitempty" validate:"omitempty"`
+	}
+
+	UpdateLeadsRequest struct {
+		Update []*UpdateLeadsRequestData `validate:"required,gt=0,dive,required"`
 	}
 
 	UpdateLeadsResponseItem struct {
@@ -124,24 +131,13 @@ type (
 	}
 
 	UpdateLeadsResponseEmbedded struct {
-		Leads []*UpdateLeadsResponseItem `json:"leads" validate:"required,dive,required"`
+		Leads []*UpdateLeadsResponseItem `json:"leads" validate:"required,gt=0,dive,required"`
 	}
 
 	UpdateLeadsResponse struct {
 		Links         *domain.Links                `json:"_links" validate:"required"`
 		Embedded      *UpdateLeadsResponseEmbedded `json:"_embedded" validate:"required"`
 		ErrorResponse *domain.AmoError             `json:"response" validate:"omitempty"`
-	}
-
-	GetLeadsResponseEmbedded struct {
-		Leads []*domain.Lead `json:"leads" validate:"omitempty,dive,required"`
-	}
-
-	GetLeadsResponse struct {
-		Page          uint64                    `json:"_page" validate:"required"`
-		Links         *domain.Links             `json:"_links" validate:"required"`
-		Embedded      *GetLeadsResponseEmbedded `json:"_embedded" validate:"required"`
-		ErrorResponse *domain.AmoError          `json:"response" validate:"omitempty"`
 	}
 )
 
@@ -217,6 +213,14 @@ func (f *GetLeadsRequestFilter) validate() error {
 		return errors.New("ClosestTaskAt filter must be simple or interval type")
 	}
 
+	if f.CustomFieldValues != nil {
+		for _, cf := range f.CustomFieldValues {
+			if !cf.IsSimpleCustomFieldFilter() && !cf.IsMultipleCustomFieldFilter() && !cf.IsIntervalCustomFieldFilter() {
+				return errors.New("CustomFieldValues filter must be custom field specific type")
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -290,18 +294,18 @@ func (c *Client) AddLeads(ctx context.Context, req *AddLeadsRequest) ([]*AddLead
 		return nil, ErrEmptyResponse
 	}
 
-	resp := new(AddLeadsResponse)
-	err = json.Unmarshal(body, resp)
+	response := new(AddLeadsResponse)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.validator.Struct(resp)
+	err = c.validator.Struct(response)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Embedded.Leads, nil
+	return response.Embedded.Leads, nil
 }
 
 func (c *Client) UpdateLeads(ctx context.Context, req *UpdateLeadsRequest) ([]*UpdateLeadsResponseItem, error) {
@@ -318,18 +322,18 @@ func (c *Client) UpdateLeads(ctx context.Context, req *UpdateLeadsRequest) ([]*U
 		return nil, ErrEmptyResponse
 	}
 
-	resp := new(UpdateLeadsResponse)
-	err = json.Unmarshal(body, resp)
+	response := new(UpdateLeadsResponse)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.validator.Struct(resp)
+	err = c.validator.Struct(response)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Embedded.Leads, nil
+	return response.Embedded.Leads, nil
 }
 
 func (c *Client) UpdateLead(ctx context.Context, leadID uint64, req *UpdateLeadsRequestData) (*UpdateLeadsResponseItem, error) {
@@ -350,18 +354,18 @@ func (c *Client) UpdateLead(ctx context.Context, leadID uint64, req *UpdateLeads
 		return nil, ErrEmptyResponse
 	}
 
-	resp := new(UpdateLeadsResponse)
-	err = json.Unmarshal(body, resp)
+	response := new(UpdateLeadsResponseItem)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.validator.Struct(resp)
+	err = c.validator.Struct(response)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Embedded.Leads[0], nil
+	return response, nil
 }
 
 func (c *Client) GetLeadByID(ctx context.Context, leadID uint64, with []GetLeadsRequestWith) (*domain.Lead, error) {
@@ -383,18 +387,18 @@ func (c *Client) GetLeadByID(ctx context.Context, leadID uint64, with []GetLeads
 		return nil, ErrEmptyResponse
 	}
 
-	resp := new(domain.Lead)
-	err = json.Unmarshal(body, resp)
+	response := new(domain.Lead)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.validator.Struct(resp)
+	err = c.validator.Struct(response)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	return response, nil
 }
 
 func (c *Client) GetLeads(ctx context.Context, reqParams *GetLeadsRequestParams) ([]*domain.Lead, error) {

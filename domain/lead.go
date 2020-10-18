@@ -31,7 +31,7 @@ type (
 		ClosedAt               uint64         `json:"closed_at,omitempty" validate:"omitempty"`            // Дата изменения сделки, передаётся в Unit Timestamp
 		ClosestTaskAt          uint64         `json:"closest_task_at,omitempty" validate:"omitempty"`      // Дата ближайшей задачи к выполнению, передаётся в Unit Timestamp
 		IsDeleted              bool           `json:"is_deleted" validate:"omitempty"`                     // Признак удалена ли сделка
-		CustomFieldsValues     []*CustomField `json:"custom_fields_values,omitempty" validate:"omitempty"` // // Массив дополнительных полей, заданным для сделки
+		CustomFieldsValues     []*CustomField `json:"custom_fields_values,omitempty" validate:"omitempty"` // // Массив дополнительных полей, заданных для сделки
 		Score                  uint64         `json:"score" validate:"omitempty"`                          // Скоринг сделки
 		AccountID              uint64         `json:"account_id" validate:"required"`                      // ID аккаунта, в котором находится сделка
 		IsPriceModifiedByRobot bool           `json:"is_price_modified_by_robot" validate:"omitempty"`     // Признак изменён ли в последний раз бюджет сделки роботом (требует параметра `with=is_price_modified_by_robot` в запросе)

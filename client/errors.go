@@ -20,4 +20,5 @@ const (
 	ErrInvalidPipelineStatusID Error = "invalid_pipeline_status_id"
 	ErrInvalidTaskID           Error = "invalid_task_id"
 	ErrInvalidTaskResult       Error = "invalid_task_result"
+	ErrInvalidCompanyID        Error = "incalid_company_id"
 )

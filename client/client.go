@@ -38,12 +38,13 @@ type (
 
 const (
 	authURI      = "/oauth2/access_token"
-	contactsURI  = "/api/v4/contacts"
 	accountURI   = "/api/v4/account"
-	leadsURI     = "/api/v4/leads"
-	tasksURI     = "/api/v4/tasks"
-	pipelinesURI = "/api/v4/leads/pipelines"
+	companiesURI = "/api/v4/companies"
+	contactsURI  = "/api/v4/contacts"
 	downloadURI  = "/download/"
+	leadsURI     = "/api/v4/leads"
+	pipelinesURI = "/api/v4/leads/pipelines"
+	tasksURI     = "/api/v4/tasks"
 )
 
 const (
@@ -113,17 +114,17 @@ func (c *Client) doGet(ctx context.Context, url string, params url.Values) ([]by
 	req.URL.RawQuery = params.Encode()
 	c.withAuthToken(req)
 
-	resp, err := c.httpClient.Do(req)
+	response, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer response.Body.Close()
 
-	if !isSuccessResponse(resp) {
-		return nil, errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
+	if !isSuccessResponse(response) {
+		return nil, errors.New("http status not ok: " + strconv.Itoa(response.StatusCode))
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -145,17 +146,17 @@ func (c *Client) do(ctx context.Context, url string, method string, data interfa
 	addApplicationJSONContentType(req)
 	c.withAuthToken(req)
 
-	resp, err := c.httpClient.Do(req)
+	response, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer response.Body.Close()
 
-	if !isSuccessResponse(resp) {
-		return nil, errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
+	if !isSuccessResponse(response) {
+		return nil, errors.New("http status not ok: " + strconv.Itoa(response.StatusCode))
 	}
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -163,8 +164,8 @@ func (c *Client) do(ctx context.Context, url string, method string, data interfa
 	return respBody, nil
 }
 
-func isSuccessResponse(resp *http.Response) bool {
-	switch resp.Header.Get(contentTypeHeader) {
+func isSuccessResponse(response *http.Response) bool {
+	switch response.Header.Get(contentTypeHeader) {
 	case successContentType:
 		return true
 	case errorContentType:

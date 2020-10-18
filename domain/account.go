@@ -37,11 +37,11 @@ type (
 )
 
 const (
-	UnavailableCustomersMode CustomersMode = "unavailable"
-	DisabledCustomersMode    CustomersMode = "disabled"
-	SegmentsCustomersMode    CustomersMode = "segments"
-	DynamicCustomersMode     CustomersMode = "dynamic"
-	PeriodicityCustomersMode CustomersMode = "periodicity"
+	UnavailableCustomersMode CustomersMode = "unavailable" // Функционал недоступен
+	DisabledCustomersMode    CustomersMode = "disabled"    // Функционал отключен
+	SegmentsCustomersMode    CustomersMode = "segments"    // Сегментация
+	DynamicCustomersMode     CustomersMode = "dynamic"     // Динамический DEPRECATED
+	PeriodicityCustomersMode CustomersMode = "periodicity" // Периодические покупки
 )
 
 const (

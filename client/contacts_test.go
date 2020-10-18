@@ -16,7 +16,7 @@ import (
 	"github.com/ogi4i/amocrm-client/request"
 )
 
-func TestJoinGetContactsRequestWithSlice(t *testing.T) {
+func TestJoinGetContactsRequestWith(t *testing.T) {
 	testCases := []struct {
 		name   string
 		params []GetContactsRequestWith
@@ -745,7 +745,7 @@ func TestUpdateContacts(t *testing.T) {
 func TestUpdateContact(t *testing.T) {
 	const (
 		requestBodyWant                 = `{"id":3,"first_name":"Иван","last_name":"Иванов","custom_fields_values":[{"field_id":66192,"field_name":"Телефон","values":[{"enum_code":"WORK","value":"79999999999"}]}]}`
-		sampleUpdateContactResponseBody = `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts"}},"_embedded":{"contacts":[{"id":3,"name":"Иван Иванов","updated_at":1590945248,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/3"}}}]}}`
+		sampleUpdateContactResponseBody = `{"id":3,"name":"Иван Иванов","updated_at":1590945248,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/3"}}}`
 	)
 
 	sampleUpdateContactRequest := &UpdateContactsRequestData{
@@ -814,14 +814,14 @@ func TestUpdateContact(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			requestBodyGot, _ = ioutil.ReadAll(r.Body)
 			w.Header().Add(contentTypeHeader, successContentType)
-			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts"}},"_embedded":{"contacts":[]}}`)
+			_, _ = io.WriteString(w, `{"_id":3,"name":"Иван Иванов","updated_at":1590945248,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/3"}}}`)
 		}))
 
 		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContact(ctx, 3, sampleUpdateContactRequest)
-		assert.EqualError(t, err, "Key: 'UpdateContactsResponse.Embedded.Contacts' Error:Field validation for 'Contacts' failed on the 'gt' tag")
+		assert.EqualError(t, err, "Key: 'UpdateContactsResponseItem.ID' Error:Field validation for 'ID' failed on the 'required' tag")
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})

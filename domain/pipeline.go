@@ -13,7 +13,7 @@ type (
 		IsUnsortedOn bool              `json:"is_unsorted_on,omitempty" validate:"omitempty"` // Включено ли неразобранное в воронке
 		IsArchive    bool              `json:"is_archive,omitempty" validate:"omitempty"`     // Является ли воронка архивной
 		AccountID    uint64            `json:"account_id,omitempty" validate:"required"`      // ID аккаунта, в котором находится воронка
-		Embedded     *PipelineEmbedded `json:"_embedded,omitempty" validate:"required,dive,required"`
+		Embedded     *PipelineEmbedded `json:"_embedded,omitempty" validate:"required"`
 		Links        *Links            `json:"_links,omitempty" validate:"required"`
 	}
 )

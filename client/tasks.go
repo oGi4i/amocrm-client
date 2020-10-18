@@ -14,11 +14,11 @@ import (
 )
 
 type (
-	GetTasksRequestParams struct {
-		Page   uint64                 `validate:"omitempty"`         // Страница выборки
-		Limit  uint64                 `validate:"omitempty,lte=250"` // Количество возвращаемых сущностей за один запрос (максимум - 250)
-		Filter *GetTasksRequestFilter `validate:"omitempty"`         // Фильтр
-		Order  *GetTasksOrder         `validate:"omitempty"`         // Сортировка результатов
+	GetTasksOrderBy string
+
+	GetTasksOrder struct {
+		By     GetTasksOrderBy     `validate:"required,oneof=id updated_at"`
+		Method request.OrderMethod `validate:"required,oneof=asc desc"`
 	}
 
 	GetTasksRequestFilter struct {
@@ -31,11 +31,22 @@ type (
 		EntityID          *request.Filter `validate:"omitempty"`                        // Фильтр по ID привязанной к задаче сущности. Необходимо использовать вместе с фильтром по типу привязанной сущности
 	}
 
-	GetTasksOrderBy string
+	GetTasksRequestParams struct {
+		Page   uint64                 `validate:"omitempty"`         // Страница выборки
+		Limit  uint64                 `validate:"omitempty,lte=250"` // Количество возвращаемых сущностей за один запрос (максимум - 250)
+		Filter *GetTasksRequestFilter `validate:"omitempty"`         // Фильтр
+		Order  *GetTasksOrder         `validate:"omitempty"`         // Сортировка результатов
+	}
 
-	GetTasksOrder struct {
-		By     GetTasksOrderBy     `validate:"required,oneof=id updated_at"`
-		Method request.OrderMethod `validate:"required,oneof=asc desc"`
+	GetTasksResponseEmbedded struct {
+		Tasks []*domain.Task `json:"tasks" validate:"omitempty,dive,required"`
+	}
+
+	GetTasksResponse struct {
+		Page          uint64                    `json:"_page" validate:"required"`
+		Links         *domain.Links             `json:"_links" validate:"required"`
+		Embedded      *GetTasksResponseEmbedded `json:"_embedded" validate:"omitempty"`
+		ErrorResponse *domain.AmoError          `json:"response" validate:"omitempty"`
 	}
 
 	AddTasksRequestData struct {
@@ -57,6 +68,21 @@ type (
 
 	AddTasksRequest struct {
 		Add []*AddTasksRequestData `validate:"required,gt=0,dive,required"`
+	}
+
+	AddTasksResponseItem struct {
+		ID        uint64        `json:"id" validate:"required"`
+		RequestID string        `json:"request_id" validate:"required"`
+		Links     *domain.Links `json:"_links" validate:"required"`
+	}
+
+	AddTasksResponseEmbedded struct {
+		Tasks []*AddTasksResponseItem `json:"tasks" validate:"required,gt=0,dive,required"`
+	}
+
+	AddTasksResponse struct {
+		Links    *domain.Links             `json:"_links" validate:"required"`
+		Embedded *AddTasksResponseEmbedded `json:"_embedded" validate:"required"`
 	}
 
 	UpdateTasksRequestData struct {
@@ -81,21 +107,6 @@ type (
 		Update []*UpdateTasksRequestData `validate:"required,gt=0,dive,required"`
 	}
 
-	AddTasksResponseItem struct {
-		ID        uint64        `json:"id" validate:"required"`
-		RequestID string        `json:"request_id" validate:"required"`
-		Links     *domain.Links `json:"_links" validate:"required"`
-	}
-
-	AddTasksResponseEmbedded struct {
-		Tasks []*AddTasksResponseItem `json:"tasks" validate:"required,gt=0,dive,required"`
-	}
-
-	AddTasksResponse struct {
-		Links    *domain.Links             `json:"_links" validate:"required"`
-		Embedded *AddTasksResponseEmbedded `json:"_embedded" validate:"required"`
-	}
-
 	UpdateTasksResponseItem struct {
 		ID        uint64        `json:"id" validate:"required"`
 		UpdatedAt uint64        `json:"updated_at" validate:"required"`
@@ -110,17 +121,6 @@ type (
 	UpdateTasksResponse struct {
 		Links    *domain.Links                `json:"_links" validate:"required"`
 		Embedded *UpdateTasksResponseEmbedded `json:"_embedded" validate:"required"`
-	}
-
-	GetTasksResponseEmbedded struct {
-		Tasks []*domain.Task `json:"tasks" validate:"omitempty,dive,required"`
-	}
-
-	GetTasksResponse struct {
-		Page          uint64                    `json:"_page" validate:"required"`
-		Links         *domain.Links             `json:"_links" validate:"required"`
-		Embedded      *GetTasksResponseEmbedded `json:"_embedded" validate:"omitempty"`
-		ErrorResponse *domain.AmoError          `json:"response" validate:"omitempty"`
 	}
 )
 

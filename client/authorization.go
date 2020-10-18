@@ -85,29 +85,29 @@ func (c *Client) authorize(ctx context.Context, authRequest *AuthRequest) error 
 		return err
 	}
 
-	body, err := json.Marshal(authRequest)
+	reqBody, err := json.Marshal(authRequest)
 	if err != nil {
 		return err
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+authURI, bytes.NewBuffer(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+authURI, bytes.NewBuffer(reqBody))
 	if err != nil {
 		return err
 	}
 
 	addApplicationJSONContentType(req)
 
-	resp, err := c.httpClient.Do(req)
+	response, err := c.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer response.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
+	if response.StatusCode != 200 {
+		return errors.New("http status not ok: " + strconv.Itoa(response.StatusCode))
 	}
 
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 		return err
 	}

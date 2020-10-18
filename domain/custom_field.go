@@ -16,7 +16,8 @@ type (
 	}
 
 	UpdateCustomField struct {
-		ID     uint64        `json:"field_id" validate:"required"`
+		ID     uint64        `json:"field_id,omitempty" validate:"required_without=Code"`
+		Code   string        `json:"field_code,omitempty" validate:"required_without=ID"`
 		Name   string        `json:"field_name,omitempty" validate:"omitempty"`
 		Values []interface{} `json:"values" validate:"required,dive,required"`
 	}

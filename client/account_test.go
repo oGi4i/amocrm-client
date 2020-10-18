@@ -14,7 +14,7 @@ import (
 	"github.com/ogi4i/amocrm-client/domain"
 )
 
-func TestJoinAccountRequestWithSlice(t *testing.T) {
+func TestJoinAccountRequestWith(t *testing.T) {
 	testCases := []struct {
 		name   string
 		params []AccountGetRequestWith
@@ -52,7 +52,7 @@ func TestJoinAccountRequestWithSlice(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			assert.Equal(t, tc.want, joinAccountRequestWithSlice(tc.params))
+			assert.Equal(t, tc.want, joinAccountRequestWith(tc.params))
 		})
 	}
 }

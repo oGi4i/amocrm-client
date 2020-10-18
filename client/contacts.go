@@ -17,13 +17,11 @@ import (
 type (
 	GetContactsRequestWith string
 
-	GetContactsRequestParams struct {
-		With   []GetContactsRequestWith  `validate:"omitempty,dive,oneof=catalog_elements leads customers"` // Дополнительные параметры запроса, позволяющие получить больше данных в ответе
-		Page   uint64                    `validate:"omitempty"`                                             // Страница выборки
-		Limit  uint64                    `validate:"omitempty,lte=250"`                                     // Количество возвращаемых сущностей за один запрос (максимум - 250)
-		Query  string                    `validate:"omitempty"`                                             // Поисковый запрос (осуществляет поиск по заполненным полям сущности)
-		Filter *GetContactsRequestFilter `validate:"omitempty"`                                             // Фильтр
-		Order  *GetContactsOrder         `validate:"omitempty"`                                             // Сортировка результатов
+	GetContactsOrderBy string
+
+	GetContactsOrder struct {
+		By     GetContactsOrderBy  `validate:"required,oneof=id updated_at"`
+		Method request.OrderMethod `validate:"required,oneof=asc desc"`
 	}
 
 	GetContactsRequestFilter struct {
@@ -38,14 +36,27 @@ type (
 		CustomFieldValues []*request.Filter `validate:"omitempty,gt=0,dive,required"` // Фильтр по дополнительным полям, привязанным к контакту
 	}
 
-	GetContactsOrderBy string
-
-	GetContactsOrder struct {
-		By     GetContactsOrderBy  `validate:"required,oneof=id updated_at"`
-		Method request.OrderMethod `validate:"required,oneof=asc desc"`
+	GetContactsRequestParams struct {
+		With   []GetContactsRequestWith  `validate:"omitempty,dive,oneof=catalog_elements leads customers"` // Дополнительные параметры запроса, позволяющие получить больше данных в ответе
+		Page   uint64                    `validate:"omitempty"`                                             // Страница выборки
+		Limit  uint64                    `validate:"omitempty,lte=250"`                                     // Количество возвращаемых сущностей за один запрос (максимум - 250)
+		Query  string                    `validate:"omitempty"`                                             // Поисковый запрос (осуществляет поиск по заполненным полям сущности)
+		Filter *GetContactsRequestFilter `validate:"omitempty"`                                             // Фильтр
+		Order  *GetContactsOrder         `validate:"omitempty"`                                             // Сортировка результатов
 	}
 
-	ContactRequestDataEmbedded struct {
+	GetContactsResponseEmbedded struct {
+		Contacts []*domain.Contact `json:"contacts" validate:"omitempty,dive,required"`
+	}
+
+	GetContactsResponse struct {
+		Page          uint64                       `json:"_page" validate:"required"`
+		Links         *domain.Links                `json:"_links" validate:"required"`
+		Embedded      *GetContactsResponseEmbedded `json:"_embedded" validate:"required"`
+		ErrorResponse *domain.AmoError             `json:"response,omitempty" validate:"omitempty"`
+	}
+
+	ModifyContactsEmbedded struct {
 		Tags []*domain.Tag `json:"tags" validate:"omitempty,dive,required"`
 	}
 
@@ -59,7 +70,7 @@ type (
 		CreatedAt          uint64                      `json:"created_at,omitempty" validate:"omitempty"`
 		UpdatedAt          uint64                      `json:"updated_at,omitempty" validate:"omitempty"`
 		CustomFieldsValues []*domain.UpdateCustomField `json:"custom_fields_values,omitempty" validate:"omitempty,gt=0,dive,required"`
-		Embedded           *ContactRequestDataEmbedded `json:"_embedded,omitempty" validate:"omitempty"`
+		Embedded           *ModifyContactsEmbedded     `json:"_embedded,omitempty" validate:"omitempty"`
 		RequestID          string                      `json:"request_id,omitempty" validate:"omitempty"`
 	}
 
@@ -74,7 +85,7 @@ type (
 	}
 
 	AddContactsResponseEmbedded struct {
-		Contacts []*AddContactsResponseItem `json:"contacts" validate:"omitempty,gt=0,dive,required"`
+		Contacts []*AddContactsResponseItem `json:"contacts" validate:"required,gt=0,dive,required"`
 	}
 
 	AddContactsResponse struct {
@@ -94,7 +105,7 @@ type (
 		CreatedAt          uint64                      `json:"created_at,omitempty" validate:"omitempty"`
 		UpdatedAt          uint64                      `json:"updated_at,omitempty" validate:"omitempty"`
 		CustomFieldsValues []*domain.UpdateCustomField `json:"custom_fields_values,omitempty" validate:"omitempty,gt=0,dive,required"`
-		Embedded           *ContactRequestDataEmbedded `json:"_embedded,omitempty" validate:"omitempty"`
+		Embedded           *ModifyContactsEmbedded     `json:"_embedded,omitempty" validate:"omitempty"`
 		RequestID          string                      `json:"request_id,omitempty" validate:"omitempty"`
 	}
 
@@ -111,24 +122,13 @@ type (
 	}
 
 	UpdateContactsResponseEmbedded struct {
-		Contacts []*UpdateContactsResponseItem `json:"contacts" validate:"omitempty,gt=0,dive,required"`
+		Contacts []*UpdateContactsResponseItem `json:"contacts" validate:"required,gt=0,dive,required"`
 	}
 
 	UpdateContactsResponse struct {
 		Links         *domain.Links                   `json:"_links" validate:"required"`
 		Embedded      *UpdateContactsResponseEmbedded `json:"_embedded" validate:"required"`
 		ErrorResponse *domain.AmoError                `json:"response,omitempty" validate:"omitempty"`
-	}
-
-	GetContactsResponseEmbedded struct {
-		Contacts []*domain.Contact `json:"contacts" validate:"omitempty,dive,required"`
-	}
-
-	GetContactsResponse struct {
-		Page          uint64                       `json:"_page" validate:"required"`
-		Links         *domain.Links                `json:"_links" validate:"required"`
-		Embedded      *GetContactsResponseEmbedded `json:"_embedded" validate:"required"`
-		ErrorResponse *domain.AmoError             `json:"response,omitempty" validate:"omitempty"`
 	}
 )
 
@@ -182,6 +182,14 @@ func (f *GetContactsRequestFilter) validate() error {
 
 	if f.ClosestTaskAt != nil && !f.ClosestTaskAt.IsSimpleFilter() && !f.ClosestTaskAt.IsIntervalFilter() {
 		return errors.New("ClosestTaskAt filter must be simple or interval type")
+	}
+
+	if f.CustomFieldValues != nil {
+		for _, cf := range f.CustomFieldValues {
+			if !cf.IsSimpleCustomFieldFilter() && !cf.IsMultipleCustomFieldFilter() && !cf.IsIntervalCustomFieldFilter() {
+				return errors.New("CustomFieldValues filter must be custom field specific type")
+			}
+		}
 	}
 
 	return nil
@@ -241,18 +249,18 @@ func (c *Client) AddContacts(ctx context.Context, req *AddContactsRequest) ([]*A
 		return nil, ErrEmptyResponse
 	}
 
-	resp := new(AddContactsResponse)
-	err = json.Unmarshal(body, resp)
+	response := new(AddContactsResponse)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.validator.Struct(resp)
+	err = c.validator.Struct(response)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Embedded.Contacts, nil
+	return response.Embedded.Contacts, nil
 }
 
 func (c *Client) UpdateContacts(ctx context.Context, req *UpdateContactsRequest) ([]*UpdateContactsResponseItem, error) {
@@ -269,18 +277,18 @@ func (c *Client) UpdateContacts(ctx context.Context, req *UpdateContactsRequest)
 		return nil, ErrEmptyResponse
 	}
 
-	resp := new(UpdateContactsResponse)
-	err = json.Unmarshal(body, resp)
+	response := new(UpdateContactsResponse)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.validator.Struct(resp)
+	err = c.validator.Struct(response)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Embedded.Contacts, nil
+	return response.Embedded.Contacts, nil
 }
 
 func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *UpdateContactsRequestData) (*UpdateContactsResponseItem, error) {
@@ -301,18 +309,18 @@ func (c *Client) UpdateContact(ctx context.Context, contactID uint64, req *Updat
 		return nil, ErrEmptyResponse
 	}
 
-	resp := new(UpdateContactsResponse)
-	err = json.Unmarshal(body, resp)
+	response := new(UpdateContactsResponseItem)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.validator.Struct(resp)
+	err = c.validator.Struct(response)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp.Embedded.Contacts[0], nil
+	return response, nil
 }
 
 func (c *Client) GetContactByID(ctx context.Context, contactID uint64, with []GetContactsRequestWith) (*domain.Contact, error) {
@@ -334,18 +342,18 @@ func (c *Client) GetContactByID(ctx context.Context, contactID uint64, with []Ge
 		return nil, ErrEmptyResponse
 	}
 
-	resp := new(domain.Contact)
-	err = json.Unmarshal(body, resp)
+	response := new(domain.Contact)
+	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
 	}
 
-	err = c.validator.Struct(resp)
+	err = c.validator.Struct(response)
 	if err != nil {
 		return nil, err
 	}
 
-	return resp, nil
+	return response, nil
 }
 
 func (c *Client) GetContacts(ctx context.Context, reqParams *GetContactsRequestParams) ([]*domain.Contact, error) {
