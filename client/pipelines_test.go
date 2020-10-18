@@ -113,7 +113,7 @@ func TestGetPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetPipelinesResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelines(ctx)
@@ -127,7 +127,7 @@ func TestGetPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelines(ctx)
@@ -141,7 +141,7 @@ func TestGetPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelines(ctx)
@@ -155,7 +155,7 @@ func TestGetPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[]}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelines(ctx)
@@ -169,7 +169,7 @@ func TestGetPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, `{"total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#ffc8c8","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}}]}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
@@ -251,7 +251,7 @@ func TestGetPipelineByID(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetPipelineByIDResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineByID(ctx, 3177727)
@@ -265,7 +265,7 @@ func TestGetPipelineByID(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineByID(ctx, 3177727)
@@ -279,7 +279,7 @@ func TestGetPipelineByID(t *testing.T) {
 			_, _ = io.WriteString(w, `{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineByID(ctx, 3177727)
@@ -293,7 +293,7 @@ func TestGetPipelineByID(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#ffc8c8","type":1,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineByID(ctx, 3177727)
@@ -395,7 +395,7 @@ func TestAddPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, sampleAddPipelinesResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
@@ -412,7 +412,7 @@ func TestAddPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
@@ -429,7 +429,7 @@ func TestAddPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
@@ -446,7 +446,7 @@ func TestAddPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3270358,"name":"Воронка для примера","sort":1,"is_main":true,"is_unsorted_on":false,"account_id":1415131,"request_id":"123","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270358"}},"_embedded":{"statuses":[]}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
@@ -461,7 +461,7 @@ func TestAddPipelines(t *testing.T) {
 			_, _ = io.WriteString(w, `{"total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3270358,"name":"Воронка для примера","sort":1,"is_main":true,"is_unsorted_on":false,"account_id":1415131,"request_id":"123","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270358"}},"_embedded":{"statuses":[{"id":3304,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3270358,"color":"#ffc8c8","type":1,"account_id":1415131,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/3304"}}}]}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
@@ -543,7 +543,7 @@ func TestUpdatePipeline(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdatePipelineResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipeline(ctx, 3177727, sampleUpdatePipelineRequest)
@@ -560,7 +560,7 @@ func TestUpdatePipeline(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipeline(ctx, 3177727, sampleUpdatePipelineRequest)
@@ -577,7 +577,7 @@ func TestUpdatePipeline(t *testing.T) {
 			_, _ = io.WriteString(w, `{"id":3177727,"name":"Новое название для воронки","sort":1000,"is_main":false,"is_unsorted_on":false,"is_archive":false,"account_id":12345678,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipeline(ctx, 3177727, sampleUpdatePipelineRequest)
@@ -592,7 +592,7 @@ func TestUpdatePipeline(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_id":3177727,"name":"Новое название для воронки","sort":1000,"is_main":false,"is_unsorted_on":false,"is_archive":false,"account_id":12345678,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392159,"name":"Первичный контакт","sort":20,"is_editable":true,"pipeline_id":3177727,"color":"#e6e8ea","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"}}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipeline(ctx, 3177727, sampleUpdatePipelineRequest)
@@ -610,7 +610,7 @@ func TestDeletePipeline(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		err = client.DeletePipeline(ctx, 3177727)
@@ -624,7 +624,7 @@ func TestDeletePipeline(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		err = client.DeletePipeline(ctx, 3177727)

@@ -178,7 +178,7 @@ func TestGetAccount(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetAccountResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetAccount(ctx, sampleGetAccountRequestParams)
@@ -195,7 +195,7 @@ func TestGetAccount(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetAccount(ctx, sampleGetAccountRequestParams)
@@ -212,7 +212,7 @@ func TestGetAccount(t *testing.T) {
 			_, _ = io.WriteString(w, `{"id":1231414,"name":"example","subdomain":"example","created_at":1585840134,"created_by":321321,"updated_at":1589472711,"updated_by":321321,"current_user_id":581651,"country":"RU","customers_mode":"segments","is_unsorted_on":true,"is_loss_reason_enabled":true,"is_helpbot_enabled":false,"is_technical_account":false,"contact_name_display_order":1,"amojo_id":"f3c6340d-410e-4ad1-9f7e-c5e663599909","uuid":"824f3a59-6154-4edf-ba90-0b5593715d07","version":11,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/account"}},"_embedded":{"amojo_rights":{"can_direct":true,"can_create_groups":true},"users_groups":[{"id":1,"name":"Отдел продаж","uuid":null}],"task_types":[{"id":1,"name":"Связаться","color":null,"icon_id":null,"code":"FOLLOW_UP"},{"id":2,"name":"Встреча","color":null,"icon_id":null,"code":"MEETING"}],"entity_names":{"leads":{"ru":{"gender":"m","plural_form":{"dative":"клиентам","default":"клиенты","genitive":"клиентов","accusative":"клиентов","instrumental":"клиентами","prepositional":"клиентах"},"singular_form":{"dative":"клиенту","default":"клиент","genitive":"клиента","accusative":"клиента","instrumental":"клиентом","prepositional":"клиенте"}},"en":{"singular_form":{"default":"lead"},"plural_form":{"default":"leads"},"gender":"f"},"es":{"singular_form":{"default":"acuerdo"},"plural_form":{"default":"acuerdos"},"gender":"m"}}},"datetime_settings":{"date_pattern":"d.m.Y H:i","short_date_pattern":"d.m.Y","short_time_pattern":"H:i","date_format":"d.m.Y","time_format":"H:i:s","timezone":"Europe/Moscow"}}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetAccount(ctx, sampleGetAccountRequestParams)

@@ -293,7 +293,7 @@ func TestGetTasks(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetTasksResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetTasks(ctx, sampleGetTasksRequestParams)
@@ -310,7 +310,7 @@ func TestGetTasks(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetTasks(ctx, sampleGetTasksRequestParams)
@@ -327,7 +327,7 @@ func TestGetTasks(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_page":2,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads?limit=2&page=2"}},"_embedded":{"tasks":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetTasks(ctx, sampleGetTasksRequestParams)
@@ -344,7 +344,7 @@ func TestGetTasks(t *testing.T) {
 			_, _ = io.WriteString(w, `{"page":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/tasks?filter[task_type][]=2&filter[is_completed][]=1&limit=2&page=1"},"next":{"href":"https://example.amocrm.ru/api/v4/tasks?filter[task_type][]=2&filter[is_completed][]=1&limit=2&page=2"}},"_embedded":{"tasks":[{"id":7087,"created_by":3987910,"updated_by":3987910,"created_at":1575364000,"updated_at":1575364851,"responsible_user_id":123123,"group_id":1,"entity_id":167353,"entity_type":"leads","duration":0,"is_completed":true,"task_type_id":2,"text":"Пригласить на бесплатную тренировку","complete_till":1575665940,"account_id":321321,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/tasks/7087"}}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetTasks(ctx, sampleGetTasksRequestParams)
@@ -384,7 +384,7 @@ func TestGetTaskByID(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetTaskByIDResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetTaskByID(ctx, 56981)
@@ -398,7 +398,7 @@ func TestGetTaskByID(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetTaskByID(ctx, 56981)
@@ -407,7 +407,7 @@ func TestGetTaskByID(t *testing.T) {
 	})
 
 	t.Run("Невалидный запрос", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetTaskByID(ctx, 0)
@@ -421,7 +421,7 @@ func TestGetTaskByID(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_id":56981,"created_by":54224,"updated_by":3987910,"created_at":1575910123,"updated_at":1576767989,"responsible_user_id":123123,"group_id":1,"entity_id":180765,"entity_type":"leads","duration":0,"is_completed":true,"task_type_id":2,"text":"Назначить встречу с клиентом","result":{"text":"Результат есть"},"complete_till":1575910423,"account_id":321312,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/tasks/56981"}}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetTaskByID(ctx, 56981)
@@ -467,7 +467,7 @@ func TestAddTasks(t *testing.T) {
 			_, _ = io.WriteString(w, sampleAddTasksResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddTasks(ctx, sampleAddTasksRequest)
@@ -484,7 +484,7 @@ func TestAddTasks(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddTasks(ctx, sampleAddTasksRequest)
@@ -501,7 +501,7 @@ func TestAddTasks(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/tasks"}},"_embedded":{}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddTasks(ctx, sampleAddTasksRequest)
@@ -559,7 +559,7 @@ func TestUpdateTasks(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdateTasksResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateTasks(ctx, sampleUpdateTasksRequest)
@@ -576,7 +576,7 @@ func TestUpdateTasks(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateTasks(ctx, sampleUpdateTasksRequest)
@@ -593,7 +593,7 @@ func TestUpdateTasks(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/tasks"}},"_embedded":{"tasks":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateTasks(ctx, sampleUpdateTasksRequest)
@@ -633,7 +633,7 @@ func TestUpdateTask(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdateTaskResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateTask(ctx, 4745251, sampleUpdateTaskRequest)
@@ -650,7 +650,7 @@ func TestUpdateTask(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateTask(ctx, 4745251, sampleUpdateTaskRequest)
@@ -660,7 +660,7 @@ func TestUpdateTask(t *testing.T) {
 	})
 
 	t.Run("Невалидный запрос", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateTask(ctx, 0, sampleUpdateTaskRequest)
@@ -676,7 +676,7 @@ func TestUpdateTask(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_id":4745251,"updated_at":1588760725,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/tasks/4745251"}}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateTask(ctx, 4745251, sampleUpdateTaskRequest)
@@ -715,7 +715,7 @@ func TestCompleteTask(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdateTaskResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.CompleteTask(ctx, 4747929, "Удалось связаться с клиентом")
@@ -732,7 +732,7 @@ func TestCompleteTask(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.CompleteTask(ctx, 4747929, "Удалось связаться с клиентом")
@@ -742,7 +742,7 @@ func TestCompleteTask(t *testing.T) {
 	})
 
 	t.Run("Невалидный taskID в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.CompleteTask(ctx, 0, "Удалось связаться с клиентом")
@@ -751,7 +751,7 @@ func TestCompleteTask(t *testing.T) {
 	})
 
 	t.Run("Невалидный result в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.CompleteTask(ctx, 4747929, "")
@@ -767,7 +767,7 @@ func TestCompleteTask(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_id":4747929,"updated_at":1588770600,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/tasks/4747929"}}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.CompleteTask(ctx, 4747929, "Удалось связаться с клиентом")

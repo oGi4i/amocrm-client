@@ -401,7 +401,7 @@ func TestGetContacts(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetContactsResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContacts(ctx, sampleGetContactsRequestParams)
@@ -418,7 +418,7 @@ func TestGetContacts(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContacts(ctx, sampleGetContactsRequestParams)
@@ -435,7 +435,7 @@ func TestGetContacts(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_page":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts?limit=2&page=1"},"next":{"href":"https://example.amocrm.ru/api/v4/contacts?limit=2&page=2"}},"_embedded":{"contacts":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContacts(ctx, sampleGetContactsRequestParams)
@@ -452,7 +452,7 @@ func TestGetContacts(t *testing.T) {
 			_, _ = io.WriteString(w, `{"page":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts?limit=2&page=1"},"next":{"href":"https://example.amocrm.ru/api/v4/contacts?limit=2&page=2"}},"_embedded":{"contacts":[{"id":7143599,"name":"1","first_name":"","last_name":"","responsible_user_id":504141,"group_id":1,"created_by":504141,"updated_by":504141,"created_at":1585758065,"updated_at":1585758065,"closest_task_at":null,"custom_fields_values":null,"account_id":28805383,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/7143599"}},"_embedded":{"tags":[],"companies":[]}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContacts(ctx, sampleGetContactsRequestParams)
@@ -513,7 +513,7 @@ func TestGetContactByID(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetContactByIDResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContactByID(ctx, 3, sampleGetContactByIDRequestParams)
@@ -530,7 +530,7 @@ func TestGetContactByID(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContactByID(ctx, 3, sampleGetContactByIDRequestParams)
@@ -540,7 +540,7 @@ func TestGetContactByID(t *testing.T) {
 	})
 
 	t.Run("Невалидный запрос", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContactByID(ctx, 0, sampleGetContactByIDRequestParams)
@@ -556,7 +556,7 @@ func TestGetContactByID(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_id":3,"name":"Иван Иванов","first_name":"Иван","last_name":"Иванов","responsible_user_id":504141,"group_id":1,"created_by":504141,"updated_by":504141,"created_at":1582117331,"updated_at":1590943929,"account_id":28805383,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts/3"}},"_embedded":{"tags":[],"leads":[],"customers":[],"catalog_elements":[],"companies":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetContactByID(ctx, 3, sampleGetContactByIDRequestParams)
@@ -611,7 +611,7 @@ func TestAddContacts(t *testing.T) {
 			_, _ = io.WriteString(w, sampleAddContactsResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddContacts(ctx, sampleAddContactsRequest)
@@ -628,7 +628,7 @@ func TestAddContacts(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddContacts(ctx, sampleAddContactsRequest)
@@ -645,7 +645,7 @@ func TestAddContacts(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts"}},"_embedded":{"contacts":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddContacts(ctx, sampleAddContactsRequest)
@@ -693,7 +693,7 @@ func TestUpdateContacts(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdateContactsResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContacts(ctx, sampleUpdateContactsRequest)
@@ -710,7 +710,7 @@ func TestUpdateContacts(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContacts(ctx, sampleUpdateContactsRequest)
@@ -727,7 +727,7 @@ func TestUpdateContacts(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts"}},"_embedded":{"contacts":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContacts(ctx, sampleUpdateContactsRequest)
@@ -769,7 +769,7 @@ func TestUpdateContact(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdateContactResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContact(ctx, 3, sampleUpdateContactRequest)
@@ -786,7 +786,7 @@ func TestUpdateContact(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContact(ctx, 3, sampleUpdateContactRequest)
@@ -796,7 +796,7 @@ func TestUpdateContact(t *testing.T) {
 	})
 
 	t.Run("Невалидный запрос", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContact(ctx, 0, sampleUpdateContactRequest)
@@ -812,7 +812,7 @@ func TestUpdateContact(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/contacts"}},"_embedded":{"contacts":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateContact(ctx, 3, sampleUpdateContactRequest)

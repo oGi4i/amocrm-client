@@ -117,7 +117,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetPipelineStatusesResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
@@ -131,7 +131,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
@@ -145,7 +145,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_total_items":1,"_links":{"self":{"href":"url"}},"_embedded":{"items":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
@@ -154,7 +154,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 	})
 
 	t.Run("Невалидный запрос", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 0)
@@ -168,7 +168,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			_, _ = io.WriteString(w, `{"total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#f9deff","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}}]}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
@@ -199,7 +199,7 @@ func TestGetPipelineStatusByID(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetPipelineStatusByIDResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatusByID(ctx, 3177727, 32392156)
@@ -213,7 +213,7 @@ func TestGetPipelineStatusByID(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatusByID(ctx, 3177727, 32392156)
@@ -222,7 +222,7 @@ func TestGetPipelineStatusByID(t *testing.T) {
 	})
 
 	t.Run("Невалидный pipelineID в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatusByID(ctx, 0, 32392156)
@@ -231,7 +231,7 @@ func TestGetPipelineStatusByID(t *testing.T) {
 	})
 
 	t.Run("Невалидный statusID в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatusByID(ctx, 3177727, 0)
@@ -245,7 +245,7 @@ func TestGetPipelineStatusByID(t *testing.T) {
 			_, _ = io.WriteString(w, `{"id":32392156,"name":"Неразобранное","_sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#ccc8f9","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatusByID(ctx, 3177727, 32392156)
@@ -308,7 +308,7 @@ func TestAddPipelineStatuses(t *testing.T) {
 			_, _ = io.WriteString(w, sampleAddPipelineStatusesResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelineStatuses(ctx, 3270355, sampleAddPipelineStatusesRequest)
@@ -325,7 +325,7 @@ func TestAddPipelineStatuses(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelineStatuses(ctx, 3270355, sampleAddPipelineStatusesRequest)
@@ -342,7 +342,7 @@ func TestAddPipelineStatuses(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_total_items":2,"_embedded":{"statuses":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelineStatuses(ctx, 3270355, sampleAddPipelineStatusesRequest)
@@ -352,7 +352,7 @@ func TestAddPipelineStatuses(t *testing.T) {
 	})
 
 	t.Run("Невалидный pipelineID в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelineStatuses(ctx, 0, sampleAddPipelineStatusesRequest)
@@ -368,7 +368,7 @@ func TestAddPipelineStatuses(t *testing.T) {
 			_, _ = io.WriteString(w, `{"total_items":2,"_embedded":{"statuses":[{"id":33035290,"name":"Новый этап","sort":60,"is_editable":true,"pipeline_id":3270355,"color":"#fffeb2","type":0,"account_id":1415131,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270355/statuses/33035290"}}},{"id":33035293,"name":"Новый этап 2","sort":70,"is_editable":true,"pipeline_id":3270355,"color":"#fffeb2","type":0,"account_id":1415131,"request_id":"1","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270355/statuses/33035293"}}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelineStatuses(ctx, 3270355, sampleAddPipelineStatusesRequest)
@@ -410,7 +410,7 @@ func TestUpdatePipelineStatuse(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdatePipelineStatuseResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipelineStatus(ctx, 3177727, 32392165, sampleUpdatePipelineStatusRequest)
@@ -427,7 +427,7 @@ func TestUpdatePipelineStatuse(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipelineStatus(ctx, 3177727, 32392165, sampleUpdatePipelineStatusRequest)
@@ -437,7 +437,7 @@ func TestUpdatePipelineStatuse(t *testing.T) {
 	})
 
 	t.Run("Невалидный pipelineID в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipelineStatus(ctx, 0, 32392156, sampleUpdatePipelineStatusRequest)
@@ -446,7 +446,7 @@ func TestUpdatePipelineStatuse(t *testing.T) {
 	})
 
 	t.Run("Невалидный statusID в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipelineStatus(ctx, 3177727, 0, sampleUpdatePipelineStatusRequest)
@@ -462,7 +462,7 @@ func TestUpdatePipelineStatuse(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_id":32392165,"name":"Новое название для статуса","sort":20,"is_editable":true,"pipeline_id":3177727,"color":"#c1e0ff","type":0,"account_id":12345678,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"}}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdatePipelineStatus(ctx, 3177727, 32392165, sampleUpdatePipelineStatusRequest)
@@ -481,7 +481,7 @@ func TestDeletePipelineStatus(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		err = client.DeletePipelineStatus(ctx, 3177727, 32392165)
@@ -489,7 +489,7 @@ func TestDeletePipelineStatus(t *testing.T) {
 	})
 
 	t.Run("Невалидный pipelineID в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		err = client.DeletePipelineStatus(ctx, 0, 32392156)
@@ -497,7 +497,7 @@ func TestDeletePipelineStatus(t *testing.T) {
 	})
 
 	t.Run("Невалидный statusID в запросе", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		err = client.DeletePipelineStatus(ctx, 3177727, 0)
@@ -511,7 +511,7 @@ func TestDeletePipelineStatus(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		err = client.DeletePipelineStatus(ctx, 3177727, 32392165)

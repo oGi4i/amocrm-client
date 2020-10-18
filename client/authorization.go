@@ -1,4 +1,4 @@
-package amocrm
+package client
 
 import (
 	"bytes"
@@ -35,10 +35,10 @@ type (
 )
 
 const (
-	AuthorizationCodeAuthGrantType AuthGrantType = "authorization_code"
-	RefreshTokenAuthGrantType      AuthGrantType = "refresh_token"
+	authorizationCodeAuthGrantType AuthGrantType = "authorization_code"
+	refreshTokenAuthGrantType      AuthGrantType = "refresh_token"
 
-	BearerAuthTokenType AuthTokenType = "Bearer"
+	bearerAuthTokenType AuthTokenType = "Bearer"
 
 	authRetryCount = 5
 )
@@ -48,7 +48,7 @@ func (c *Client) Authorize(ctx context.Context) error {
 	authRequest := &AuthRequest{
 		ClientID:     c.clientID,
 		ClientSecret: c.clientSecret,
-		GrantType:    RefreshTokenAuthGrantType,
+		GrantType:    refreshTokenAuthGrantType,
 		RefreshToken: c.token.RefreshToken,
 	}
 	c.token.mu.RUnlock()
@@ -58,52 +58,52 @@ func (c *Client) Authorize(ctx context.Context) error {
 		return err
 	}
 
-	req, err := http.NewRequest(http.MethodPost, c.baseURL+authURI, bytes.NewBuffer(body))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+authURI, bytes.NewBuffer(body))
 	if err != nil {
 		return err
 	}
 
-	req.Header.Set("Content-Type", "application/json")
+	addApplicationJsonContentType(req)
 
-	resp, err := c.client.Do(req.WithContext(ctx))
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return err
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode == 200 {
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		authResponse := new(AuthResponse)
-		err = json.Unmarshal(body, authResponse)
-		if err != nil {
-			return err
-		}
-
-		if authResponse.TokenType != BearerAuthTokenType {
-			return ErrInvalidAuthTokenType
-		}
-
-		if err := c.validator.Struct(authResponse); err != nil {
-			return err
-		}
-
-		c.token.mu.Lock()
-		defer c.token.mu.Unlock()
-
-		c.token.AccessToken = authResponse.AccessToken
-		c.token.RefreshToken = authResponse.RefreshToken
-		c.token.ExpiresAt = time.Now().Add(time.Duration(authResponse.ExpiresIn) * time.Second)
-
-		go c.refreshAuthTokens(ctx)
-
-		return nil
+	if resp.StatusCode != 200 {
+		return errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
 	}
 
-	return errors.New("http status not ok: " + strconv.Itoa(resp.StatusCode))
+	respBody, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	authResponse := new(AuthResponse)
+	err = json.Unmarshal(respBody, authResponse)
+	if err != nil {
+		return err
+	}
+
+	if authResponse.TokenType != bearerAuthTokenType {
+		return ErrInvalidAuthTokenType
+	}
+
+	if err := c.validator.Struct(authResponse); err != nil {
+		return err
+	}
+
+	c.token.mu.Lock()
+	defer c.token.mu.Unlock()
+
+	c.token.AccessToken = authResponse.AccessToken
+	c.token.RefreshToken = authResponse.RefreshToken
+	c.token.ExpiresAt = time.Now().Add(time.Duration(authResponse.ExpiresIn) * time.Second)
+
+	go c.refreshAuthTokens(ctx)
+
+	return nil
 }
 
 func (c *Client) refreshAuthTokens(ctx context.Context) {
@@ -149,6 +149,6 @@ func (c *Client) authorizeWithRetry(ctx context.Context, backOff time.Duration) 
 
 func (c *Client) withAuthToken(req *http.Request) {
 	c.token.mu.RLock()
-	req.Header.Set("Authorization", fmt.Sprintf("%s %s", BearerAuthTokenType, c.token.AccessToken))
+	req.Header.Set("Authorization", fmt.Sprintf("%s %s", bearerAuthTokenType, c.token.AccessToken))
 	c.token.mu.RUnlock()
 }

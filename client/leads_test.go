@@ -427,7 +427,7 @@ func TestGetLeads(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetLeadsResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeads(ctx, sampleGetLeadsRequestParams)
@@ -444,7 +444,7 @@ func TestGetLeads(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeads(ctx, sampleGetLeadsRequestParams)
@@ -461,7 +461,7 @@ func TestGetLeads(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_page":2,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads?limit=2&page=2"}},"_embedded":{"leads":[]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeads(ctx, sampleGetLeadsRequestParams)
@@ -478,7 +478,7 @@ func TestGetLeads(t *testing.T) {
 			_, _ = io.WriteString(w, `{"page":2,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads?limit=2&page=2"},"next":{"href":"https://example.amocrm.ru/api/v4/leads?limit=2&page=3"},"first":{"href":"https://example.amocrm.ru/api/v4/leads?limit=2&page=1"},"prev":{"href":"https://example.amocrm.ru/api/v4/leads?limit=2&page=1"}},"_embedded":{"leads":[{"id":19619,"name":"Сделка для примера","price":46333,"responsible_user_id":123321,"group_id":625,"status_id":142,"pipeline_id":1300,"loss_reason_id":null,"source_id":null,"created_by":321123,"updated_by":321123,"created_at":1453279607,"updated_at":1502193501,"closed_at":1483005931,"closest_task_at":null,"is_deleted":false,"custom_fields_values":null,"score":null,"account_id":5135160,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/19619"}},"_embedded":{"tags":[],"companies":[]}}]}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeads(ctx, sampleGetLeadsRequestParams)
@@ -520,10 +520,7 @@ func TestGetLeadByID(t *testing.T) {
 			CatalogElements: []*domain.CatalogElement{
 				{
 					ID: 525439,
-					Metadata: struct {
-						Quantity  int64 `json:"quantity" validate:"required"`
-						CatalogID int64 `json:"catalog_id" validate:"required"`
-					}{
+					Metadata: &domain.CatalogElementMetadata{
 						Quantity:  1,
 						CatalogID: 4521,
 					},
@@ -545,7 +542,7 @@ func TestGetLeadByID(t *testing.T) {
 			_, _ = io.WriteString(w, sampleGetLeadByIDResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeadByID(ctx, 3912171, sampleGetLeadsRequestParams.With)
@@ -562,7 +559,7 @@ func TestGetLeadByID(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeadByID(ctx, 3912171, sampleGetLeadsRequestParams.With)
@@ -572,7 +569,7 @@ func TestGetLeadByID(t *testing.T) {
 	})
 
 	t.Run("Невалидный запрос", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeadByID(ctx, 0, sampleGetLeadsRequestParams.With)
@@ -588,7 +585,7 @@ func TestGetLeadByID(t *testing.T) {
 			_, _ = io.WriteString(w, `{"id":3912171,"name":"Example","price":12,"responsible_user_id":504141,"group_id":0,"status_id":143,"pipeline_id":3104455,"loss_reason_id":4203748,"source_id":null,"created_by":504141,"updated_by":504141,"created_at":1585299171,"updated_at":1590683337,"closed_at":1590683337,"account_id":28805383}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetLeadByID(ctx, 3912171, sampleGetLeadsRequestParams.With)
@@ -645,7 +642,7 @@ func TestAddLeads(t *testing.T) {
 			_, _ = io.WriteString(w, sampleAddLeadsResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddLeads(ctx, sampleAddLeadsRequest)
@@ -662,7 +659,7 @@ func TestAddLeads(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddLeads(ctx, sampleAddLeadsRequest)
@@ -679,7 +676,7 @@ func TestAddLeads(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads"}},"embedded":{}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddLeads(ctx, sampleAddLeadsRequest)
@@ -741,7 +738,7 @@ func TestUpdateLeads(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdateLeadsResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLeads(ctx, sampleUpdateLeadsRequest)
@@ -758,7 +755,7 @@ func TestUpdateLeads(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLeads(ctx, sampleUpdateLeadsRequest)
@@ -775,7 +772,7 @@ func TestUpdateLeads(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads"}},"embedded":{}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLeads(ctx, sampleUpdateLeadsRequest)
@@ -818,7 +815,7 @@ func TestUpdateLead(t *testing.T) {
 			_, _ = io.WriteString(w, sampleUpdateLeadResponseBody)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLead(ctx, 54884, sampleUpdateLeadRequest)
@@ -835,7 +832,7 @@ func TestUpdateLead(t *testing.T) {
 			_, _ = io.WriteString(w, "")
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLead(ctx, 54884, sampleUpdateLeadRequest)
@@ -845,7 +842,7 @@ func TestUpdateLead(t *testing.T) {
 	})
 
 	t.Run("Невалидный запрос", func(t *testing.T) {
-		client, err := NewClient("localhost:1234", "login", "hash")
+		client, err := defaultTestClient()
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLead(ctx, 0, sampleUpdateLeadRequest)
@@ -861,7 +858,7 @@ func TestUpdateLead(t *testing.T) {
 			_, _ = io.WriteString(w, `{"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads"}},"embedded":{}}`)
 		}))
 
-		client, err := NewClient(server.URL, "login", "hash")
+		client, err := defaultTestClientWithURL(server.URL)
 		assert.NoError(t, err)
 
 		responseGot, err := client.UpdateLead(ctx, 54884, sampleUpdateLeadRequest)
