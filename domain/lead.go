@@ -1,12 +1,17 @@
 package domain
 
 type (
+	EmbeddedLead struct {
+		ID    uint64 `json:"id" validate:"required"`
+		Links *Links `json:"_links" validate:"required"`
+	}
+
 	LeadEmbedded struct {
-		LossReasons     []*LossReason     `json:"loss_reason" validate:"omitempty,dive,required"`                // Причина отказа сделки (требует параметра `with=loss_reason` в запросе)
-		Tags            []*Tag            `json:"tags,omitempty" validate:"omitempty,dive,required"`             // Теги, привязанные к сделки
-		Contacts        []*Contact        `json:"contacts,omitempty" validate:"omitempty,dive,required"`         // Данные контактов, привязанных к сделке (требует параметра `with=contacts` в запросе)
-		Companies       []*Company        `json:"companies,omitempty" validate:"omitempty,dive,required"`        // Данные компании, привязанной к сделке. В данном массиве всегда 1 элемент, так как у сделки может быть только 1 компания
-		CatalogElements []*CatalogElement `json:"catalog_elements,omitempty" validate:"omitempty,dive,required"` // Данные элементов списков, привязанных к сделке (требует параметра `with=catalog_elements` в запросе)
+		LossReasons     []*LossReason      `json:"loss_reason" validate:"omitempty,dive,required"`                // Причина отказа сделки (требует параметра `with=loss_reason` в запросе)
+		Tags            []*Tag             `json:"tags,omitempty" validate:"omitempty,dive,required"`             // Теги, привязанные к сделке
+		Contacts        []*Contact         `json:"contacts,omitempty" validate:"omitempty,dive,required"`         // Данные контактов, привязанных к сделке (требует параметра `with=contacts` в запросе)
+		Companies       []*EmbeddedCompany `json:"companies,omitempty" validate:"omitempty,dive,required"`        // Данные компании, привязанной к сделке. В данном массиве всегда 1 элемент, так как у сделки может быть только 1 компания
+		CatalogElements []*CatalogElement  `json:"catalog_elements,omitempty" validate:"omitempty,dive,required"` // Данные элементов списков, привязанных к сделке (требует параметра `with=catalog_elements` в запросе)
 	}
 
 	Lead struct {
@@ -26,7 +31,7 @@ type (
 		ClosedAt               uint64         `json:"closed_at,omitempty" validate:"omitempty"`            // Дата изменения сделки, передаётся в Unit Timestamp
 		ClosestTaskAt          uint64         `json:"closest_task_at,omitempty" validate:"omitempty"`      // Дата ближайшей задачи к выполнению, передаётся в Unit Timestamp
 		IsDeleted              bool           `json:"is_deleted" validate:"omitempty"`                     // Признак удалена ли сделка
-		CustomFieldsValues     []*CustomField `json:"custom_fields_values,omitempty" validate:"omitempty"` // Массив, содержащий информацию по дополнительным полям, заданным для данной сделки
+		CustomFieldsValues     []*CustomField `json:"custom_fields_values,omitempty" validate:"omitempty"` // // Массив дополнительных полей, заданным для сделки
 		Score                  uint64         `json:"score" validate:"omitempty"`                          // Скоринг сделки
 		AccountID              uint64         `json:"account_id" validate:"required"`                      // ID аккаунта, в котором находится сделка
 		IsPriceModifiedByRobot bool           `json:"is_price_modified_by_robot" validate:"omitempty"`     // Признак изменён ли в последний раз бюджет сделки роботом (требует параметра `with=is_price_modified_by_robot` в запросе)

@@ -55,7 +55,7 @@ type (
 const (
 	authURI      = "/private/api/auth.php?type=json"
 	notesURI     = "/api/v2/note"
-	contactsURI  = "/api/v2/contacts"
+	contactsURI  = "/api/v4/contacts"
 	accountURI   = "/api/v4/account"
 	leadsURI     = "/api/v4/leads"
 	tasksURI     = "/api/v2/tasks"
@@ -103,6 +103,12 @@ func NewClient(accountURL string, login string, hash string, opts ...Option) (*C
 func WithHTTPTimeout(d time.Duration) Option {
 	return func(c *Client) {
 		c.client.Timeout = d
+	}
+}
+
+func WithCustomValidationTag(tagName string, f func(fl validator.FieldLevel) bool) Option {
+	return func(c *Client) {
+		_ = c.validator.RegisterValidation(tagName, f)
 	}
 }
 

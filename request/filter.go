@@ -105,3 +105,31 @@ func (f *Filter) AppendToQuery(params url.Values) {
 		params.Add(fmt.Sprintf("filter[custom_fields_values][%s][to]", f.name), f.values[1])
 	}
 }
+
+func (f *Filter) IsSimpleFilter() bool {
+	return f.filterType == simpleFilterType
+}
+
+func (f *Filter) IsMultipleFilter() bool {
+	return f.filterType == multipleFilterType
+}
+
+func (f *Filter) IsIntervalFilter() bool {
+	return f.filterType == intervalFilterType
+}
+
+func (f *Filter) IsStatusFilter() bool {
+	return f.filterType == statusFilterType
+}
+
+func (f *Filter) IsSimpleCustomFieldFilter() bool {
+	return f.filterType == simpleCustomFieldFilterType
+}
+
+func (f *Filter) IsMultipleCustomFieldFilter() bool {
+	return f.filterType == multipleCustomFieldFilterType
+}
+
+func (f *Filter) IsIntervalCustomFieldFilter() bool {
+	return f.filterType == intervalCustomFieldFilterType
+}

@@ -16,8 +16,8 @@ func TestAddPipelineStatusDataValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Невалидный цвет в запросе", func(t *testing.T) {
-		req := &AddPipelineStatusData{Color: "#ffffff"}
-		assert.EqualError(t, v.Struct(req), "Key: 'AddPipelineStatusData.Color' Error:Field validation for 'Color' failed on the 'oneof' tag")
+		data := &AddPipelineStatusData{Color: "#ffffff"}
+		assert.EqualError(t, v.Struct(data), "Key: 'AddPipelineStatusData.Color' Error:Field validation for 'Color' failed on the 'oneof' tag")
 	})
 }
 
@@ -25,117 +25,38 @@ func TestUpdatePipelineStatusDataValidation(t *testing.T) {
 	v := validator.New()
 
 	t.Run("Невалидный цвет в запросе", func(t *testing.T) {
-		req := &UpdatePipelineStatusData{Color: "#ffffff"}
-		assert.EqualError(t, v.Struct(req), "Key: 'UpdatePipelineStatusData.Color' Error:Field validation for 'Color' failed on the 'oneof' tag")
+		data := &UpdatePipelineStatusData{Color: "#ffffff"}
+		assert.EqualError(t, v.Struct(data), "Key: 'UpdatePipelineStatusData.Color' Error:Field validation for 'Color' failed on the 'oneof' tag")
+	})
+}
+
+func TestAddPipelineStatusResponseValidation(t *testing.T) {
+	v := validator.New()
+
+	t.Run("Ни одного обязательного параметра в ответе", func(t *testing.T) {
+		data := &AddPipelineStatusResponse{}
+		assert.EqualError(t, v.Struct(data), `Key: 'AddPipelineStatusResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag
+Key: 'AddPipelineStatusResponse.Embedded' Error:Field validation for 'Embedded' failed on the 'required' tag`)
+	})
+
+	t.Run("Пустой массив Statuses в ответе", func(t *testing.T) {
+		data := &AddPipelineStatusResponse{TotalItems: 1, Embedded: &domain.PipelineEmbedded{Statuses: []*domain.PipelineStatus{}}}
+		assert.EqualError(t, v.Struct(data), "Key: 'AddPipelineStatusResponse.Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
+	})
+
+	t.Run("Ни одного обязательного параметра в Status в ответе", func(t *testing.T) {
+		data := &AddPipelineStatusResponse{TotalItems: 1, Embedded: &domain.PipelineEmbedded{Statuses: []*domain.PipelineStatus{{}}}}
+		assert.EqualError(t, v.Struct(data), `Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].ID' Error:Field validation for 'ID' failed on the 'required' tag
+Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].Name' Error:Field validation for 'Name' failed on the 'required' tag
+Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].Sort' Error:Field validation for 'Sort' failed on the 'required' tag
+Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].PipelineID' Error:Field validation for 'PipelineID' failed on the 'required' tag
+Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].AccountID' Error:Field validation for 'AccountID' failed on the 'required' tag
+Key: 'AddPipelineStatusResponse.Embedded.Statuses[0].Links' Error:Field validation for 'Links' failed on the 'required' tag`)
 	})
 }
 
 func TestGetPipelineStatuses(t *testing.T) {
-	const sampleGetPipelineStatusesResponseBody = `{
-    "_total_items": 1,
-    "_links": {
-        "self": {
-            "href": "https://example.amocrm.ru/api/v4/leads/pipelines"
-        }
-    },
-    "_embedded": {
-        "pipelines": [
-            {
-                "id": 3177727,
-                "name": "Воронка",
-                "sort": 1,
-                "is_main": true,
-                "is_unsorted_on": true,
-                "is_archive": false,
-                "account_id": 12345678,
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727"
-                    }
-                },
-                "_embedded": {
-                    "statuses": [
-                        {
-                            "id": 32392156,
-                            "name": "Неразобранное",
-                            "sort": 10,
-                            "is_editable": false,
-                            "pipeline_id": 3177727,
-                            "color": "#c1c1c1",
-                            "type": 1,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"
-                                }
-                            }
-                        },
-                        {
-                            "id": 32392159,
-                            "name": "Первичный контакт",
-                            "sort": 20,
-                            "is_editable": true,
-                            "pipeline_id": 3177727,
-                            "color": "#99ccff",
-                            "type": 0,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"
-                                }
-                            }
-                        },
-                        {
-                            "id": 32392165,
-                            "name": "Принимают решение",
-                            "sort": 30,
-                            "is_editable": true,
-                            "pipeline_id": 3177727,
-                            "color": "#ffcc66",
-                            "type": 0,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"
-                                }
-                            }
-                        },
-                        {
-                            "id": 142,
-                            "name": "Успешно реализовано",
-                            "sort": 10000,
-                            "is_editable": false,
-                            "pipeline_id": 3177727,
-                            "color": "#CCFF66",
-                            "type": 0,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"
-                                }
-                            }
-                        },
-                        {
-                            "id": 143,
-                            "name": "Закрыто и не реализовано",
-                            "sort": 11000,
-                            "is_editable": false,
-                            "pipeline_id": 3177727,
-                            "color": "#D5D8DB",
-                            "type": 0,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
-    }
-}`
+	const sampleGetPipelineStatusesResponseBody = `{"_total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#ffdc7f","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}},{"id":32392159,"name":"Первичный контакт","sort":20,"is_editable":true,"pipeline_id":3177727,"color":"#ccc8f9","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"}}},{"id":32392165,"name":"Принимают решение","sort":30,"is_editable":true,"pipeline_id":3177727,"color":"#c1e0ff","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"}}},{"id":142,"name":"Успешно реализовано","sort":10000,"is_editable":false,"pipeline_id":3177727,"color":"#f2f3f4","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"}}},{"id":143,"name":"Закрыто и не реализовано","sort":11000,"is_editable":false,"pipeline_id":3177727,"color":"#e6e8ea","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"}}}]}}]}}`
 
 	responseWant := []*domain.PipelineStatus{
 		{
@@ -143,7 +64,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			Name:       "Неразобранное",
 			Sort:       10,
 			PipelineID: 3177727,
-			Color:      "#c1c1c1",
+			Color:      domain.SalomiePipelineStatusColor,
 			Type:       domain.RegularPipelineStatusType,
 			AccountID:  12345678,
 			Links:      &domain.Links{Self: &domain.Link{Href: "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}},
@@ -154,7 +75,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			Sort:       20,
 			IsEditable: true,
 			PipelineID: 3177727,
-			Color:      "#99ccff",
+			Color:      domain.LavanderBluePipelineStatusColor,
 			AccountID:  12345678,
 			Links:      &domain.Links{Self: &domain.Link{Href: "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"}},
 		},
@@ -164,7 +85,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			Sort:       30,
 			IsEditable: true,
 			PipelineID: 3177727,
-			Color:      "#ffcc66",
+			Color:      domain.MediumPattensBluePipelineStatusColor,
 			AccountID:  12345678,
 			Links:      &domain.Links{Self: &domain.Link{Href: "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"}},
 		},
@@ -173,7 +94,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			Name:       "Успешно реализовано",
 			Sort:       10000,
 			PipelineID: 3177727,
-			Color:      "#CCFF66",
+			Color:      domain.AliceBluePipelineStatusColor,
 			AccountID:  12345678,
 			Links:      &domain.Links{Self: &domain.Link{Href: "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"}},
 		},
@@ -182,7 +103,7 @@ func TestGetPipelineStatuses(t *testing.T) {
 			Name:       "Закрыто и не реализовано",
 			Sort:       11000,
 			PipelineID: 3177727,
-			Color:      "#D5D8DB",
+			Color:      domain.SolitudePipelineStatusColor,
 			AccountID:  12345678,
 			Links:      &domain.Links{Self: &domain.Link{Href: "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"}},
 		},
@@ -228,41 +149,27 @@ func TestGetPipelineStatuses(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
-		assert.EqualError(t, err, "Key: 'GetPipelineStatusesResponse.Embedded.Pipelines' Error:Field validation for 'Pipelines' failed on the 'required' tag")
+		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
 		assert.Empty(t, responseGot)
 	})
 
 	t.Run("Невалидный ответ", func(t *testing.T) {
 		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Add(contentTypeHeader, successContentType)
-			_, _ = io.WriteString(w, `{"total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#c1c1c1","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}}]}}]}}`)
+			_, _ = io.WriteString(w, `{"total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#f9deff","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}}]}}]}}`)
 		}))
 
 		client, err := NewClient(server.URL, "login", "hash")
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
-		assert.EqualError(t, err, "Key: 'GetPipelineStatusesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag")
+		assert.EqualError(t, err, "Key: 'PipelinesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag")
 		assert.Empty(t, responseGot)
 	})
 }
 
 func TestGetPipelineStatusByID(t *testing.T) {
-	const sampleGetPipelineStatusByIDResponseBody = `{
-    "id": 32392156,
-    "name": "Неразобранное",
-    "sort": 10,
-    "is_editable": false,
-    "pipeline_id": 3177727,
-    "color": "#ccc8f9",
-    "type": 1,
-    "account_id": 12345678,
-    "_links": {
-        "self": {
-            "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"
-        }
-    }
-}`
+	const sampleGetPipelineStatusByIDResponseBody = `{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#ccc8f9","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}}`
 
 	responseWant := &domain.PipelineStatus{
 		ID:         32392156,
@@ -322,46 +229,8 @@ func TestGetPipelineStatusByID(t *testing.T) {
 
 func TestAddPipelineStatuses(t *testing.T) {
 	const (
-		sampleAddPipelineStatusesResponseBody = `{
-    "_total_items": 2,
-    "_embedded": {
-        "statuses": [
-            {
-                "id": 33035290,
-                "name": "Новый этап",
-                "sort": 60,
-                "is_editable": true,
-                "pipeline_id": 3270355,
-                "color": "#fffeb2",
-                "type": 0,
-                "account_id": 1415131,
-                "request_id": "0",
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3270355/statuses/33035290"
-                    }
-                }
-            },
-            {
-                "id": 33035293,
-                "name": "Новый этап 2",
-                "sort": 70,
-                "is_editable": true,
-                "pipeline_id": 3270355,
-                "color": "#fffeb2",
-                "type": 0,
-                "account_id": 1415131,
-                "request_id": "1",
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3270355/statuses/33035293"
-                    }
-                }
-            }
-        ]
-    }
-}`
-		requestBodyWant = `[{"name":"Новый этап","sort":100,"color":"#fffeb2"},{"name":"Новый этап 2","sort":200,"color":"#fffeb2"}]`
+		sampleAddPipelineStatusesResponseBody = `{"_total_items":2,"_embedded":{"statuses":[{"id":33035290,"name":"Новый этап","sort":60,"is_editable":true,"pipeline_id":3270355,"color":"#fffeb2","type":0,"account_id":1415131,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270355/statuses/33035290"}}},{"id":33035293,"name":"Новый этап 2","sort":70,"is_editable":true,"pipeline_id":3270355,"color":"#fffeb2","type":0,"account_id":1415131,"request_id":"1","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270355/statuses/33035293"}}}]}}`
+		requestBodyWant                       = `[{"name":"Новый этап","sort":100,"color":"#fffeb2"},{"name":"Новый этап 2","sort":200,"color":"#fffeb2"}]`
 	)
 
 	sampleAddPipelineStatusesRequest := []*AddPipelineStatusData{
@@ -473,23 +342,8 @@ func TestAddPipelineStatuses(t *testing.T) {
 
 func TestUpdatePipelineStatuse(t *testing.T) {
 	const (
-		sampleUpdatePipelineStatuseResponseBody = `{
-    "id": 32392165,
-    "name": "Новое название для статуса",
-    "sort": 20,
-    "is_editable": true,
-    "pipeline_id": 3177727,
-    "color": "#c1e0ff",
-    "type": 0,
-    "account_id": 12345678,
-    "request_id": "0",
-    "_links": {
-        "self": {
-            "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"
-        }
-    }
-}`
-		requestBodyWant = `{"name":"Новое название для статуса","color":"#c1e0ff"}`
+		sampleUpdatePipelineStatuseResponseBody = `{"id":32392165,"name":"Новое название для статуса","sort":20,"is_editable":true,"pipeline_id":3177727,"color":"#c1e0ff","type":0,"account_id":12345678,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"}}}`
+		requestBodyWant                         = `{"name":"Новое название для статуса","color":"#c1e0ff"}`
 	)
 
 	sampleUpdatePipelineStatusRequest := &UpdatePipelineStatusData{

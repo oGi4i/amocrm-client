@@ -9,16 +9,6 @@ import (
 )
 
 type (
-	GetPipelineStatusesEmbedded struct {
-		Pipelines []*domain.Pipeline `json:"pipelines" validate:"required"`
-	}
-
-	GetPipelineStatusesResponse struct {
-		TotalItems    uint64                       `json:"_total_items" validate:"required"`
-		Embedded      *GetPipelineStatusesEmbedded `json:"_embedded" validate:"required"`
-		ErrorResponse *domain.AmoError             `json:"response" validate:"omitempty"`
-	}
-
 	AddPipelineStatusData struct {
 		Name      string                     `json:"name,omitempty" validate:"omitempty"`
 		Sort      uint64                     `json:"sort,omitempty" validate:"omitempty"`
@@ -49,7 +39,7 @@ func (c *Client) GetPipelineStatuses(ctx context.Context, pipelineID uint64) ([]
 		return nil, domain.ErrEmptyResponse
 	}
 
-	response := new(GetPipelineStatusesResponse)
+	response := new(PipelinesResponse)
 	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
@@ -57,6 +47,10 @@ func (c *Client) GetPipelineStatuses(ctx context.Context, pipelineID uint64) ([]
 
 	if err := c.validator.Struct(response); err != nil {
 		return nil, err
+	}
+
+	if len(response.Embedded.Pipelines) == 0 {
+		return nil, domain.ErrEmptyResponse
 	}
 
 	return response.Embedded.Pipelines[0].Embedded.Statuses, nil

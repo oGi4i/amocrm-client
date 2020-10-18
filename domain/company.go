@@ -1,5 +1,8 @@
 package domain
 
-type Company struct {
-	ID int64 `json:"id" validate:"required"`
-}
+type (
+	EmbeddedCompany struct {
+		ID    int64  `json:"id" validate:"required"`
+		Links *Links `json:"_links" validate:"required"`
+	}
+)

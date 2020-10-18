@@ -1,30 +1,8 @@
 package request
 
-import (
-	"fmt"
-	"net/url"
-)
-
-type (
-	OrderBy string
-
-	OrderMethod string
-
-	Order struct {
-		By     OrderBy     `validate:"required,oneof=id created_at updated_at"`
-		Method OrderMethod `validate:"required,oneof=asc desc"`
-	}
-)
+type OrderMethod string
 
 const (
-	AscendingOrderMethod  OrderMethod = "asc"
-	DescendingOrderMethod OrderMethod = "desc"
-
-	IDRequestOrderBy        OrderBy = "id"
-	CreatedAtRequestOrderBy OrderBy = "created_at"
-	UpdatedAtRequestOrderBy OrderBy = "updated_at"
+	AscendingOrderMethod  OrderMethod = "asc"  // Сортировка по возрастанию
+	DescendingOrderMethod OrderMethod = "desc" // Сортировка по убыванию
 )
-
-func (o *Order) AppendToQuery(params url.Values) {
-	params.Add(fmt.Sprintf("order[%s]", string(o.By)), string(o.Method))
-}

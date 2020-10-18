@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"github.com/go-playground/validator/v10"
 	"github.com/ogi4i/amocrm-client/domain"
 	"github.com/stretchr/testify/assert"
 	"io"
@@ -11,112 +12,34 @@ import (
 	"testing"
 )
 
+func TestPipelinesResponseValidation(t *testing.T) {
+	v := validator.New()
+
+	t.Run("Ни одного обязательного параметра в ответе", func(t *testing.T) {
+		data := &PipelinesResponse{}
+		assert.EqualError(t, v.Struct(data), `Key: 'PipelinesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag
+Key: 'PipelinesResponse.Links' Error:Field validation for 'Links' failed on the 'required' tag
+Key: 'PipelinesResponse.Embedded' Error:Field validation for 'Embedded' failed on the 'required' tag`)
+	})
+
+	t.Run("Пустой массив Pipelines в ответе", func(t *testing.T) {
+		data := &PipelinesResponse{TotalItems: 1, Links: &domain.Links{Self: &domain.Link{Href: "url"}}, Embedded: &PipelinesResponseEmbedded{Pipelines: []*domain.Pipeline{}}}
+		assert.NoError(t, v.Struct(data))
+	})
+
+	t.Run("Ни одного обязательного параметра в Pipeline в ответе", func(t *testing.T) {
+		data := &PipelinesResponse{TotalItems: 1, Links: &domain.Links{Self: &domain.Link{Href: "url"}}, Embedded: &PipelinesResponseEmbedded{Pipelines: []*domain.Pipeline{{}}}}
+		assert.EqualError(t, v.Struct(data), `Key: 'PipelinesResponse.Embedded.Pipelines[0].ID' Error:Field validation for 'ID' failed on the 'required' tag
+Key: 'PipelinesResponse.Embedded.Pipelines[0].Name' Error:Field validation for 'Name' failed on the 'required' tag
+Key: 'PipelinesResponse.Embedded.Pipelines[0].Sort' Error:Field validation for 'Sort' failed on the 'required' tag
+Key: 'PipelinesResponse.Embedded.Pipelines[0].AccountID' Error:Field validation for 'AccountID' failed on the 'required' tag
+Key: 'PipelinesResponse.Embedded.Pipelines[0].Embedded' Error:Field validation for 'Embedded' failed on the 'required' tag
+Key: 'PipelinesResponse.Embedded.Pipelines[0].Links' Error:Field validation for 'Links' failed on the 'required' tag`)
+	})
+}
+
 func TestGetPipelines(t *testing.T) {
-	const sampleGetPipelinesResponseBody = `{
-    "_total_items": 1,
-    "_links": {
-        "self": {
-            "href": "https://example.amocrm.ru/api/v4/leads/pipelines"
-        }
-    },
-    "_embedded": {
-        "pipelines": [
-            {
-                "id": 3177727,
-                "name": "Воронка",
-                "sort": 1,
-                "is_main": true,
-                "is_unsorted_on": true,
-                "is_archive": false,
-                "account_id": 12345678,
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727"
-                    }
-                },
-                "_embedded": {
-                    "statuses": [
-                        {
-                            "id": 32392156,
-                            "name": "Неразобранное",
-                            "sort": 10,
-                            "is_editable": false,
-                            "pipeline_id": 3177727,
-                            "color": "#ffc8c8",
-                            "type": 1,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"
-                                }
-                            }
-                        },
-                        {
-                            "id": 32392159,
-                            "name": "Первичный контакт",
-                            "sort": 20,
-                            "is_editable": true,
-                            "pipeline_id": 3177727,
-                            "color": "#ffdc7f",
-                            "type": 0,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"
-                                }
-                            }
-                        },
-                        {
-                            "id": 32392165,
-                            "name": "Принимают решение",
-                            "sort": 30,
-                            "is_editable": true,
-                            "pipeline_id": 3177727,
-                            "color": "#ccc8f9",
-                            "type": 0,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"
-                                }
-                            }
-                        },
-                        {
-                            "id": 142,
-                            "name": "Успешно реализовано",
-                            "sort": 10000,
-                            "is_editable": false,
-                            "pipeline_id": 3177727,
-                            "color": "#c1e0ff",
-                            "type": 0,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"
-                                }
-                            }
-                        },
-                        {
-                            "id": 143,
-                            "name": "Закрыто и не реализовано",
-                            "sort": 11000,
-                            "is_editable": false,
-                            "pipeline_id": 3177727,
-                            "color": "#e6e8ea",
-                            "type": 0,
-                            "account_id": 12345678,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
-    }
-}`
+	const sampleGetPipelinesResponseBody = `{"_total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#ffc8c8","type":1,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}},{"id":32392159,"name":"Первичный контакт","sort":20,"is_editable":true,"pipeline_id":3177727,"color":"#ffdc7f","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"}}},{"id":32392165,"name":"Принимают решение","sort":30,"is_editable":true,"pipeline_id":3177727,"color":"#ccc8f9","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"}}},{"id":142,"name":"Успешно реализовано","sort":10000,"is_editable":false,"pipeline_id":3177727,"color":"#c1e0ff","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"}}},{"id":143,"name":"Закрыто и не реализовано","sort":11000,"is_editable":false,"pipeline_id":3177727,"color":"#e6e8ea","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"}}}]}}]}}`
 
 	responseWant := []*domain.Pipeline{
 		{
@@ -222,7 +145,7 @@ func TestGetPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelines(ctx)
-		assert.EqualError(t, err, "Key: 'GetPipelinesResponse.Embedded.Pipelines' Error:Field validation for 'Pipelines' failed on the 'gt' tag")
+		assert.EqualError(t, err, domain.ErrEmptyResponse.Error())
 		assert.Empty(t, responseGot)
 	})
 
@@ -236,7 +159,7 @@ func TestGetPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelines(ctx)
-		assert.EqualError(t, err, "Key: 'GetPipelinesResponse.Embedded.Pipelines[0].Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
+		assert.EqualError(t, err, "Key: 'PipelinesResponse.Embedded.Pipelines[0].Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
 		assert.Empty(t, responseGot)
 	})
 
@@ -250,105 +173,13 @@ func TestGetPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.GetPipelineStatuses(ctx, 3177727)
-		assert.EqualError(t, err, "Key: 'GetPipelineStatusesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag")
+		assert.EqualError(t, err, "Key: 'PipelinesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag")
 		assert.Empty(t, responseGot)
 	})
 }
 
 func TestGetPipelineByID(t *testing.T) {
-	const sampleGetPipelineByIDResponseBody = `{
-    "id": 3177727,
-    "name": "Воронка",
-    "sort": 1,
-    "is_main": true,
-    "is_unsorted_on": true,
-    "is_archive": false,
-    "account_id": 28847170,
-    "_links": {
-        "self": {
-            "href": "https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727"
-        }
-    },
-    "_embedded": {
-        "statuses": [
-            {
-                "id": 32392156,
-                "name": "Неразобранное",
-                "sort": 10,
-                "is_editable": false,
-                "pipeline_id": 3177727,
-                "color": "#ffc8c8",
-                "type": 1,
-                "account_id": 28847170,
-                "_links": {
-                    "self": {
-                        "href": "https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"
-                    }
-                }
-            },
-            {
-                "id": 32392159,
-                "name": "Первичный контакт",
-                "sort": 20,
-                "is_editable": true,
-                "pipeline_id": 3177727,
-                "color": "#ffdc7f",
-                "type": 0,
-                "account_id": 28847170,
-                "_links": {
-                    "self": {
-                        "href": "https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"
-                    }
-                }
-            },
-            {
-                "id": 32392165,
-                "name": "Принимают решение",
-                "sort": 30,
-                "is_editable": true,
-                "pipeline_id": 3177727,
-                "color": "#ccc8f9",
-                "type": 0,
-                "account_id": 28847170,
-                "_links": {
-                    "self": {
-                        "href": "https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"
-                    }
-                }
-            },
-            {
-                "id": 142,
-                "name": "Успешно реализовано",
-                "sort": 10000,
-                "is_editable": false,
-                "pipeline_id": 3177727,
-                "color": "#c1e0ff",
-                "type": 0,
-                "account_id": 28847170,
-                "_links": {
-                    "self": {
-                        "href": "https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"
-                    }
-                }
-            },
-            {
-                "id": 143,
-                "name": "Закрыто и не реализовано",
-                "sort": 11000,
-                "is_editable": false,
-                "pipeline_id": 3177727,
-                "color": "#e6e8ea",
-                "type": 0,
-                "account_id": 28847170,
-                "_links": {
-                    "self": {
-                        "href": "https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"
-                    }
-                }
-            }
-        ]
-    }
-}`
+	const sampleGetPipelineByIDResponseBody = `{"id":3177727,"name":"Воронка","sort":1,"is_main":true,"is_unsorted_on":true,"is_archive":false,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392156,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3177727,"color":"#ffc8c8","type":1,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392156"}}},{"id":32392159,"name":"Первичный контакт","sort":20,"is_editable":true,"pipeline_id":3177727,"color":"#ffdc7f","type":0,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"}}},{"id":32392165,"name":"Принимают решение","sort":30,"is_editable":true,"pipeline_id":3177727,"color":"#ccc8f9","type":0,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"}}},{"id":142,"name":"Успешно реализовано","sort":10000,"is_editable":false,"pipeline_id":3177727,"color":"#c1e0ff","type":0,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"}}},{"id":143,"name":"Закрыто и не реализовано","sort":11000,"is_editable":false,"pipeline_id":3177727,"color":"#e6e8ea","type":0,"account_id":28847170,"_links":{"self":{"href":"https://shard152.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"}}}]}}`
 
 	responseWant := &domain.Pipeline{
 		ID:           3177727,
@@ -473,97 +304,8 @@ func TestGetPipelineByID(t *testing.T) {
 
 func TestAddPipelines(t *testing.T) {
 	const (
-		sampleAddPipelinesResponseBody = `{
-    "_total_items": 1,
-    "_links": {
-        "self": {
-            "href": "https://example.amocrm.ru/api/v4/leads/pipelines"
-        }
-    },
-    "_embedded": {
-        "pipelines": [
-            {
-                "id": 3270358,
-                "name": "Воронка для примера",
-                "sort": 1,
-                "is_main": true,
-                "is_unsorted_on": false,
-                "account_id": 1415131,
-                "request_id": "123",
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3270358"
-                    }
-                },
-                "_embedded": {
-                    "statuses": [
-                        {
-                            "id": 3304,
-                            "name": "Неразобранное",
-                            "sort": 10,
-                            "is_editable": false,
-                            "pipeline_id": 3270358,
-                            "color": "#ffc8c8",
-                            "type": 1,
-                            "account_id": 1415131,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/3304"
-                                }
-                            }
-                        },
-                        {
-                            "id": 3303,
-                            "name": "Первичный контакт",
-                            "sort": 20,
-                            "is_editable": true,
-                            "pipeline_id": 3270358,
-                            "color": "#ffdc7f",
-                            "type": 0,
-                            "account_id": 1415131,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/3303"
-                                }
-                            }
-                        },
-                        {
-                            "id": 142,
-                            "name": "Мое название для успешных сделок",
-                            "sort": 10000,
-                            "is_editable": false,
-                            "pipeline_id": 3270358,
-                            "color": "#c1e0ff",
-                            "type": 0,
-                            "account_id": 1415131,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/142"
-                                }
-                            }
-                        },
-                        {
-                            "id": 143,
-                            "name": "Закрыто и не реализовано",
-                            "sort": 11000,
-                            "is_editable": false,
-                            "pipeline_id": 3270358,
-                            "color": "#e6e8ea",
-                            "type": 0,
-                            "account_id": 1415131,
-                            "_links": {
-                                "self": {
-                                    "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/143"
-                                }
-                            }
-                        }
-                    ]
-                }
-            }
-        ]
-    }
-}`
-		requestBodyWant = `[{"name":"Воронка доп продаж","sort":20,"is_main":false,"is_unsorted_on":true,"request_id":"123","_embedded":{"statuses":[{"id":142,"name":"Мое название для успешных сделок"},{"name":"Первичный контакт","sort":10,"color":"#fffeb2"}]}}]`
+		sampleAddPipelinesResponseBody = `{"_total_items":1,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines"}},"_embedded":{"pipelines":[{"id":3270358,"name":"Воронка для примера","sort":1,"is_main":true,"is_unsorted_on":false,"account_id":1415131,"request_id":"123","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270358"}},"_embedded":{"statuses":[{"id":3304,"name":"Неразобранное","sort":10,"is_editable":false,"pipeline_id":3270358,"color":"#ffc8c8","type":1,"account_id":1415131,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/3304"}}},{"id":3303,"name":"Первичный контакт","sort":20,"is_editable":true,"pipeline_id":3270358,"color":"#ffdc7f","type":0,"account_id":1415131,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/3303"}}},{"id":142,"name":"Мое название для успешных сделок","sort":10000,"is_editable":false,"pipeline_id":3270358,"color":"#c1e0ff","type":0,"account_id":1415131,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/142"}}},{"id":143,"name":"Закрыто и не реализовано","sort":11000,"is_editable":false,"pipeline_id":3270358,"color":"#e6e8ea","type":0,"account_id":1415131,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3270358/statuses/143"}}}]}}]}}`
+		requestBodyWant                = `[{"name":"Воронка доп продаж","sort":20,"is_main":false,"is_unsorted_on":true,"request_id":"123","_embedded":{"statuses":[{"id":142,"name":"Мое название для успешных сделок"},{"name":"Первичный контакт","sort":10,"color":"#fffeb2"}]}}]`
 	)
 
 	sampleAddPipelinesRequest := []*AddPipelineData{
@@ -689,7 +431,7 @@ func TestAddPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
-		assert.EqualError(t, err, "Key: 'GetPipelinesResponse.Embedded.Pipelines' Error:Field validation for 'Pipelines' failed on the 'gt' tag")
+		assert.EqualError(t, err, "Key: 'AddPipelinesResponse.Embedded.Pipelines' Error:Field validation for 'Pipelines' failed on the 'gt' tag")
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -706,7 +448,7 @@ func TestAddPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
-		assert.EqualError(t, err, "Key: 'GetPipelinesResponse.Embedded.Pipelines[0].Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
+		assert.EqualError(t, err, "Key: 'AddPipelinesResponse.Embedded.Pipelines[0].Embedded.Statuses' Error:Field validation for 'Statuses' failed on the 'gt' tag")
 		assert.Equal(t, requestBodyWant, string(requestBodyGot))
 		assert.Empty(t, responseGot)
 	})
@@ -721,95 +463,15 @@ func TestAddPipelines(t *testing.T) {
 		assert.NoError(t, err)
 
 		responseGot, err := client.AddPipelines(ctx, sampleAddPipelinesRequest)
-		assert.EqualError(t, err, "Key: 'GetPipelinesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag")
+		assert.EqualError(t, err, "Key: 'AddPipelinesResponse.TotalItems' Error:Field validation for 'TotalItems' failed on the 'required' tag")
 		assert.Empty(t, responseGot)
 	})
 }
 
 func TestUpdatePipeline(t *testing.T) {
 	const (
-		sampleUpdatePipelineResponseBody = `{
-    "id": 3177727,
-    "name": "Новое название для воронки",
-    "sort": 1000,
-    "is_main": false,
-    "is_unsorted_on": false,
-    "is_archive": false,
-    "account_id": 12345678,
-    "request_id": "0",
-    "_links": {
-        "self": {
-            "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727"
-        }
-    },
-    "_embedded": {
-        "statuses": [
-            {
-                "id": 32392159,
-                "name": "Первичный контакт",
-                "sort": 20,
-                "is_editable": true,
-                "pipeline_id": 3177727,
-                "color": "#ffc8c8",
-                "type": 0,
-                "account_id": 12345678,
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"
-                    }
-                }
-            },
-            {
-                "id": 32392165,
-                "name": "Принимают решение",
-                "sort": 30,
-                "is_editable": true,
-                "pipeline_id": 3177727,
-                "color": "#ffdc7f",
-                "type": 0,
-                "account_id": 12345678,
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"
-                    }
-                }
-            },
-            {
-                "id": 142,
-                "name": "Успешно реализовано",
-                "sort": 10000,
-                "is_editable": false,
-                "pipeline_id": 3177727,
-                "color": "#c1e0ff",
-                "type": 0,
-                "account_id": 12345678,
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"
-                    }
-                }
-            },
-            {
-                "id": 143,
-                "name": "Закрыто и не реализовано",
-                "sort": 11000,
-                "is_editable": false,
-                "pipeline_id": 3177727,
-                "color": "#e6e8ea",
-                "type": 0,
-                "account_id": 12345678,
-                "_links": {
-                    "self": {
-                        "href": "https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"
-                    }
-                }
-            }
-        ]
-    }
-}
-
-`
-		requestBodyWant = `{"name":"Новое название для воронки","sort":100,"is_main":false,"is_unsorted_on":false}`
+		sampleUpdatePipelineResponseBody = `{"id":3177727,"name":"Новое название для воронки","sort":1000,"is_main":false,"is_unsorted_on":false,"is_archive":false,"account_id":12345678,"request_id":"0","_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727"}},"_embedded":{"statuses":[{"id":32392159,"name":"Первичный контакт","sort":20,"is_editable":true,"pipeline_id":3177727,"color":"#ffc8c8","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392159"}}},{"id":32392165,"name":"Принимают решение","sort":30,"is_editable":true,"pipeline_id":3177727,"color":"#ffdc7f","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/32392165"}}},{"id":142,"name":"Успешно реализовано","sort":10000,"is_editable":false,"pipeline_id":3177727,"color":"#c1e0ff","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/142"}}},{"id":143,"name":"Закрыто и не реализовано","sort":11000,"is_editable":false,"pipeline_id":3177727,"color":"#e6e8ea","type":0,"account_id":12345678,"_links":{"self":{"href":"https://example.amocrm.ru/api/v4/leads/pipelines/3177727/statuses/143"}}}]}}`
+		requestBodyWant                  = `{"name":"Новое название для воронки","sort":100,"is_main":false,"is_unsorted_on":false}`
 	)
 
 	sampleUpdatePipelineRequest := &UpdatePipelineData{

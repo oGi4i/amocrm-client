@@ -10,15 +10,15 @@ import (
 )
 
 type (
-	GetPipelinesResponseEmbedded struct {
-		Pipelines []*domain.Pipeline `json:"pipelines" validate:"required,gt=0,dive,required"`
+	PipelinesResponseEmbedded struct {
+		Pipelines []*domain.Pipeline `json:"pipelines" validate:"omitempty,dive,required"`
 	}
 
-	GetPipelinesResponse struct {
-		TotalItems    uint64                        `json:"_total_items" validate:"required"`
-		Links         *domain.Links                 `json:"_links" validate:"required"`
-		Embedded      *GetPipelinesResponseEmbedded `json:"_embedded" validate:"required"`
-		ErrorResponse *domain.AmoError              `json:"response" validate:"omitempty"`
+	PipelinesResponse struct {
+		TotalItems    uint64                     `json:"_total_items" validate:"required"`
+		Links         *domain.Links              `json:"_links" validate:"required"`
+		Embedded      *PipelinesResponseEmbedded `json:"_embedded" validate:"required"`
+		ErrorResponse *domain.AmoError           `json:"response" validate:"omitempty"`
 	}
 
 	AddPipelineData struct {
@@ -28,6 +28,17 @@ type (
 		IsUnsortedOn bool                     `json:"is_unsorted_on" validate:"omitempty"`
 		RequestID    string                   `json:"request_id,omitempty" validate:"omitempty"`
 		Embedded     *domain.PipelineEmbedded `json:"_embedded" validate:"omitempty,gt=0,dive,required"`
+	}
+
+	AddPipelinesResponseEmbedded struct {
+		Pipelines []*domain.Pipeline `json:"pipelines" validate:"required,gt=0,dive,required"`
+	}
+
+	AddPipelinesResponse struct {
+		TotalItems    uint64                        `json:"_total_items" validate:"required"`
+		Links         *domain.Links                 `json:"_links" validate:"required"`
+		Embedded      *AddPipelinesResponseEmbedded `json:"_embedded" validate:"required"`
+		ErrorResponse *domain.AmoError              `json:"response" validate:"omitempty"`
 	}
 
 	UpdatePipelineData struct {
@@ -48,7 +59,7 @@ func (c *Client) GetPipelines(ctx context.Context) ([]*domain.Pipeline, error) {
 		return nil, domain.ErrEmptyResponse
 	}
 
-	response := new(GetPipelinesResponse)
+	response := new(PipelinesResponse)
 	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err
@@ -56,6 +67,10 @@ func (c *Client) GetPipelines(ctx context.Context) ([]*domain.Pipeline, error) {
 
 	if err := c.validator.Struct(response); err != nil {
 		return nil, err
+	}
+
+	if len(response.Embedded.Pipelines) == 0 {
+		return nil, domain.ErrEmptyResponse
 	}
 
 	return response.Embedded.Pipelines, nil
@@ -94,7 +109,7 @@ func (c *Client) AddPipelines(ctx context.Context, pipelines []*AddPipelineData)
 		return nil, domain.ErrEmptyResponse
 	}
 
-	response := new(GetPipelinesResponse)
+	response := new(AddPipelinesResponse)
 	err = json.Unmarshal(body, response)
 	if err != nil {
 		return nil, err

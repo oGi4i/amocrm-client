@@ -1,30 +1,29 @@
 package domain
 
 type (
+	ContactEmbedded struct {
+		Tags            []*Tag              `json:"tags,omitempty" validate:"omitempty,dive,required"`             // Теги, привязанные к контакту
+		Companies       []*EmbeddedCompany  `json:"companies,omitempty" validate:"omitempty,dive,required"`        // Данные компании, привязанной к контакту
+		Leads           []*EmbeddedLead     `json:"leads,omitempty" validate:"omitempty,dive,required"`            // Данные сделок, привязанных к контакту (требует параметра `with=leads` в запросе)
+		Customers       []*EmbeddedCustomer `json:"customers,omitempty" validate:"omitempty,dive,required"`        // Данные покупателей, привязанных к контакту (требует параметра `with=customers` в запросе)
+		CatalogElements []*CatalogElement   `json:"catalog_elements,omitempty" validate:"omitempty,dive,required"` // Данные элементов списков, привязанных к контакту (требует параметра `with=catalog_elements` в запросе)
+	}
+
 	Contact struct {
-		ID                int    `json:"id" validate:"required"`
-		Name              string `json:"name" validate:"required"`
-		ResponsibleUserID int    `json:"responsible_user_id" validate:"required"`
-		CreatedBy         int    `json:"created_by" validate:"required"`
-		CreatedAt         int    `json:"created_at" validate:"required"`
-		UpdatedAt         int    `json:"updated_at" validate:"required"`
-		AccountID         int    `json:"account_id" validate:"required"`
-		UpdatedBy         int    `json:"updated_by" validate:"required"`
-		GroupID           int    `json:"group_id,omitempty" validate:"omitempty"`
-		Company           struct {
-			ID    int    `json:"id" validate:"omitempty"`
-			Name  string `json:"name" validate:"omitempty"`
-			Links *Links `json:"_links" validate:"omitempty"`
-		} `json:"company,omitempty" validate:"omitempty"`
-		Leads struct {
-			ID    []int  `json:"id" validate:"omitempty,dive,required"`
-			Links *Links `json:"_links" validate:"omitempty"`
-		} `json:"leads,omitempty" validate:"omitempty"`
-		ClosestTaskAt int            `json:"closest_task_at,omitempty" validate:"omitempty"`
-		Tags          []*Tag         `json:"tags,omitempty" validate:"omitempty,dive,required"`
-		CustomFields  []*CustomField `json:"custom_fields,omitempty" validate:"omitempty,dive,required"`
-		Customers     struct {
-		} `json:"customers,omitempty" validate:"omitempty"`
-		Links *Links `json:"_links" validate:"required"`
+		ID                 uint64           `json:"id" validate:"required"`                                            // ID контакта
+		Name               string           `json:"name" validate:"required"`                                          // Название контакта
+		FirstName          string           `json:"first_name" validate:"omitempty"`                                   // Имя контакта
+		LastName           string           `json:"last_name" validate:"omitempty"`                                    // Фамилия контакта
+		ResponsibleUserID  uint64           `json:"responsible_user_id" validate:"required"`                           // ID пользователя, ответственного за контакт
+		GroupID            uint64           `json:"group_id" validate:"required"`                                      // ID группы, в которой состоит ответственный за контакт
+		CreatedBy          uint64           `json:"created_by" validate:"required"`                                    // ID пользователя, создавшего контакт
+		UpdatedBy          uint64           `json:"updated_by" validate:"required"`                                    // ID пользователя, изменившего контакт
+		CreatedAt          uint64           `json:"created_at" validate:"required"`                                    // Дата создания контакта, передаётся в Unix Timestamp
+		UpdatedAt          uint64           `json:"updated_at" validate:"required"`                                    // Дата изменения контакта, передаётся в Unix Timestamp
+		ClosestTaskAt      uint64           `json:"closest_task_at,omitempty" validate:"omitempty"`                    // Дата ближайшей задачи к выполнению, передаётся в Unix Timestamp
+		CustomFieldsValues []*CustomField   `json:"custom_fields_values,omitempty" validate:"omitempty,dive,required"` // Массив дополнительных полей, заданных для контакта
+		AccountID          uint64           `json:"account_id" validate:"required"`                                    // ID аккаунта, в котором находится контакт
+		Embedded           *ContactEmbedded `json:"_embedded" validate:"omitempty,gt=0,dive,required"`
+		Links              *Links           `json:"_links" validate:"required"`
 	}
 )
