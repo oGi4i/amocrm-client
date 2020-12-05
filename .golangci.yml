@@ -26,7 +26,7 @@ linters-settings:
     min-len:         2
     min-occurrences: 2
   goimports:
-    local-prefixes: mikrotik_provisioning
+    local-prefixes: github.com/ogi4i/amocrm-client
   errchek:
     check-type-assertions: false
   nakedret:
@@ -85,7 +85,7 @@ issues:
     # for "public interface + private struct implementation" cases only!
     - exported func * returns unexported type *, which can be annoying to use
     # can be removed in the development phase
-    # - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
+    - (comment on exported (method|function|type|const)|should have( a package)? comment|comment should be of the form)
     # not for the active development - can be removed in the stable phase
     - should have a package comment, unless it's in another file for this package
     - don't use an underscore in package name
@@ -99,5 +99,5 @@ issues:
     # golint: allow any comments
     - comment on exported type (.+) should be of the form (.+)
     # golint: allow capitalized errors
-    # - error strings should not be capitalized or end with punctuation or a newline
+    - error strings should not be capitalized or end with punctuation or a newline
     - 'shadow: declaration of "ctx" shadows declaration at line (.+)'

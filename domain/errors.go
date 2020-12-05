@@ -1,19 +1,12 @@
-package amocrm
+package domain
 
 import "fmt"
 
-type (
-	Error string
-
-	AmoError struct {
-		ErrorDetail string `json:"error" validate:"required"`
-		ErrorCode   int    `json:"error_code,string" validate:"required"`
-	}
-)
-
-func (e Error) Error() string {
-	return string(e)
+type AmoError struct {
+	ErrorDetail string `json:"error" validate:"required"`
+	ErrorCode   int    `json:"error_code,string" validate:"required"`
 }
+
 func (e *AmoError) Error() string {
 	return fmt.Sprintf("%s: %s", amoErrorTypeMap[e.ErrorCode], e.ErrorDetail)
 }
@@ -113,12 +106,6 @@ const (
 )
 
 var (
-	ErrEmptyLogin         Error = "empty_login"
-	ErrEmptyAPIHash       Error = "empty_api_hash"
-	ErrEmptyPhoneNumber   Error = "empty_phone_number"
-	ErrInvalidEventType   Error = "invalid_event_type"
-	ErrEmptyResponseItems Error = "empty_response_items"
-
 	amoErrorTypeMap = map[int]string{
 		AccountNotFoundCode:          AccountNotFound,
 		BodyMustBeJSONCode:           BodyMustBeJSON,
